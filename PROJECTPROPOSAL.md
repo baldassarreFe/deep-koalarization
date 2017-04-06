@@ -24,7 +24,7 @@ For this reason we are not going to build an image classifier from scratch. Inst
 
 The hidden layers of these model have learned to create a semantic representation of the image that is then used by the final layer (fully connected + softmax) to label the objects in the image. By “cutting” the model at one of its final layers we will get a high dimensional representation of image features, that will be used by our network to perform the un-filtering task ([reference1](https://www.tensorflow.org/tutorials/image_retraining), [reference2](https://kwotsin.github.io/tech/2017/02/11/transfer-learning.html) and [reference3](https://arxiv.org/abs/1403.6382)).
 
-## Training data
+## Training data
 Training data for this experiment could actually come from every source, but we are thinking of using images from ImageNet and apply instagram-like filters. The motivation for this choice would be to use a dataset that is nowadays considered the de-facto reference for image tasks. It will also make our experiments easily reproducible, compared to using our own images.
 
 After the network is trained, if we have time, we might build a plugin to use actual pictures from Instagram.
@@ -34,12 +34,12 @@ We will be working with Python 3, for it is widely used in the data science and 
 
 As for additional libraries, for machine learning, deep learning and image manipulation we will use TensorFlow, NumPy/SciPy, Scikit, Pillow, imagemagick etc.
 
-## Experiments
+## Experiments
 We are going to start small, with fewer images and fewer filter styles. Once the technique seems to be working we are going to expand the dataset and the filters, adapting also the size of the network.
 
 Finally we will test the network against real images taken from Instagram.
 
-## Evaluation
+## Evaluation
 In this project, we deal with a regression problem, where we want to estimate how the original picture looked like given a filtered version of it. The regression task is performed by a Deep Network and can be expressed as a function _F_.
 
 
