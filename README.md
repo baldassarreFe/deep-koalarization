@@ -12,7 +12,7 @@ This project is currently being developed as part of the [DD2424 Deep Learning i
 We got the inspiration from the work of Richard Zhang, Phillip Isola and Alexei A. Efros, who realized a network able to colorize black and white images ([blog post](http://richzhang.github.io/colorization/) and [paper](https://arxiv.org/abs/1603.08511)). They trained a network on ImageNet pictures preprocessed to make them grayscale, with the colored image as the output target.
 
 
-Then we also saw the experiments of Satoshi Izuka, Edgar Simo-Serra and Hiroshi Ishikawa, who added image classification features to raw pixels fed to the network, improving the overall results ([YouTube review](https://www.youtube.com/watch?v=MfaTOXxA8dM), [blog post](http://hi.cs.waseda.ac.jp/~iizuka/projects/colorization/en/) and [paper](https://github.com/satoshiiizuka/siggraph2016_colorization)).
+Then we also saw the experiments of Satoshi Izuka, Edgar Simo-Serra and Hiroshi Ishikawa, who added image classification features to raw pixels fed to the network, improving the overall results ([YouTube review](https://www.youtube.com/watch?v=MfaTOXxA8dM), [blog post](http://hi.cs.waseda.ac.jp/~iizuka/projects/colorization/en/) and [paper](http://hi.cs.waseda.ac.jp/~iizuka/projects/colorization/data/colorization_sig2016.pdf)).
 
 Our idea is to apply a similar technique to overly filtered images (e.g. Instagram images), i.e. going from the modified color image to a version that is closer to the original, using both the raw pixels and object recognition features.
 
