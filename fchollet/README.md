@@ -1,0 +1,1 @@
+This library contains the modules from [fchollet/deep-learning-models](https://github.com/fchollet/deep-learning-models).
