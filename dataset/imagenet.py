@@ -1,3 +1,4 @@
+import argparse
 import hashlib
 import os
 import sys
@@ -21,18 +22,15 @@ class Batch:
 links_source_url = 'http://image-net.org/imagenet_data/urls/imagenet_fall11_urls.tgz'
 compressed_links_file = 'imagenet_fall11_urls.tgz'
 links_file = 'fall11_urls.txt'
-dir_originals = 'imagenet_original/'
-dir_resized = 'imagenet_resized/'
-dir_filtered = 'imagenet_filtered/'
+dir_root = 'imagenet'
+dir_originals = 'original/'
+dir_resized = 'resized/'
+dir_filtered = 'filtered/'
 
 
-def check_folders_exist():
-    if not os.path.isdir(dir_originals):
-        os.mkdir(dir_originals)
-    if not os.path.isdir(dir_resized):
-        os.mkdir(dir_resized)
-    if not os.path.isdir(dir_filtered):
-        os.mkdir(dir_filtered)
+def check_folders_exist(folder):
+    if not os.path.isdir(folder):
+        os.mkdir(folder)
 
 
 # NOTE:
@@ -54,7 +52,7 @@ def image_name(image_url: str, suffix='') -> str:
 
 
 def get_image(image_url: str) -> Union[str, None]:
-    image_path = dir_originals + image_name(image_url)
+    image_path = dir_root + '/' + dir_originals + image_name(image_url)
     if not os.path.isfile(image_path):
         try:
             urllib.request.urlretrieve(image_url, image_path)
@@ -84,6 +82,27 @@ def get_images(size=10, skip=0) -> List[str]:
 
 
 if __name__ == '__main__':
-    check_folders_exist()
-    for img_path in get_images(10):
+    # Argparse setup
+    parser = argparse.ArgumentParser(description='Download and process images from imagenet')
+    parser.add_argument('-c', '--count', default=10, type=int,
+                        help='get COUNT images (default: 10)')
+    parser.add_argument('-f', '--source-file', default=None, type=str, metavar='FILE', dest='source',
+                        help='set the path for the links source file')
+    parser.add_argument('-o', '--image-folder', default=None, type=str, metavar='FOLDER', dest='root',
+                        help='use FOLDER as root of the images folders (default: imagenet)')
+
+    # Using the arguments
+    args = parser.parse_args()
+    if args.source is not None:
+        links_file = args.source
+    if args.root is not None:
+        dir_root = args.root
+
+    # Set up folders
+    check_folders_exist(dir_root)
+    check_folders_exist(dir_root + '/' + dir_originals)
+    check_folders_exist(dir_root + '/' + dir_resized)
+    check_folders_exist(dir_root + '/' + dir_filtered)
+
+    for img_path in get_images(args.count):
         print(img_path)
