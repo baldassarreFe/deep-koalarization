@@ -121,3 +121,4 @@ if __name__ == '__main__':
 
     for img_path in get_images(args.count):
         print(img_path)
+		Resize_Img(img_path, './Resized/')
