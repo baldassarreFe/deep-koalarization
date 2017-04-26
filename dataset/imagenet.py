@@ -5,6 +5,9 @@ import sys
 import tarfile
 import urllib.request
 from itertools import islice
+from PIL import Image
+#TO INSTALL: pip install python-resize-image
+from resizeimage import resizeimage
 
 from typing import Union, List
 
@@ -79,6 +82,18 @@ def get_images(size=10, skip=0) -> List[str]:
     urls = islice(image_urls_generator(), skip, skip + size)
     valid_images = filter(lambda x: x is not None, (get_image(url) for url in urls))
     return list(valid_images)
+
+def Resize_Img ( filename , save_path , size = [299, 299] ):
+	img = Image.open( filename )
+	# Resize using padding
+	cover = resizeimage.resize_contain(img, size)
+	# Make dir if it does not exist
+	try:
+		os.stat(save_path)
+	except:
+		os.mkdir(save_path)  	
+	# Safe resized image
+	cover.save( save_path + filename + '-resized.jpeg', img.format)
 
 
 if __name__ == '__main__':
