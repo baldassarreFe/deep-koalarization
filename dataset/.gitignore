@@ -1,2 +1,6 @@
+# Imagenet dataset byproducts
+imagenet_fall11_urls.tgz
 fall11_urls.txt
-imagenet_images
+imagenet_original/
+imagener_resized/
+imagener_filtered/
