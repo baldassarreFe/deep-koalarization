@@ -26,35 +26,36 @@ def resize(source_path, output_path, size=(299, 299)):
     cover = resizeimage.resize_contain(img, size)
     cover.save(output_path, img.format)
 
-def filters(source_path, output_path, namesCV = ('nashville', 'gotham', 'claredon'), namesIM = ('lomo', 'kelvin', 'nash2', 'toaster')):
+def filters(dir_resized, dir_filtered, namesCV = ('nashville', 'gotham', 'claredon'), namesIM = ('lomo', 'kelvin', 'nash2', 'toaster')):
     	out = []		
 	IO = ImageOperator()
 	filters = Filters()
-	IO.image(source_path)
+	IO.image(dir_resized)
 	inImage = IO.im
-	
+	name_in = os.path.basename(dir_resized)
 	# OPEN CV FILTERS
 	out.append( filters.nashville(inImage))
 	out.append( filters.gotham(inImage))
 	out.append( filters.claredon(inImage))
 	for i in range(len(namesCV)):
-		cv2.imwrite(os.path.join('Transformed', namesCV[i] + '_' + source_path ),out[i])
+		
+		cv2.imwrite(dir_filtered + namesCV[i] + '_' + name_in ,out[i])
 
 	# IM filters
-	filenameDumb = os.path.join('Transformed', namesIM[0] + '_' + source_path)
-	shutil.copyfile(filename, filenameDumb)
+	filenameDumb = dir_filtered + namesIM[0] + '_' + name_in 
+	shutil.copyfile(dir_resized, filenameDumb)
 	filters.lomo(filenameDumb)
 
-	filenameDumb = os.path.join('Transformed', namesIM[1] + '_' + source_path )
-	shutil.copyfile(source_path, filenameDumb)
+	filenameDumb = dir_filtered + namesIM[1] + '_' + name_in 
+	shutil.copyfile(dir_resized, filenameDumb)
 	filters.kelvin(filenameDumb)
 
-	filenameDumb = os.path.join('Transformed', namesIM[2] + '_' + source_path )
-	shutil.copyfile(source_path, filenameDumb)
+	filenameDumb = dir_filtered + namesIM[2] + '_' + name_in
+	shutil.copyfile(dir_resized, filenameDumb)
 	filters.nash2(filenameDumb)
 
-	filenameDumb = os.path.join('Transformed', namesIM[3] + '_' + source_path)
-	shutil.copyfile(source_path, filenameDumb)
+	filenameDumb = dir_filtered + namesIM[3] + '_' + name_in
+	shutil.copyfile(dir_resized, filenameDumb)
 	filters.toaster(filenameDumb)
 
 def processing():
