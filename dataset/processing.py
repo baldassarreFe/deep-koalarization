@@ -26,7 +26,7 @@ def resize(source_path, output_path, size=(299, 299)):
     cover = resizeimage.resize_contain(img, size)
     cover.save(output_path, img.format)
 
-def filters(dir_resized, dir_filtered, namesCV = ('nashville', 'gotham', 'claredon'), namesIM = ('lomo', 'kelvin', 'nash2', 'toaster')):
+def filters(dir_resized, dir_filtered, namesCV = ('nashville', 'claredon'), namesIM = ('lomo', 'kelvin', 'nash2', 'toaster')):
     	out = []		
 	IO = ImageOperator()
 	filters = Filters()
@@ -35,7 +35,6 @@ def filters(dir_resized, dir_filtered, namesCV = ('nashville', 'gotham', 'clared
 	name_in = os.path.basename(dir_resized)
 	# OPEN CV FILTERS
 	out.append( filters.nashville(inImage))
-	out.append( filters.gotham(inImage))
 	out.append( filters.claredon(inImage))
 	for i in range(len(namesCV)):
 		
