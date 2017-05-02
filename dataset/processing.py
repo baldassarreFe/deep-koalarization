@@ -17,7 +17,7 @@ def resize(source_path, output_path, size=(299, 299)):
     """
     img = Image.open(source_path)
     cover = resizeimage.resize_contain(img, size)
-    cover.save(output_path, img.format)
+    cover.save(output_path, 'JPEG')
 
 
 def filter(source_path, output_path, size=(299, 299)):
