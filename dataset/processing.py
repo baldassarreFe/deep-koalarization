@@ -1,7 +1,14 @@
 import argparse
 import os
 import sys
+import unittest
+import cv2
+import Filters
+import ImageOperator
+import shutil 
 
+from filter_functions.filters import Filters
+from filter_functions.image_operation import ImageOperator
 from PIL import Image
 from resizeimage import resizeimage
 from shared import *
@@ -19,10 +26,36 @@ def resize(source_path, output_path, size=(299, 299)):
     cover = resizeimage.resize_contain(img, size)
     cover.save(output_path, 'JPEG')
 
+def filters(dir_resized, dir_filtered, namesCV = ('nashville', 'claredon'), namesIM = ('lomo', 'kelvin', 'nash2', 'toaster')):
+    	out = []		
+	IO = ImageOperator()
+	filters = Filters()
+	IO.image(dir_resized)
+	inImage = IO.im
+	name_in = os.path.basename(dir_resized)
+	# OPEN CV FILTERS
+	out.append( filters.nashville(inImage))
+	out.append( filters.claredon(inImage))
+	for i in range(len(namesCV)):
+		
+		cv2.imwrite(dir_filtered + namesCV[i] + '_' + name_in ,out[i])
 
-def filter(source_path, output_path, size=(299, 299)):
-    pass
+	# IM filters
+	filenameDumb = dir_filtered + namesIM[0] + '_' + name_in 
+	shutil.copyfile(dir_resized, filenameDumb)
+	filters.lomo(filenameDumb)
 
+	filenameDumb = dir_filtered + namesIM[1] + '_' + name_in 
+	shutil.copyfile(dir_resized, filenameDumb)
+	filters.kelvin(filenameDumb)
+
+	filenameDumb = dir_filtered + namesIM[2] + '_' + name_in
+	shutil.copyfile(dir_resized, filenameDumb)
+	filters.nash2(filenameDumb)
+
+	filenameDumb = dir_filtered + namesIM[3] + '_' + name_in
+	shutil.copyfile(dir_resized, filenameDumb)
+	filters.toaster(filenameDumb)
 
 def processing():
     file_list = (f for f in os.listdir(dir_originals)
@@ -58,3 +91,5 @@ if __name__ == '__main__':
     maybe_create_folder(dir_filtered)
 
     processing()
+    resize(dir_originals, dir_resized)
+    filters(dir_resized, dir_filtered)
