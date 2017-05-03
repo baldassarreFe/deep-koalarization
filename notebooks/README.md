@@ -1,0 +1,1 @@
+This folder contains some notebooks. Ignore the other files. Special interest in [ExtractFeaturesInception.ipynb](ExtractFeaturesInception.ipynb) 
