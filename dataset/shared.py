@@ -1,10 +1,13 @@
-import os
+from os import makedirs
+from os.path import expanduser, join
 
-root = 'imagenet'
-dir_originals = os.path.join(root, 'original')
-dir_resized = os.path.join(root, 'resized')
-dir_filtered = os.path.join(root, 'filtered')
+# Default folders
+dir_root = join(expanduser('~'), 'imagenet')
+dir_originals = join(dir_root, 'original')
+dir_resized = join(dir_root, 'resized')
+dir_filtered = join(dir_root, 'filtered')
+dir_tfrecord = join(dir_root, 'filtered')
 
 
 def maybe_create_folder(folder):
-    os.makedirs(folder, exist_ok=True)
+    makedirs(folder, exist_ok=True)

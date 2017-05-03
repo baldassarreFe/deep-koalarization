@@ -1,3 +1,5 @@
+PIL
+opencv-python
 appdirs==1.4.3
 Keras==2.0.3
 numpy==1.12.1
