@@ -14,7 +14,7 @@ from resizeimage import resizeimage
 from shared import *
 
 
-def resize(source_path, output_path, size=(299, 299)):
+def resize(dir_originals, dir_resized, size=(299, 299)):
     """
     Resizes the image using padding
     :param source_path:
@@ -22,9 +22,9 @@ def resize(source_path, output_path, size=(299, 299)):
     :param size:
     :return:
     """
-    img = Image.open(source_path)
+    img = Image.open(dir_originals)
     cover = resizeimage.resize_contain(img, size)
-    cover.save(output_path, img.format)
+    cover.save(dir_resized, img.format)
 
 def filters(dir_resized, dir_filtered, namesCV = ('nashville', 'claredon'), namesIM = ('lomo', 'kelvin', 'nash2', 'toaster')):
     	out = []		
