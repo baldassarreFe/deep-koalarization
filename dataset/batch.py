@@ -4,9 +4,11 @@ from os.path import isdir, join
 import tensorflow as tf
 
 from dataset.batching.images_queue import queue_paired_images_from_folders
+from dataset.embedding.inception_resnet_v2 import *
+from dataset.embedding.extract_features import preprocessing, inception_resnet_v2_maybe_download 
 from dataset.batching.paired_featured_image_record import ImagePairRecordWriter
 from dataset.filtering.filters import all_filters_with_base_args
-from dataset.shared import maybe_create_folder
+from dataset.shared import maybe_create_folder, dir_root
 
 
 class ImagenetBatcher:
@@ -23,6 +25,8 @@ class ImagenetBatcher:
         # Destination folder
         maybe_create_folder(records_dir)
         self.records_dir = records_dir
+        ### NEW ###
+        inception_resnet_v2_maybe_download(dir_root)
 
     def batch_all(self, batch_size):
         # Create the queue operations
@@ -32,8 +36,14 @@ class ImagenetBatcher:
                 self.targets_dir,
                 [f.__name__ for f in all_filters_with_base_args])
 
-        # TODO Feature extraction
-        input_embedding = tf.random_normal([100])
+        # Preprocess input tensor
+        scaled_input_tensor = preprocessing(input_tensor)
+        input_embedding = tf.placeholder(tf.float32, shape=(None, self.n_outputs\
+            ), name='output_vector') 
+        arg_scope = inception_resnet_v2_arg_scope()
+        with slim.arg_scope(arg_scope):
+            _, end_points = inception_resnet_v2(scaled_input_tensor, is_training=False)
+        #input_embedding = tf.random_normal([100])
 
         # Create a writer to write the images
         writer = ImagePairRecordWriter(
@@ -41,15 +51,20 @@ class ImagenetBatcher:
 
         # Start a new session to run the operations
         with tf.Session() as sess:
+            saver = tf.train.Saver()
+            saver.restore(sess, checkpoint_file)
             sess.run(tf.global_variables_initializer())
             sess.run(tf.local_variables_initializer())
+
+            input_embedding = sess.run(end_points['Logits'], \
+                        feed_dict={input_tensor: scaled_input_tensor})
 
             # Coordinate the loading of image files.
             coord = tf.train.Coordinator()
             threads = tf.train.start_queue_runners(coord=coord)
             count = 0
             start_time = time.time()
-
+            
             # These are the only lines where something happens:
             # we execute the operations to get the image pair, compute the
             # embedding and write everythin in the TFRecord
