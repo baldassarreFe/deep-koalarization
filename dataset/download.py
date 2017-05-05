@@ -51,7 +51,9 @@ class ImagenetDownloader:
         image_path = join(self.dest_dir, image_name)
         if not isfile(image_path):
             try:
-                urllib.request.urlretrieve(image_url, image_path)
+                request = urllib.request.urlopen(image_url, timeout=2)
+                with open(image_path, "wb") as f:
+                    f.write(request.read())
             except Exception as e:
                 print('Error downloading {}: {}'.format(image_url, e),
                       file=sys.stderr)
