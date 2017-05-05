@@ -4,13 +4,13 @@ from os.path import isdir, join
 import tensorflow as tf
 
 from dataset.batching.images_queue import queue_paired_images_from_folders
-from dataset.batching.paired_image_record import ImagePairRecordWriter
+from dataset.batching.paired_featured_image_record import ImagePairRecordWriter
 from dataset.filtering.filters import all_filters_with_base_args
 from dataset.shared import maybe_create_folder
 
 
 class ImagenetBatcher:
-    def __init__(self, inputs_dir: str, targets_dir, records_dir: str):
+    def __init__(self, inputs_dir: str, targets_dir: str, records_dir: str):
         if not isdir(inputs_dir):
             raise Exception('Input folder does not exists: {}'
                             .format(inputs_dir))
@@ -26,14 +26,16 @@ class ImagenetBatcher:
 
     def batch_all(self, batch_size):
         # Create the queue operations
-        suffixes = map(lambda f: f.__name__, all_filters_with_base_args)
         input_key, input_tensor, target_key, target_tensor = \
-            queue_paired_images_from_folders('~/imagenet/resized',
-                                             '~/imagenet/filtered', suffixes)
+            queue_paired_images_from_folders(
+                self.inputs_dir,
+                self.targets_dir,
+                [f.__name__ for f in all_filters_with_base_args])
 
-        # TODO add feature extraction here from input_tensor
+        # TODO Feature extraction
+        input_embedding = tf.random_normal([100])
 
-        # Create a writer to write_image the images
+        # Create a writer to write the images
         writer = ImagePairRecordWriter(
             join(self.records_dir, 'images.tfrecord'))
 
@@ -49,23 +51,25 @@ class ImagenetBatcher:
             start_time = time.time()
 
             # These are the only lines where something happens:
-            # we execute the operations to get one image and print everything.
+            # we execute the operations to get the image pair, compute the
+            # embedding and write everythin in the TFRecord
             try:
                 while not coord.should_stop():
-                    in_key, in_img, tar_key, tar_img = sess.run(
-                        [input_key, input_tensor, target_key, target_tensor])
-                    writer.write_image_pair(in_key, in_img, tar_key, tar_img)
+                    in_key, in_img, in_emb, tar_key, tar_img = sess.run(
+                        [input_key, input_tensor, input_embedding, target_key,
+                         target_tensor])
+                    writer.write_image_pair(in_key, in_img, in_emb, tar_key,
+                                            tar_img)
                     print('Written', in_key, tar_key)
                     count += 1
             except tf.errors.OutOfRangeError:
-                # It's all right, it's just the string_input_producer queue telling
-                # us that it has run out of strings
+                # The string_input_producer queue ran out of strings
                 pass
             finally:
                 # Ask the threads (filename queue) to stop.
                 coord.request_stop()
-                print('Finished reading {} files in {}'
-                      .format(count, time.time() - start_time))
+                print('Finished writing {} pairs in {:.2f}s'
+                      .format(count, 1000 * (time.time() - start_time)))
 
             # Wait for threads to finish.
             coord.join(threads)

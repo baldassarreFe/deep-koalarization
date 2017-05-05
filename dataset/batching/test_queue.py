@@ -7,6 +7,7 @@ from dataset.batching.images_queue import \
     queue_single_images_from_folder, \
     queue_paired_images_from_folders
 from dataset.filtering.filters import all_filters_with_base_args
+from dataset.shared import dir_resized, dir_filtered
 
 
 def show_image(key, img, shape):
@@ -22,7 +23,7 @@ def test_one():
     """
     # Create the queue operations
     image_key, image_tensor, image_shape = queue_single_images_from_folder(
-        '~/imagenet/resized')
+        dir_resized)
 
     # Start a new session to run the operations
     with tf.Session() as sess:
@@ -51,8 +52,8 @@ def test_one():
         finally:
             # Ask the threads (filename queue) to stop.
             coord.request_stop()
-            print('Finished reading {} files in {}'
-                  .format(count, time.time() - start_time))
+            print('Finished listing {} pairs in {:.2f}s'
+                  .format(count, 1000 * (time.time() - start_time)))
 
         # Wait for threads to finish.
         coord.join(threads)
@@ -63,10 +64,11 @@ def test_two():
     Load paired images from a folder once and print the result
     """
     # Create the queue operations
-    suffixes = map(lambda f: f.__name__, all_filters_with_base_args)
     input_key, input_tensor, target_key, target_tensor = \
-        queue_paired_images_from_folders('~/imagenet/resized',
-                                         '~/imagenet/filtered', suffixes)
+        queue_paired_images_from_folders(
+            dir_resized,
+            dir_filtered,
+            [f.__name__ for f in all_filters_with_base_args])
 
     # Start a new session to run the operations
     with tf.Session() as sess:
@@ -87,14 +89,13 @@ def test_two():
                 print(in_key, tar_key)
                 count += 1
         except tf.errors.OutOfRangeError:
-            # It's all right, it's just the string_input_producer queue telling
-            # us that it has run out of strings
+            # The string_input_producer queue ran out of strings
             pass
         finally:
             # Ask the threads (filename queue) to stop.
             coord.request_stop()
-            print('Finished reading {} files in {}'
-                  .format(count, time.time() - start_time))
+            print('Finished listing {} pairs in {:.2f}s'
+                  .format(count, 1000 * (time.time() - start_time)))
 
         # Wait for threads to finish.
         coord.join(threads)

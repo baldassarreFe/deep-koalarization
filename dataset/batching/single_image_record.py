@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 
-from dataset.batching.tf_record_base import RecordWriter
+from dataset.batching.tf_record_base import RecordWriter, RecordReader
 
 
 class ImageRecordWriter(RecordWriter):
@@ -17,14 +17,10 @@ class ImageRecordWriter(RecordWriter):
         self._writer.write(example.SerializeToString())
 
 
-class ImageRecordReader:
-    def __init__(self, tfrecord_name):
-        filename_queue = tf.train.string_input_producer([tfrecord_name])
-        reader = tf.TFRecordReader()
-        tfrecord_key, tfrecord_serialized = reader.read(filename_queue)
-
+class ImageRecordReader(RecordReader):
+    def _create_read_operation(self):
         features = tf.parse_single_example(
-            tfrecord_serialized,
+            self._tfrecord_serialized,
             features={
                 'key': tf.FixedLenFeature([], tf.string),
                 'image': tf.FixedLenFeature([], tf.string),
@@ -48,18 +44,5 @@ class ImageRecordReader:
         image = tf.reshape(image, shape)
         image = tf.cast(image, tf.float32) * (1. / 255)
         key = features['key']
-        self._read_operation = [key, image]
 
-    def read_one(self):
-        return self._read_operation
-
-    def read_batch(self, batch_size):
-        num_threads = 1
-        min_after_dequeue = 10 * batch_size
-        capacity = min_after_dequeue + (num_threads + 1) * batch_size
-        key_batch, image_batch = tf.train.shuffle_batch(
-            self._read_operation,
-            batch_size, capacity,
-            min_after_dequeue, num_threads,
-            allow_smaller_final_batch=True)
-        return key_batch, image_batch
+        return [key, image]
