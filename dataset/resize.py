@@ -1,3 +1,5 @@
+import math
+
 from os import listdir
 from os.path import join, isfile, isdir
 from typing import Tuple
@@ -26,7 +28,14 @@ class ImagenetResizer:
         :param size:
         """
         img = Image.open(join(self.source_dir, filename))
-        cover = resizeimage.resize_contain(img, size)
+        width, height = img.size
+        aspect_ratio = width/height
+        if width <= height & width < size[0]:
+            cover = img.resize((size[0], math.floor(size[0]/aspect_ratio)))
+        elif width >= height & height < size[1]:
+            cover = img.resize((size[1], math.floor(size[1]*aspect_ratio)))
+        else: 
+            cover = resizeimage.resize_contain(img, size)
         cover.save(join(self.dest_dir, filename), 'JPEG')
 
     def resize_all(self, size=(299, 299)):
