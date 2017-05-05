@@ -20,15 +20,17 @@ class ImagenetFilters:
 
     def filter_img(self, filename):
         source_file = join(self.source_dir, filename)
+        if imghdr.what(source_file) == 'jpeg':
+            for f in all_filters_with_base_args:
+                dest_file = join(self.dest_dir,
+                                 filtered_filename(filename, f.__name__))
 
-        for f in all_filters_with_base_args:
-            dest_file = join(self.dest_dir,
-                             filtered_filename(filename, f.__name__))
-
-            try:
-                f(source_file=source_file, dest_file=dest_file)
-            except Exception as e:
-                print(e, file=sys.stderr)
+                try:
+                    f(source_file=source_file, dest_file=dest_file)
+                except Exception as e:
+                    print(e, file=sys.stderr)
+        else:
+            print(" Wrong file extension, skipping" )
 
     def filter_all(self):
         for filename in os.listdir(self.source_dir):
