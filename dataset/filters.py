@@ -1,6 +1,7 @@
 import os
 import sys
 from os.path import join, isdir
+import imghdr
 
 from dataset.filtering.filters import all_filters_with_base_args
 from dataset.filtering.filters import filtered_filename
