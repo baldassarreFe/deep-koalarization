@@ -1,3 +1,4 @@
+import multiprocessing
 from abc import abstractmethod, ABC
 from os.path import join
 
@@ -11,7 +12,8 @@ class RecordWriter(tf.python_io.TFRecordWriter):
     """
 
     def __init__(self, tfrecord_name, dest_folder=''):
-        super().__init__(join(dest_folder, tfrecord_name))
+        self.path = join(dest_folder, tfrecord_name)
+        super().__init__(self.path)
 
     @staticmethod
     def _bytes_feature(value):
@@ -37,7 +39,7 @@ class RecordReader(ABC):
         return self._read_operation
 
     def read_batch(self, batch_size):
-        num_threads = 1
+        num_threads = multiprocessing.cpu_count()
         min_after_dequeue = 10 * batch_size
         capacity = min_after_dequeue + (num_threads + 1) * batch_size
 

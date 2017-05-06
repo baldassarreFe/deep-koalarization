@@ -36,7 +36,7 @@ Use `-h` to see the available options
 #### Filtering
 
 ```bash
-python3 -m dataset.filters <args>
+python3 -m dataset.filter <args>
 ```
 
 Use `-h` to see the available options
@@ -45,11 +45,15 @@ Use `-h` to see the available options
 #### Converting to TFRecords
 
 ```bash
-python3 -m dataset.filters <args>
+python3 -O -m dataset.batch <args>
 ```
 
 Passing `-c path/to/inception_resnet_v2_2016_08_30.ckpt` is highly recommended
 over passing a url.
+
+Omitting the `-O` will print all image pairs at the moment they are written to
+a TFRecord. Given that we batch the inception operations, they will most likely
+appear all at once when the batch gets written to disk.
 
 Use `-h` to see the available options
 

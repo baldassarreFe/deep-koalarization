@@ -1,3 +1,4 @@
+import multiprocessing
 from os import listdir
 from os.path import join, expanduser, isfile
 
@@ -93,3 +94,32 @@ def queue_paired_images_from_folders(inputs_folder, targets_folder, suffixes):
     # Note: nothing has happened yet, we've only defined operations,
     # what we return are tensors
     return input_key, input_tensor, target_key, target_tensor
+
+
+def batch_operations(operations, batch_size):
+    """
+    Once you have created the operation(s) with the other methods of this class,
+    use this method to batch it(them).
+
+    :Note:
+
+        If a single queue operation is `[a, b, c]`,
+        the batched queue_operation will be `[[a1, a2], [b1,b2], [c1, c2]]`
+        and not `[[a1, b1, c1], [a2, b2, c3]]`
+
+    :param operations: can be a tensor or a list of tensors
+    :param batch_size: the batch
+    :return:
+    """
+    # The internet gave me these numbers
+    num_threads = multiprocessing.cpu_count()
+    min_after_dequeue = 3 * batch_size
+    capacity = min_after_dequeue + (num_threads + 1) * batch_size
+    return tf.train.batch(
+        operations,
+        batch_size,
+        num_threads,
+        capacity,
+        dynamic_pad=True,
+        allow_smaller_final_batch=True,
+    )

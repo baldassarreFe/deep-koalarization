@@ -2,7 +2,8 @@ import itertools
 import time
 from os.path import isdir, join, basename
 
-from dataset.batching.images_queue import queue_paired_images_from_folders
+from dataset.batching.images_queue import queue_paired_images_from_folders, \
+    batch_operations
 from dataset.batching.paired_featured_image_record import ImagePairRecordWriter
 from dataset.embedding.inception_resnet_v2 import *
 from dataset.embedding.inception_utils import prepare_image_for_inception, \
@@ -41,7 +42,7 @@ class ImagenetBatcher:
             join(records_dir, 'images_{}.tfrecord'))
 
     def batch_all(self, examples_per_record):
-        operations = self._create_operations()
+        operations = self._create_operations(examples_per_record)
 
         with tf.Session() as sess:
             self._initialize_session(sess)
@@ -63,7 +64,7 @@ class ImagenetBatcher:
         saver = tf.train.Saver()
         saver.restore(sess, self.checkpoint_file)
 
-    def _create_operations(self):
+    def _create_operations(self, examples_per_record):
         """
         Create the operations to read images from the queue and
         extract inception features
@@ -82,7 +83,9 @@ class ImagenetBatcher:
             input_embedding, _ = inception_resnet_v2(scaled_input_tensor,
                                                      is_training=False)
 
-        return input_key, input_tens, target_key, target_tens, input_embedding
+        operations = input_key, input_tens, target_key, target_tens, input_embedding
+
+        return batch_operations(operations, examples_per_record)
 
     def _run_session(self, sess, operations, examples_per_record):
         """
@@ -119,19 +122,22 @@ class ImagenetBatcher:
         coord.join(threads)
 
     def _write_record(self, examples_per_record, operations, sess):
-        # Create a writer to write the images
-        name = next(self.records_names_gen)
-        with ImagePairRecordWriter(name) as writer:
-            for i in range(examples_per_record):
-                results = sess.run(operations)
-                writer.write_image_pair(*results)
-                print('Written', basename(results[0]),
-                      basename(results[2]))
-                self._examples_count += 1
+        # The base queue_operation is [a, b, c]
+        # The batched queue_operation is [[a1, a2], [b1,b2], [c1, c2]]
+        # and not [[a1, b1, c1], [a2, b2, c3]]
+        # The result will have the same structure as the batched operations
+        results = sess.run(operations)
 
-        # Note: this won't print the last record name, unless we catch the
-        # exception, print the info and then re-raise the exception
-        print('Record ready:', name)
+        # Create a writer to write the images
+        with ImagePairRecordWriter(next(self.records_names_gen)) as writer:
+            # Iterate over each result in the results
+            for one_res in zip(*results):
+                writer.write_image_pair(*one_res)
+                if __debug__:
+                    print('Written', basename(one_res[0]), basename(one_res[2]))
+
+            self._examples_count += len(results[0])
+            print('Record ready:', writer.path)
 
 
 # Run from the top folder as:

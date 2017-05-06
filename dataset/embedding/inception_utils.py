@@ -3,7 +3,7 @@ import sys
 import tarfile
 import urllib
 import urllib.request
-from os.path import join, isfile
+from os.path import join, isfile, expanduser
 
 import tensorflow as tf
 
@@ -36,8 +36,9 @@ def maybe_download_inception(checkpoint_source):
             checkpoint_source = join(
                 dir_root, 'inception_resnet_v2_2016_08_30.ckpt')
 
+    checkpoint_source = expanduser(checkpoint_source)
     if not isfile(checkpoint_source):
-        raise Exception('Links source not valid: {}'.format(checkpoint_source))
+        raise Exception('Checkpoint not valid: {}'.format(checkpoint_source))
 
     return checkpoint_source
 
