@@ -38,7 +38,7 @@ with tf.Session() as sess:
         # Ask the threads (filename queue) to stop.
         coord.request_stop()
         print('Finished writing {} pairs in {:.2f}s'
-              .format(count, 1000 * (time.time() - start_time)))
+              .format(count, time.time() - start_time))
 
     # Wait for threads to finish.
     coord.join(threads)

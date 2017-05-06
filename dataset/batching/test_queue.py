@@ -53,7 +53,7 @@ def test_one():
             # Ask the threads (filename queue) to stop.
             coord.request_stop()
             print('Finished listing {} pairs in {:.2f}s'
-                  .format(count, 1000 * (time.time() - start_time)))
+                  .format(count, time.time() - start_time))
 
         # Wait for threads to finish.
         coord.join(threads)
@@ -95,7 +95,7 @@ def test_two():
             # Ask the threads (filename queue) to stop.
             coord.request_stop()
             print('Finished listing {} pairs in {:.2f}s'
-                  .format(count, 1000 * (time.time() - start_time)))
+                  .format(count, time.time() - start_time))
 
         # Wait for threads to finish.
         coord.join(threads)

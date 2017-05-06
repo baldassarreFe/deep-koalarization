@@ -19,7 +19,6 @@ from __future__ import division
 from __future__ import print_function
 
 import tensorflow as tf
-
 from tensorflow.python.ops import control_flow_ops
 
 
@@ -48,7 +47,7 @@ def distort_color(image, color_ordering=0, fast_mode=True, scope=None):
   Each color distortion is non-commutative and thus ordering of the color ops
   matters. Ideally we would randomly permute the ordering of the color ops.
   Rather then adding that level of complication, we select a distinct ordering
-  of color ops for each preprocessing thread.
+  of color ops for each prepare_image_for_inception thread.
 
   Args:
     image: 3-D Tensor containing single image in [0, 1].
