@@ -19,7 +19,7 @@ Our idea is to apply a similar technique to overly filtered images (e.g. Instagr
 We plan to enrich the pixel information of each image with semantic information about its content. However, object recognition is already a complex problem and would be worth a project on its own.
 For this reason we are not going to build an image classifier from scratch. Instead we will use a network that has already been trained on a large variety of images, such as Google’s Inception model or AlexNet, both trained on ImageNet. Adapting pre trained models and using them as feature extractor for other tasks is the base concept of transfer learning.
 
-![Inception v3](images/inception_v3.png)
+![Inception v3](docs/images/inception_v3.png)
 
 The hidden layers of these model have learned to create a semantic representation of the image that is then used by the final layer (fully connected + softmax) to label the objects in the image. By “cutting” the model at one of its final layers we will get a high dimensional representation of image features, that will be used by our network to perform the un-filtering task (TensorFlow [tutorial](https://www.tensorflow.org/tutorials/image_retraining) on transfer learning, another [tutorial](https://kwotsin.github.io/tech/2017/02/11/transfer-learning.html) and arXiv [paper](https://arxiv.org/abs/1403.6382)).
 
