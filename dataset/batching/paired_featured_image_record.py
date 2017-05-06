@@ -4,8 +4,8 @@ from dataset.batching.tf_record_base import RecordWriter, RecordReader
 
 
 class ImagePairRecordWriter(RecordWriter):
-    def write_image_pair(self, input_file, input_image, input_embedding,
-                         target_file, target_image):
+    def write_image_pair(self, input_file, input_image, target_file,
+                         target_image, input_embedding):
         """
         Writes into this TFRecord an Example representing a pair of images,
         including the image names, the image data and and embedding of the
@@ -23,7 +23,7 @@ class ImagePairRecordWriter(RecordWriter):
             'target_file': self._bytes_feature(target_file),
             'target_image': self._bytes_feature(target_image.tostring())
         }))
-        self._writer.write(example.SerializeToString())
+        self.write(example.SerializeToString())
 
 
 class ImageRecordReader(RecordReader):

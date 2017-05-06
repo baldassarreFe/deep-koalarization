@@ -14,7 +14,7 @@ class ImageRecordWriter(RecordWriter):
             # 'width': self._int64_feature(img.shape[1]),
             # 'depth': self._int64_feature(img.shape[2]),
         }))
-        self._writer.write(example.SerializeToString())
+        self.write(example.SerializeToString())
 
 
 class ImageRecordReader(RecordReader):

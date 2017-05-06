@@ -4,18 +4,14 @@ from os.path import join
 import tensorflow as tf
 
 
-class RecordWriter:
+class RecordWriter(tf.python_io.TFRecordWriter):
     """
     Wrapper around a TFRecordWriter that adds the methods to serialize an
     image tensor and its properties like the shape.
     """
 
-    def __init__(self, tfrecord_name, dest_folder='.'):
-        self._writer = tf.python_io.TFRecordWriter(
-            join(dest_folder, tfrecord_name))
-
-    def close(self):
-        self._writer.close()
+    def __init__(self, tfrecord_name, dest_folder=''):
+        super().__init__(join(dest_folder, tfrecord_name))
 
     @staticmethod
     def _bytes_feature(value):
