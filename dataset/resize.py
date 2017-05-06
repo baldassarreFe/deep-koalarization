@@ -1,6 +1,4 @@
 import math
-import imghdr
-
 from os import listdir
 from os.path import join, isfile, isdir
 from typing import Tuple
@@ -28,19 +26,17 @@ class ImagenetResizer:
         :param filename:
         :param size:
         """
-        if imghdr.what(join(self.source_dir, filename)) == 'jpeg':
-            img = Image.open(join(self.source_dir, filename))
-            width, height = img.size
-            aspect_ratio = width/height
-            if width <= height & width < size[0]:
-                cover = img.resize((size[0], math.floor(size[0]/aspect_ratio)))
-            elif width >= height & height < size[1]:
-                cover = img.resize((size[1], math.floor(size[1]*aspect_ratio)))
-            else: 
-                cover = resizeimage.resize_contain(img, size)
-            cover.save(join(self.dest_dir, filename), 'JPEG')
+        img = Image.open(join(self.source_dir, filename))
+        width, height = img.size
+        aspect_ratio = width / height
+        if width <= height & width < size[0]:
+            cover = img.resize((size[0], math.floor(size[0] / aspect_ratio)))
+        elif width >= height & height < size[1]:
+            cover = img.resize((size[1], math.floor(size[1] * aspect_ratio)))
         else:
-            print(" Wrong file extension, skipping" )
+            cover = resizeimage.resize_contain(img, size)
+        cover.save(join(self.dest_dir, filename), 'JPEG')
+
     def resize_all(self, size=(299, 299)):
         for filename in listdir(self.source_dir):
             if isfile(join(self.source_dir, filename)):

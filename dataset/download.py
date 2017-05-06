@@ -1,4 +1,5 @@
 import hashlib
+import imghdr
 import sys
 import tarfile
 import urllib.request
@@ -42,18 +43,16 @@ class ImagenetDownloader:
         valid_images = filter(lambda x: x is not None, downloaded_images)
         return list(valid_images)
 
-    @staticmethod
-    def _encode_image_name(image_url: str) -> str:
-        return hashlib.md5(image_url.encode('utf-8')).hexdigest() + '.jpeg'
-
     def _download_img(self, image_url: str) -> Union[str, None]:
         image_name = self._encode_image_name(image_url)
         image_path = join(self.dest_dir, image_name)
         if not isfile(image_path):
             try:
                 request = urllib.request.urlopen(image_url, timeout=2)
-                with open(image_path, "wb") as f:
-                    f.write(request.read())
+                image = request.read()
+                if imghdr.what('', image) == 'jpeg':
+                    with open(image_path, "wb") as f:
+                        f.write(image)
             except Exception as e:
                 print('Error downloading {}: {}'.format(image_url, e),
                       file=sys.stderr)
@@ -65,17 +64,18 @@ class ImagenetDownloader:
             while True:
                 try:
                     line = sources.readline()
-                    if line == '':
+                    split = line.split()
+                    if len(split) == 2:
+                        yield split[1]
+                    elif line == '':
                         # End of file
                         return
-
-                    split = line.split()
-                    if len(split) == 2 and \
-                            (split[1].endswith('.jpg') or
-                                 split[1].endswith('.jpeg')):
-                        yield split[1]
                 except UnicodeDecodeError as ue:
                     print('Unicode error: {}'.format(ue), file=sys.stderr)
+
+    @staticmethod
+    def _encode_image_name(image_url: str) -> str:
+        return hashlib.md5(image_url.encode('utf-8')).hexdigest() + '.jpeg'
 
 
 # Run from the top folder as:
@@ -93,6 +93,11 @@ if __name__ == '__main__':
                         default=10,
                         type=int,
                         help='get COUNT images (default: 10)')
+    parser.add_argument('--skip',
+                        default=0,
+                        type=int,
+                        metavar='N',
+                        help='skip the first N images (default: 0)')
     parser.add_argument('-s', '--source',
                         default=links_url,
                         type=str,
@@ -108,4 +113,5 @@ if __name__ == '__main__':
                         .format(dir_originals))
 
     args = parser.parse_args()
-    ImagenetDownloader(args.source, args.output).download_images(args.count)
+    ImagenetDownloader(args.source, args.output) \
+        .download_images(args.count, args.skip)
