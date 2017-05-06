@@ -6,9 +6,9 @@ from dataset.batching.images_queue import queue_paired_images_from_folders
 from dataset.batching.paired_featured_image_record import ImagePairRecordWriter
 from dataset.embedding.inception_resnet_v2 import *
 from dataset.embedding.inception_utils import prepare_image_for_inception, \
-    inception_resnet_v2_maybe_download
+    maybe_download_inception
 from dataset.filtering.filters import all_filters_with_base_args
-from dataset.shared import maybe_create_folder, dir_root
+from dataset.shared import maybe_create_folder
 
 
 def progressive_filename_generator(pattern='file_{}.ext'):
@@ -17,7 +17,8 @@ def progressive_filename_generator(pattern='file_{}.ext'):
 
 
 class ImagenetBatcher:
-    def __init__(self, inputs_dir: str, targets_dir: str, records_dir: str):
+    def __init__(self, inputs_dir: str, targets_dir: str,
+                 records_dir: str, checkpoint_source: str):
         if not isdir(inputs_dir):
             raise Exception('Input folder does not exists: {}'
                             .format(inputs_dir))
@@ -31,9 +32,11 @@ class ImagenetBatcher:
         maybe_create_folder(records_dir)
         self.records_dir = records_dir
 
-        self.checkpoint_file = inception_resnet_v2_maybe_download(
-            join(dir_root, 'inception_resnet_v2_2016_08_30.ckpt'))
+        # Inception checkpoint
+        self.checkpoint_file = maybe_download_inception(checkpoint_source)
 
+        # Utils
+        self._examples_count = 0
         self.records_names_gen = progressive_filename_generator(
             join(records_dir, 'images_{}.tfrecord'))
 
@@ -95,15 +98,14 @@ class ImagenetBatcher:
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(coord=coord)
         start_time = time.time()
-        examples_count = 0
+        self._examples_count = 0
 
         # These are the only lines where something happens:
         # we execute the operations to get the image pair, compute the
         # embedding and write everything in the TFRecord
         try:
             while not coord.should_stop():
-                examples_count += self._write_record(examples_per_record,
-                                                     operations, sess)
+                self._write_record(examples_per_record, operations, sess)
         except tf.errors.OutOfRangeError:
             # The string_input_producer queue ran out of strings
             pass
@@ -111,22 +113,25 @@ class ImagenetBatcher:
             # Ask the threads (filename queue) to stop.
             coord.request_stop()
             print('Finished writing {} pairs in {:.2f}s'
-                  .format(examples_count, time.time() - start_time))
+                  .format(self._examples_count, time.time() - start_time))
 
         # Wait for threads to finish.
         coord.join(threads)
 
     def _write_record(self, examples_per_record, operations, sess):
-        examples_written = 0
         # Create a writer to write the images
-        with ImagePairRecordWriter(next(self.records_names_gen)) as writer:
+        name = next(self.records_names_gen)
+        with ImagePairRecordWriter(name) as writer:
             for i in range(examples_per_record):
                 results = sess.run(operations)
                 writer.write_image_pair(*results)
                 print('Written', basename(results[0]),
                       basename(results[2]))
-                examples_written += 1
-        return examples_written
+                self._examples_count += 1
+
+        # Note: this won't print the last record name, unless we catch the
+        # exception, print the info and then re-raise the exception
+        print('Record ready:', name)
 
 
 # Run from the top folder as:
@@ -134,39 +139,55 @@ class ImagenetBatcher:
 if __name__ == '__main__':
     import argparse
     from dataset.shared import dir_resized, dir_filtered, dir_tfrecord
+    from dataset.embedding.inception_utils import checkpoint_url
 
     # Argparse setup
-    # TODO
     parser = argparse.ArgumentParser(
-        description='TODO')
+        description='Takes two folders containing paired images (resized and '
+                    'filtered_resized), extracts the inception resnet v2 '
+                    'features from the filtered image, serializes the images '
+                    'and the embedding and writes everything in tfrecord '
+                    'files in batches on N images')
     parser.add_argument('-i', '--inputs-folder',
                         default=dir_resized,
                         type=str,
                         metavar='FOLDER',
                         dest='inputs',
-                        help='use FOLDER as source of the input images (default: {})'
+                        help='use FOLDER as source of the input images '
+                             '(default: {}) '
                         .format(dir_resized)),
     parser.add_argument('-t', '--targets-folder',
                         default=dir_filtered,
                         type=str,
                         metavar='FOLDER',
                         dest='targets',
-                        help='use FOLDER as source of the target images (default: {})'
+                        help='use FOLDER as source of the target images '
+                             '(default: {}) '
                         .format(dir_filtered))
     parser.add_argument('-o', '--output-folder',
                         default=dir_tfrecord,
                         type=str,
                         metavar='FOLDER',
                         dest='records',
-                        help='use FOLDER as destination for the TFRecord batches (default: {})'
+                        help='use FOLDER as destination for the TFRecord '
+                             'batches (default: {}) '
                         .format(dir_tfrecord))
+    parser.add_argument('-c', '--checkpoint',
+                        default=checkpoint_url,
+                        type=str,
+                        dest='checkpoint',
+                        help='set the source for the trained inception '
+                             'weights, can be the url, the archive or the '
+                             'file itself (default: {}) '
+                        .format(checkpoint_url))
     parser.add_argument('-b', '--batch-size',
-                        default=20,
+                        default=500,
                         type=int,
                         metavar='N',
                         dest='batch_size',
-                        help='every batch should contain N images (default: 20)')
+                        help='every batch will contain N images, except maybe '
+                             'the last one (default: 500)')
 
     args = parser.parse_args()
-    ImagenetBatcher(args.inputs, args.targets, args.records) \
+    ImagenetBatcher(args.inputs, args.targets, args.records, args.checkpoint) \
         .batch_all(args.batch_size)

@@ -35,7 +35,7 @@ class ImagenetFilters:
 
 
 # Run from the top folder as:
-# python3 -m dataset.filters <args>
+# python3 -m dataset.filter <args>
 if __name__ == '__main__':
     import argparse
     from dataset.shared import dir_originals, dir_filtered

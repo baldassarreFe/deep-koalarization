@@ -102,7 +102,7 @@ if __name__ == '__main__':
                         default=links_url,
                         type=str,
                         dest='source',
-                        help='set the for the image links, can be the url, the archive or the file itself (default: {})'
+                        help='set the source for the image links, can be the url, the archive or the file itself (default: {})'
                         .format(links_url))
     parser.add_argument('-o', '--output-folder',
                         default=dir_originals,

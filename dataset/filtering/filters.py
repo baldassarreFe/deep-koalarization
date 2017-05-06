@@ -122,6 +122,7 @@ def toaster(source_file, dest_file):
     border(dest_file, dest_file, 'white')
 
 
+# To disable a filter it should be enough to comment its line here
 all_filters_with_base_args = [
     nashville,
     gotham,

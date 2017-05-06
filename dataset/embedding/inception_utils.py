@@ -9,11 +9,12 @@ import tensorflow as tf
 
 from dataset.shared import dir_root
 
+checkpoint_url = 'http://download.tensorflow.org/models/inception_resnet_v2_2016_08_30.tar.gz'
 
-def inception_resnet_v2_maybe_download(
-        checkpoint_source='http://download.tensorflow.org/models/inception_resnet_v2_2016_08_30.tar.gz'):
+
+def maybe_download_inception(checkpoint_source):
     """
-    Ensure that the checkpoint for inception-resnet-v2 exists
+    Ensure that the checkpoint for Inception Resnet v2 exists
     :param checkpoint_source: if a link it gets downloaded, if an archive it
     gets extracted, if a path in the filesystem, it just check it exists
     :return: the [downloaded] [uncompressed] ready-for-use file path
