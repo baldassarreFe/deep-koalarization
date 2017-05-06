@@ -1,8 +1,8 @@
-import math
 from os import listdir
 from os.path import join, isfile, isdir
 from typing import Tuple
 
+import numpy as np
 from PIL import Image
 from resizeimage import resizeimage
 
@@ -28,13 +28,23 @@ class ImagenetResizer:
         """
         img = Image.open(join(self.source_dir, filename))
         width, height = img.size
-        aspect_ratio = width / height
-        if width <= height & width < size[0]:
-            cover = img.resize((size[0], math.floor(size[0] / aspect_ratio)))
-        elif width >= height & height < size[1]:
-            cover = img.resize((size[1], math.floor(size[1] * aspect_ratio)))
-        else:
-            cover = resizeimage.resize_contain(img, size)
+        orig_shape = np.array(img.size)
+        wanted_shape = np.array(size)
+        ratios = wanted_shape / orig_shape
+        wanted_width, wanted_height = size
+        ratio_w, ratio_h = wanted_width / width, wanted_height / height
+
+        if np.alltrue(ratios > 1):
+            # Both sides of the image are shorter than the desired dimension,
+            # so take the side that's closer in size and enlarge the image
+            # in both directions to make that one fit
+            factor = min(ratio_h, ratio_w)
+            img = img.resize((int(width * factor), int(height * factor)))
+
+        # Now we have an image that's either larger than the desired shape
+        # or at least one side matches the desired shape and we can resize
+        # with contain
+        cover = resizeimage.resize_contain(img, size)
         cover.save(join(self.dest_dir, filename), 'JPEG')
 
     def resize_all(self, size=(299, 299)):
