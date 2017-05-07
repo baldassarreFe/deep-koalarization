@@ -5,6 +5,9 @@ from dataset.batching.single_image_record import ImageRecordReader
 from dataset.shared import dir_tfrecord
 
 # Just for testing, reads and show images from a tfrecord
+# Run from the top folder as:
+# python3 -m dataset.batching.test_read
+
 irr = ImageRecordReader('single_images.tfrecord', dir_tfrecord)
 
 # Important: read_batch MUST be called before start_queue_runners,

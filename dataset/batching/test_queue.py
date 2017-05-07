@@ -101,6 +101,8 @@ def test_two():
         coord.join(threads)
 
 
+# Run from the top folder as:
+# python3 -m dataset.batching.test_queue
 if __name__ == '__main__':
     test_one()
     test_two()
