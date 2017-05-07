@@ -97,10 +97,10 @@ class VariableSizeTypesRecordWriter(RecordWriter):
     def write_test(self):
         # Shape must be an int32 for the reshape operation during reading
         # to succeed (we'll need to serialize the shape too)
-        shape = np.random.random_integers(2, 4, 2).astype(np.int32)
+        shape = np.random.randint(2, 4, 2, dtype=np.int32)
 
         # Variable size matrices of uint8 (like an image) and float16
-        mat_ints = np.random.random_integers(0, 255, shape).astype(np.uint8)
+        mat_ints = np.random.randint(0, 255, shape, dtype=np.uint8)
         mat_floats = np.random.random(shape).astype(np.float16)
 
         example = tf.train.Example(features=tf.train.Features(feature={
