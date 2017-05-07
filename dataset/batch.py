@@ -2,13 +2,15 @@ import itertools
 import time
 from os.path import isdir, join, basename
 
-from dataset.batching.images_queue import queue_paired_images_from_folders, \
+import tensorflow as tf
+import tensorflow.contrib.slim as slim
+
+from dataset.batching import ImagePairRecordWriter
+from dataset.batching import queue_paired_images_from_folders, \
     batch_operations
-from dataset.batching.paired_featured_image_record import ImagePairRecordWriter
-from dataset.embedding.inception_resnet_v2 import *
-from dataset.embedding.inception_utils import prepare_image_for_inception, \
-    maybe_download_inception
-from dataset.filtering.filters import all_filters_with_base_args
+from dataset.embedding import prepare_image_for_inception, \
+    maybe_download_inception, inception_resnet_v2, inception_resnet_v2_arg_scope
+from dataset.filtering import all_filters_with_base_args
 from dataset.shared import maybe_create_folder
 
 

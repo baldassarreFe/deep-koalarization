@@ -4,7 +4,7 @@ from os.path import join, expanduser, isfile
 
 import tensorflow as tf
 
-from dataset.filtering.filters import filtered_filename
+from dataset.filtering import filtered_filename
 
 
 def queue_single_images_from_folder(folder):

@@ -3,10 +3,10 @@ import time
 import tensorflow as tf
 from matplotlib import pyplot as plt
 
-from dataset.batching.images_queue import \
+from dataset.batching import \
     queue_single_images_from_folder, \
     queue_paired_images_from_folders
-from dataset.filtering.filters import all_filters_with_base_args
+from dataset.filtering import all_filters_with_base_args
 from dataset.shared import dir_resized, dir_filtered
 
 
@@ -102,7 +102,7 @@ def test_two():
 
 
 # Run from the top folder as:
-# python3 -m dataset.batching.test_queue
+# python3 -m dataset.batching.filename_queues
 if __name__ == '__main__':
     test_one()
     test_two()
