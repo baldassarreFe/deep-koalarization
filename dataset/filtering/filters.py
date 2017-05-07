@@ -2,7 +2,7 @@ import cv2
 from PIL import Image
 
 from .cv2_ops import hue_saturation, brightness_contrast, channel_enhance
-from .imagemagik_ops import border, colortone, vignette, execute
+from .imagemagik_ops import colortone, vignette, execute
 
 
 def filtered_filename(filename, filtername):
@@ -83,9 +83,8 @@ def lomo(source_file, dest_file):
 def kelvin(source_file, dest_file):
     width, height = Image.open(source_file).size
     execute(
-        ("convert \( {source} -auto-gamma -modulate 120,50,100 \) " +
-         "\( -size {width}x{height} -fill 'rgba(255,153,0,0.5)' " +
-         "-draw 'rectangle 0,0 {width},{height}' \) -compose multiply {dest}")
+        (
+            "convert \( {source} -auto-gamma -modulate 120,80,90 \) -compose multiply {dest}")
             .format(
             source=source_file,
             dest=dest_file,
@@ -119,16 +118,15 @@ def toaster(source_file, dest_file):
     )
     vignette(dest_file, dest_file, 'none', 'LavenderBlush3')
     vignette(dest_file, dest_file, '#ff9966', 'none')
-    border(dest_file, dest_file, 'white')
 
 
 # To disable a filter it should be enough to comment its line here
 all_filters_with_base_args = [
-    nashville,
-    gotham,
+    # gotham,
     claredon,
     lomo,
     kelvin,
-    nash2,
-    toaster
+    # nash2,
+    toaster,
+    nashville
 ]
