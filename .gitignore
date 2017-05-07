@@ -90,3 +90,10 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Lucas stuff
+.DS_Store
+dataset/.DS_Store
+testing
+notebooks/graphs
+resized

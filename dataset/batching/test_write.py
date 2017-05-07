@@ -7,6 +7,8 @@ from dataset.batching.single_image_record import ImageRecordWriter
 from dataset.shared import dir_resized, dir_tfrecord
 
 # Just for testing: read images from a folder write them in a record
+# Run from the top folder as:
+# python3 -m dataset.batching.test_write
 
 # Create the queue operations
 img_key, img_tensor, _ = queue_single_images_from_folder(dir_resized)
