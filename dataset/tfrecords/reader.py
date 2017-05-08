@@ -3,12 +3,14 @@ from os.path import join
 
 import tensorflow as tf
 
+from .writer import compression
+
 
 class RecordReader(ABC):
     def __init__(self, tfrecord_name, folder=''):
         filename_queue = tf.train.string_input_producer(
             [join(folder, tfrecord_name)])
-        reader = tf.TFRecordReader()
+        reader = tf.TFRecordReader(options=compression)
         tfrecord_key, self._tfrecord_serialized = reader.read(filename_queue)
 
         self.path = tfrecord_key
