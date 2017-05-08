@@ -2,6 +2,8 @@ from os.path import join
 
 import tensorflow as tf
 
+compression = tf.python_io.TFRecordOptions(
+    tf.python_io.TFRecordCompressionType.NONE)
 
 class RecordWriter(tf.python_io.TFRecordWriter):
     """
@@ -11,7 +13,7 @@ class RecordWriter(tf.python_io.TFRecordWriter):
 
     def __init__(self, tfrecord_name, dest_folder=''):
         self.path = join(dest_folder, tfrecord_name)
-        super().__init__(self.path)
+        super().__init__(self.path, options=compression)
 
     @staticmethod
     def _bytes_feature(value):

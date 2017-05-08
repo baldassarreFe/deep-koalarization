@@ -57,14 +57,39 @@ appear all at once when the batch gets written to disk.
 
 Use `-h` to see the available options
 
-## Notes
+## Space on disk notes
 
-Out of the first 200 links, we get 131 valid images, that initially take
-a total of 17MB and then 2.5MB once resized.
+### The images
 
-Using the default value of 500 examples per tfrecord results in chunks of
-roughly 258MB each that shrink to 67MB if compressed with:
+Out of the first 200 links, we get 131 valid images, that in their original
+size take up a total of 17MB and then 2.5MB once resized to 299x299.
+
+### The TFRecords
+
+Originally, the images are stored using the jpeg compression, that makes their
+size pretty small. On the other hand, once stored in a TFRecord they will simply
+be in raw byte format and take up much more space.
+
+Keep in mind that one example is made of:
+- 2 images (299x299x3 uint8)
+- 2 byte strings
+- 1 embedding (1001 float32)
+
+To save space we can use one of TFRecord compression options, or compress the
+files after creation with a command like:
 
 ```
 7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on "$RECORD.7z" "$RECORD"
 ```
+
+Here is a comparison of the various compression options for a TFRecord:
+- `tf.python_io.TFRecordCompressionType.NONE`
+- `tf.python_io.TFRecordCompressionType.ZLIB`
+- `tf.python_io.TFRecordCompressionType.GZIP`
+
+|             |  NONE  |  ZLIB  |  GZIP  |
+|-------------|-------:|-------:|-------:|
+| Record size | 258 MB | 154 MB | 154 MB |
+| After 7z    |  79 MB | 154 MB | 154 MB |
+
+(tests made with the default value of 500 examples per tfrecord)
