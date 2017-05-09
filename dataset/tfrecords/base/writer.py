@@ -5,6 +5,7 @@ import tensorflow as tf
 compression = tf.python_io.TFRecordOptions(
     tf.python_io.TFRecordCompressionType.NONE)
 
+
 class RecordWriter(tf.python_io.TFRecordWriter):
     """
     A commodity subclass of TFRecordWriter that adds the methods to

@@ -10,8 +10,8 @@ from os.path import basename
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
-from dataset.batching.paired_featured_image_record import ImagePairRecordReader
 from dataset.shared import dir_tfrecord
+from dataset.tfrecords import ImagePairRecordReader
 
 
 class TestPairedImagesRead(unittest.TestCase):
@@ -23,9 +23,9 @@ class TestPairedImagesRead(unittest.TestCase):
         read_one_example = irr.read_one()
         read_batched_examples = irr.read_batch(10)
 
-
         with tf.Session() as sess:
-            sess.run(tf.global_variables_initializer())
+            sess.run([tf.global_variables_initializer(),
+                      tf.local_variables_initializer()])
 
             # Coordinate the loading of image files.
             coord = tf.train.Coordinator()

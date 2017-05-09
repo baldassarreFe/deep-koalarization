@@ -4,11 +4,11 @@ from os.path import basename
 
 import tensorflow as tf
 
-from dataset.batching import \
-    queue_single_images_from_folder, \
-    queue_paired_images_from_folders
 from dataset.filtering import all_filters_with_base_args
 from dataset.shared import dir_resized, dir_filtered
+from dataset.tfrecords import \
+    queue_single_images_from_folder, \
+    queue_paired_images_from_folders
 
 
 class TestFilenameQueues(unittest.TestCase):

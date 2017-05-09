@@ -10,7 +10,7 @@ import unittest
 import tensorflow as tf
 
 from dataset.shared import dir_tfrecord
-from tests.tfrecords import BaseTypesRecordReader, BaseTypesRecordWriter
+from .misc_records import BaseTypesRecordReader, BaseTypesRecordWriter
 
 
 class TestBaseRecords(unittest.TestCase):

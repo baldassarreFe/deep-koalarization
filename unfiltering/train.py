@@ -5,10 +5,10 @@ import tensorflow as tf
 from keras import backend as K
 from matplotlib import pyplot as plt
 
-from dataset.batching import ImagePairRecordReader
 from dataset.shared import dir_metrics
-from network.network_one import build_network
-from network.network_one import define_optimizer
+from dataset.tfrecords import ImagePairRecordReader
+from unfiltering.unfiltering import define_optimizer
+from unfiltering.unfiltering import unfiltering
 
 matplotlib.rcParams['figure.figsize'] = (10.0, 5.0)
 
@@ -21,16 +21,17 @@ if __name__ == '__main__':
     read_batched_examples = irr.read_batch(50)
 
     imgs_in = read_batched_examples['input_image']
+    imgs_emb = read_batched_examples['input_embedding']
     imgs_true = read_batched_examples['target_image']
 
-    imgs_out = build_network(imgs_in)
+    imgs_delta = unfiltering(imgs_in, imgs_emb)
+    imgs_out = imgs_in - imgs_delta
     opt_operations = define_optimizer(imgs_out, imgs_true)
 
     # Merge all the summaries and set up the writers
     summaries = tf.summary.merge_all()
-    train_writer = tf.summary.FileWriter(dir_metrics, sess.graph)
-
-    training_epochs = 5
+    train_writer = tf.summary.FileWriter(dir_metrics + '/unfiltering',
+                                         sess.graph)
 
     sess.run(tf.global_variables_initializer())
     with sess.as_default():
@@ -38,7 +39,7 @@ if __name__ == '__main__':
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(coord=coord)
 
-        for epoch in range(training_epochs):
+        for epoch in range(5):
             for batch in range(5):
                 print('Epoch:', epoch, 'Batch:', batch, end=' ')
                 res = sess.run(opt_operations)

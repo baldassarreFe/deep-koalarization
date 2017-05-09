@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from dataset.tfrecords import BatchableRecordReader, RecordWriter
+from ..base import BatchableRecordReader, RecordWriter
 
 
 class ImagePairRecordWriter(RecordWriter):
@@ -41,6 +41,7 @@ class ImagePairRecordReader(BatchableRecordReader):
     embedding of the input image. The images are returned as float32 matrices
     with fixed size (e.g. [299, 299, 3]) and range [-1, 1]
     """
+
     def __init__(self, tfrecord_name, dest_folder='',
                  img_shape=(299, 299, 3), embedding_size=1001):
         super().__init__(tfrecord_name, dest_folder)

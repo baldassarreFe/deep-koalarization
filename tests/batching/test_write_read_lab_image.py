@@ -11,23 +11,26 @@ from os.path import basename
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
+from colorization import l_to_rgb
+from colorization import lab_to_rgb
 from dataset.shared import dir_resized, dir_tfrecord
-from dataset.tfrecords import SingleImageRecordWriter, SingleImageRecordReader
+from dataset.tfrecords import LabImageRecordReader
+from dataset.tfrecords import LabImageRecordWriter
 from dataset.tfrecords import queue_single_images_from_folder
 
 
-class TestSingleImageWriteRead(unittest.TestCase):
-    def test_single_image_write_read(self):
-        self._single_image_write()
-        self._single_image_read()
+class TestLabImageWriteRead(unittest.TestCase):
+    def test_lab_image_write_read(self):
+        self._lab_image_write()
+        self._lab_image_read()
 
-    def _single_image_write(self):
+    def _lab_image_write(self):
         # Create the queue operations
         img_key, img_tensor, _ = queue_single_images_from_folder(dir_resized)
+        img_emb = tf.truncated_normal(shape=[1001])
 
         # Create a writer to write_image the images
-        single_writer = SingleImageRecordWriter('single_images.tfrecord',
-                                                dir_tfrecord)
+        lab_writer = LabImageRecordWriter('lab_images.tfrecord', dir_tfrecord)
 
         # Start a new session to run the operations
         with tf.Session() as sess:
@@ -43,10 +46,12 @@ class TestSingleImageWriteRead(unittest.TestCase):
             start_time = time.time()
             try:
                 while not coord.should_stop():
-                    key, img = sess.run([img_key, img_tensor])
-                    single_writer.write_image(key, img)
+                    key, img, emb = sess.run([img_key, img_tensor, img_emb])
+                    lab_writer.write_image(key, img, emb)
                     print('Written: {}'.format(key))
                     count += 1
+                    if count > 10:
+                        break
             except tf.errors.OutOfRangeError:
                 # The string_input_producer queue ran out of strings
                 pass
@@ -59,13 +64,13 @@ class TestSingleImageWriteRead(unittest.TestCase):
             # Wait for threads to finish.
             coord.join(threads)
 
-        single_writer.close()
+        lab_writer.close()
 
-    def _single_image_read(self):
+    def _lab_image_read(self):
         # Important: read_batch MUST be called before start_queue_runners,
         # otherwise the internal shuffle queue gets created but its
         # threads won't start
-        irr = SingleImageRecordReader('single_images.tfrecord', dir_tfrecord)
+        irr = LabImageRecordReader('lab_images.tfrecord', dir_tfrecord)
         read_one_example = irr.read_one()
         read_batched_examples = irr.read_batch(10)
 
@@ -78,17 +83,25 @@ class TestSingleImageWriteRead(unittest.TestCase):
             threads = tf.train.start_queue_runners(coord=coord)
 
             # Reading images sequentially one by one
-            for i in range(6):
+            for i in range(0, 12, 2):
                 res = sess.run(read_one_example)
-                plt.subplot(2, 3, i + 1)
-                plt.imshow(res['image'])
+                img = lab_to_rgb(res['image_l'], res['image_ab'])
+                img_gray = l_to_rgb(res['image_l'])
+                plt.subplot(3, 4, i + 1)
+                plt.imshow(img_gray)
                 plt.axis('off')
-                print('Read', basename(res['key']))
+                plt.subplot(3, 4, i + 2)
+                plt.imshow(img)
+                plt.axis('off')
+                print('Read', basename(res['image_name']))
             plt.show()
 
             # Reading images in batch
             res = sess.run(read_batched_examples)
-            print(res['key'], res['image'].shape)
+            print(res['image_name'],
+                  res['image_l'].shape,
+                  res['image_ab'].shape,
+                  res['image_embedding'].shape)
 
             # Finish off the filename queue coordinator.
             coord.request_stop()

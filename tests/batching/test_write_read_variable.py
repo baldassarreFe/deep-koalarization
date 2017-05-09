@@ -10,7 +10,7 @@ import unittest
 import tensorflow as tf
 
 from dataset.shared import dir_tfrecord
-from tests.tfrecords import VariableSizeTypesRecordWriter, \
+from .misc_records import VariableSizeTypesRecordWriter, \
     VariableSizeTypesRecordReader
 
 

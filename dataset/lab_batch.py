@@ -7,11 +7,10 @@ import tensorflow.contrib.slim as slim
 
 from dataset.embedding import prepare_image_for_inception, \
     maybe_download_inception, inception_resnet_v2, inception_resnet_v2_arg_scope
-from dataset.filtering import all_filters_with_base_args
-from dataset.shared import maybe_create_folder
-from dataset.tfrecords import ImagePairRecordWriter, \
-    queue_paired_images_from_folders, \
-    batch_operations
+from dataset.shared import maybe_create_folder, dir_resized
+from dataset.tfrecords import batch_operations
+from dataset.tfrecords.images.lab_image_record import LabImageRecordWriter
+from dataset.tfrecords.images_queue import queue_single_images_from_folder
 
 
 def progressive_filename_generator(pattern='file_{}.ext'):
@@ -19,17 +18,13 @@ def progressive_filename_generator(pattern='file_{}.ext'):
         yield pattern.format(i)
 
 
-class ImagenetBatcher:
-    def __init__(self, inputs_dir: str, targets_dir: str,
-                 records_dir: str, checkpoint_source: str):
+class LabImagenetBatcher:
+    def __init__(self, inputs_dir: str, records_dir: str,
+                 checkpoint_source: str):
         if not isdir(inputs_dir):
             raise Exception('Input folder does not exists: {}'
                             .format(inputs_dir))
-        if not isdir(targets_dir):
-            raise Exception('Targets folder does not exists: {}'
-                            .format(targets_dir))
         self.inputs_dir = inputs_dir
-        self.targets_dir = targets_dir
 
         # Destination folder
         maybe_create_folder(records_dir)
@@ -41,7 +36,7 @@ class ImagenetBatcher:
         # Utils
         self._examples_count = 0
         self.records_names_gen = progressive_filename_generator(
-            join(records_dir, 'images_{}.tfrecord'))
+            join(records_dir, 'lab_images_{}.tfrecord'))
 
     def batch_all(self, examples_per_record):
         operations = self._create_operations(examples_per_record)
@@ -73,19 +68,16 @@ class ImagenetBatcher:
         :return: a tuple containing all these operations
         """
         # Create the queue operations
-        input_key, input_tens, target_key, target_tens = \
-            queue_paired_images_from_folders(
-                self.inputs_dir,
-                self.targets_dir,
-                [f.__name__ for f in all_filters_with_base_args])
+        image_key, image_tensor, _ = \
+            queue_single_images_from_folder(self.inputs_dir)
 
         # Build Inception Resnet v2 operations using the image as input
-        scaled_input_tensor = prepare_image_for_inception(input_tens)
+        scaled_input_tensor = prepare_image_for_inception(image_tensor)
         with slim.arg_scope(inception_resnet_v2_arg_scope()):
             input_embedding, _ = inception_resnet_v2(scaled_input_tensor,
                                                      is_training=False)
 
-        operations = input_key, input_tens, target_key, target_tens, input_embedding
+        operations = image_key, image_tensor, input_embedding
 
         return batch_operations(operations, examples_per_record)
 
@@ -131,12 +123,12 @@ class ImagenetBatcher:
         results = sess.run(operations)
 
         # Create a writer to write the images
-        with ImagePairRecordWriter(next(self.records_names_gen)) as writer:
+        with LabImageRecordWriter(next(self.records_names_gen)) as writer:
             # Iterate over each result in the results
             for one_res in zip(*results):
-                writer.write_image_pair(*one_res)
+                writer.write_image(*one_res)
                 if __debug__:
-                    print('Written', basename(one_res[0]), basename(one_res[2]))
+                    print('Written', basename(one_res[0]))
 
             self._examples_count += len(results[0])
             print('Record ready:', writer.path)
@@ -146,32 +138,24 @@ class ImagenetBatcher:
 # python3 -m dataset.batch <args>
 if __name__ == '__main__':
     import argparse
-    from dataset.shared import dir_resized, dir_filtered, dir_tfrecord
+    from dataset.shared import dir_tfrecord
     from dataset.embedding.inception_utils import checkpoint_url
 
     # Argparse setup
     parser = argparse.ArgumentParser(
-        description='Takes two folders containing paired images (resized and '
-                    'filtered_resized), extracts the inception resnet v2 '
-                    'features from the filtered image, serializes the images '
-                    'and the embedding and writes everything in tfrecord '
+        description='Takes one folders containing 299x299 images, extracts '
+                    'the inception resnet v2 features from the image, '
+                    'serializes the image in Lab space and the embedding and '
+                    'writes everything in tfrecord files '
                     'files in batches on N images')
     parser.add_argument('-i', '--inputs-folder',
-                        default=dir_filtered,
+                        default=dir_resized,
                         type=str,
                         metavar='FOLDER',
                         dest='inputs',
                         help='use FOLDER as source of the input images '
                              '(default: {}) '
-                        .format(dir_filtered)),
-    parser.add_argument('-t', '--targets-folder',
-                        default=dir_resized,
-                        type=str,
-                        metavar='FOLDER',
-                        dest='targets',
-                        help='use FOLDER as source of the target images '
-                             '(default: {}) '
-                        .format(dir_resized))
+                        .format(dir_resized)),
     parser.add_argument('-o', '--output-folder',
                         default=dir_tfrecord,
                         type=str,
@@ -197,5 +181,5 @@ if __name__ == '__main__':
                              'the last one (default: 500)')
 
     args = parser.parse_args()
-    ImagenetBatcher(args.inputs, args.targets, args.records, args.checkpoint) \
+    LabImagenetBatcher(args.inputs, args.records, args.checkpoint) \
         .batch_all(args.batch_size)
