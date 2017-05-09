@@ -41,9 +41,15 @@ def decoder(encoded):
 def define_optimizer(img_out, img_true):
     # Trimming necessary due to convolutions (?)
     img_trim = img_true[:, :298, :298]
+
     # Define loss and optimizer, minimize the squared error
     cost = tf.reduce_mean(tf.squared_difference(img_out, img_trim), name="mse")
     optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(cost)
+
+    # Metrics for tensorboard
+    with tf.name_scope('summaries'):
+        tf.summary.scalar('cost', cost)
+
     return {
         'optimizer': optimizer,
         'cost': cost
