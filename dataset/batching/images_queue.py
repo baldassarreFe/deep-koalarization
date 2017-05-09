@@ -36,13 +36,13 @@ def queue_single_images_from_folder(folder):
 
 
 def image_pair_paths_generator(inputs_folder, target_folder, suffixes):
-    for input_file in listdir(inputs_folder):
-        input_path = join(inputs_folder, input_file)
-        if isfile(input_path):
+    for target_file in listdir(target_folder):
+        target_path = join(target_folder, target_file)
+        if isfile(target_path):
             for suff in suffixes:
-                target_file = filtered_filename(input_file, suff)
-                target_path = join(target_folder, target_file)
-                if isfile(target_path):
+                input_file = filtered_filename(target_file, suff)
+                input_path = join(inputs_folder, input_file)
+                if isfile(input_path):
                     yield input_path, target_path
 
 

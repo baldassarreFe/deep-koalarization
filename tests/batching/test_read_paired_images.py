@@ -23,6 +23,7 @@ class TestPairedImagesRead(unittest.TestCase):
         read_one_example = irr.read_one()
         read_batched_examples = irr.read_batch(10)
 
+
         with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())
 
@@ -31,13 +32,17 @@ class TestPairedImagesRead(unittest.TestCase):
             threads = tf.train.start_queue_runners(coord=coord)
 
             # Reading images sequentially one by one
+            # Note: Images in the range [-1, 1] need to be converted
+            #       to [0, 1] for matplotlib to show them  correctly
             for i in range(0, 8, 2):
                 res = sess.run(read_one_example)
                 plt.subplot(2, 4, i + 1)
-                plt.imshow(res['input_image'])
+                plt.imshow((res['input_image'] + 1) / 2)
+                plt.title('Input (filtered)')
                 plt.axis('off')
                 plt.subplot(2, 4, i + 2)
-                plt.imshow(res['target_image'])
+                plt.imshow((res['target_image'] + 1) / 2)
+                plt.title('Target (unfiltered)')
                 plt.axis('off')
                 print('Read:',
                       '\n\tinput', basename(res['input_file']),

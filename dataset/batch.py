@@ -157,21 +157,21 @@ if __name__ == '__main__':
                     'and the embedding and writes everything in tfrecord '
                     'files in batches on N images')
     parser.add_argument('-i', '--inputs-folder',
-                        default=dir_resized,
+                        default=dir_filtered,
                         type=str,
                         metavar='FOLDER',
                         dest='inputs',
                         help='use FOLDER as source of the input images '
                              '(default: {}) '
-                        .format(dir_resized)),
+                        .format(dir_filtered)),
     parser.add_argument('-t', '--targets-folder',
-                        default=dir_filtered,
+                        default=dir_resized,
                         type=str,
                         metavar='FOLDER',
                         dest='targets',
                         help='use FOLDER as source of the target images '
                              '(default: {}) '
-                        .format(dir_filtered))
+                        .format(dir_resized))
     parser.add_argument('-o', '--output-folder',
                         default=dir_tfrecord,
                         type=str,

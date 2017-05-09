@@ -14,7 +14,7 @@ class ImagePairRecordWriter(RecordWriter):
                          target_image, input_embedding):
         """
         Writes into this TFRecord an Example representing a pair of images,
-        including the image names, the image data and and embedding of the
+        including the image names, the image data and embedding of the
         input image
         :param input_file:
         :param input_image:
@@ -36,6 +36,11 @@ class ImagePairRecordWriter(RecordWriter):
 
 
 class ImagePairRecordReader(BatchableRecordReader):
+    """
+    Reads a pair of images, including the image names, the image data and
+    embedding of the input image. The images are returned as float32 matrices
+    with fixed size (e.g. [299, 299, 3]) and range [-1, 1]
+    """
     def __init__(self, tfrecord_name, dest_folder='',
                  img_shape=(299, 299, 3), embedding_size=1001):
         super().__init__(tfrecord_name, dest_folder)
@@ -58,13 +63,13 @@ class ImagePairRecordReader(BatchableRecordReader):
         input_file = features['input_file']
         target_file = features['target_file']
 
-        # Images
+        # Images (cast to float32 with range [-1, 1])
         input_image = tf.decode_raw(features['input_image'], tf.uint8)
         input_image = tf.reshape(input_image, self.img_shape)
-        input_image = tf.cast(input_image, tf.float32) * (1. / 255)
+        input_image = tf.cast(input_image, tf.float32) * (2 / 255) - 1
         target_image = tf.decode_raw(features['target_image'], tf.uint8)
         target_image = tf.reshape(target_image, self.img_shape)
-        target_image = tf.cast(target_image, tf.float32) * (1. / 255)
+        target_image = tf.cast(target_image, tf.float32) * (2 / 255) - 1
 
         # Embeddings
         input_embedding = features['input_embedding']

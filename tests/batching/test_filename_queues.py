@@ -1,5 +1,6 @@
 import time
 import unittest
+from os.path import basename
 
 import tensorflow as tf
 
@@ -59,8 +60,8 @@ class TestFilenameQueues(unittest.TestCase):
         # Create the queue operations
         input_key, input_tensor, target_key, target_tensor = \
             queue_paired_images_from_folders(
-                dir_resized,
                 dir_filtered,
+                dir_resized,
                 [f.__name__ for f in all_filters_with_base_args])
 
         # Start a new session to run the operations
@@ -79,7 +80,8 @@ class TestFilenameQueues(unittest.TestCase):
             try:
                 while not coord.should_stop():
                     in_key, tar_key = sess.run([input_key, target_key])
-                    print(in_key, tar_key)
+                    print('Input', basename(in_key),
+                          '\tTarget', basename(tar_key))
                     count += 1
             except tf.errors.OutOfRangeError:
                 # The string_input_producer queue ran out of strings
