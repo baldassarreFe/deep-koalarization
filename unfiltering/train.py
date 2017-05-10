@@ -17,7 +17,7 @@ if __name__ == '__main__':
     K.set_session(sess)
 
     irr = ImagePairRecordReader(
-        expanduser('~/imagenet/tfrecords/images_0.tfrecord'))
+        expanduser('~/imagenet/tfrecords/images_*.tfrecord'))
     read_batched_examples = irr.read_batch(50)
 
     imgs_in = read_batched_examples['input_image']

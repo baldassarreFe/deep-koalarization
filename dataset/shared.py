@@ -9,6 +9,7 @@ dir_resized = join(dir_root, 'resized')
 dir_filtered = join(dir_root, 'filtered')
 dir_tfrecord = join(dir_root, 'tfrecords')
 dir_metrics = join(dir_root, 'metrics')
+dir_checkpoints = join(dir_root, 'checkpoints')
 
 
 def maybe_create_folder(folder):
