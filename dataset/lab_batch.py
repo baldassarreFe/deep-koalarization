@@ -1,4 +1,3 @@
-import itertools
 import time
 from os.path import isdir, join, basename
 
@@ -11,11 +10,7 @@ from dataset.shared import maybe_create_folder, dir_resized
 from dataset.tfrecords import batch_operations
 from dataset.tfrecords.images.lab_image_record import LabImageRecordWriter
 from dataset.tfrecords.images_queue import queue_single_images_from_folder
-
-
-def progressive_filename_generator(pattern='file_{}.ext'):
-    for i in itertools.count():
-        yield pattern.format(i)
+from shared import progressive_filename_generator
 
 
 class LabImagenetBatcher:

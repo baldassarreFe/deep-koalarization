@@ -31,7 +31,8 @@ class TestFixedSizeRecords(unittest.TestCase):
         read_one_example = reader.read_one()
 
         with tf.Session() as sess:
-            sess.run(tf.global_variables_initializer())
+            sess.run([tf.global_variables_initializer(),
+                      tf.local_variables_initializer()])
 
             # Coordinate the queue of tfrecord files.
             coord = tf.train.Coordinator()

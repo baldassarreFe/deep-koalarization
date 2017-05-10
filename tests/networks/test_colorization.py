@@ -21,6 +21,7 @@ class TestColorization(unittest.TestCase):
     def _run(self, imgs_l, imgs_ab, imgs_true_ab, opt_operations):
         with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())
+            sess.run(tf.local_variables_initializer())
 
             # Coordinate the loading of image files.
             coord = tf.train.Coordinator()

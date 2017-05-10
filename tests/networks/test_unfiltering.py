@@ -31,6 +31,7 @@ class TestUnfiltering(unittest.TestCase):
     def _run(self, imgs_in, imgs_out, imgs_true, opt_operations):
         with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())
+            sess.run(tf.local_variables_initializer())
 
             # Coordinate the loading of image files.
             coord = tf.train.Coordinator()

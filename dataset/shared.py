@@ -1,3 +1,4 @@
+import itertools
 from os import makedirs
 from os.path import expanduser, join
 
@@ -12,3 +13,8 @@ dir_metrics = join(dir_root, 'metrics')
 
 def maybe_create_folder(folder):
     makedirs(folder, exist_ok=True)
+
+
+def progressive_filename_generator(pattern='file_{}.ext'):
+    for i in itertools.count():
+        yield pattern.format(i)

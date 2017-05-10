@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from os.path import join
+from os.path import join, expanduser
 
 import tensorflow as tf
 
@@ -7,9 +7,14 @@ from .writer import compression
 
 
 class RecordReader(ABC):
-    def __init__(self, tfrecord_name, folder=''):
-        filename_queue = tf.train.string_input_producer(
-            [join(folder, tfrecord_name)])
+    def __init__(self, tfrecord_pattern, folder=''):
+        # Normalize the folder and build the path
+        tfrecord_pattern = join(expanduser(folder), tfrecord_pattern)
+
+        # This queue will yield a filename every time it is polled
+        file_matcher = tf.train.match_filenames_once(tfrecord_pattern)
+
+        filename_queue = tf.train.string_input_producer(file_matcher)
         reader = tf.TFRecordReader(options=compression)
         tfrecord_key, self._tfrecord_serialized = reader.read(filename_queue)
 

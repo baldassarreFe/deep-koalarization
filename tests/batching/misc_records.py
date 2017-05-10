@@ -13,9 +13,9 @@ from dataset.tfrecords import RecordReader, BatchableRecordReader, RecordWriter
 
 
 class BaseTypesRecordWriter(RecordWriter):
-    def write_test(self):
+    def write_test(self, i):
         example = tf.train.Example(features=tf.train.Features(feature={
-            'string': self._bytes_feature(b'hey'),
+            'string': self._bytes_feature('hey {}'.format(i).encode('ascii')),
             'int': self._int64(42),
             'float': self._float32(3.14),
         }))

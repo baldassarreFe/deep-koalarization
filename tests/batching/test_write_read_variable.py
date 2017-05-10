@@ -28,7 +28,8 @@ class TestVariableSizeRecords(unittest.TestCase):
         read_one_example = reader.read_one()
 
         with tf.Session() as sess:
-            sess.run(tf.global_variables_initializer())
+            sess.run([tf.global_variables_initializer(),
+                      tf.initialize_local_variables()])
 
             # Coordinate the queue of tfrecord files.
             coord = tf.train.Coordinator()
