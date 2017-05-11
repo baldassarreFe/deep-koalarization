@@ -15,7 +15,7 @@ import tensorflow as tf
 from keras.layers import Conv2D, UpSampling2D
 from skimage import color
 
-from fusion_layer import fusion
+from colorization.fusion_layer import fusion
 
 
 def colorization(img_l, img_emb):

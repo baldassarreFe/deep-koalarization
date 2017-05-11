@@ -11,7 +11,7 @@ from tensorflow.python.training.saver import latest_checkpoint
 
 from colorization import colorization, define_optimizer, l_to_rgb, lab_to_rgb
 from dataset.tfrecords import LabImageRecordReader
-from shared import dir_metrics, dir_tfrecord, dir_checkpoints
+from dataset.shared import dir_metrics, dir_tfrecord, dir_checkpoints
 
 matplotlib.rcParams['figure.figsize'] = (10.0, 5.0)
 
