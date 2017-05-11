@@ -5,7 +5,8 @@ import numpy as np
 import tensorflow as tf
 from skimage import color
 
-from colorization import colorization, define_optimizer, lab_to_rgb, l_to_rgb
+from colorization import Colorization
+from colorization import color_optimizer, lab_to_rgb, l_to_rgb
 
 
 class TestColorization(unittest.TestCase):
@@ -13,8 +14,9 @@ class TestColorization(unittest.TestCase):
         imgs_l, imgs_true_ab, imgs_emb = self._tensors()
 
         # Build the network and the optimizer step
-        imgs_ab = colorization(imgs_l, imgs_emb)
-        opt_operations = define_optimizer(imgs_ab, imgs_true_ab)
+        col = Colorization(256)
+        imgs_ab = col.build(imgs_l, imgs_emb)
+        opt_operations = color_optimizer(imgs_ab, imgs_true_ab)
 
         self._run(imgs_l, imgs_ab, imgs_true_ab, opt_operations)
 
