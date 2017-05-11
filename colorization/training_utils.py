@@ -23,8 +23,7 @@ def loss_with_metrics(img_ab_out, img_ab_true, name=''):
     cost = tf.reduce_mean(
         tf.squared_difference(img_ab_out, img_ab_true), name="mse")
     # Metrics for tensorboard
-    with tf.name_scope('summaries'):
-        summary = tf.summary.scalar('cost ' + name, cost)
+    summary = tf.summary.scalar('cost ' + name, cost)
     return cost, summary
 
 
@@ -48,7 +47,7 @@ def training_pipeline(col, learning_rate, batch_size):
 
 def evaluation_pipeline(col, number_of_images):
     # Set up validation (input queues, graph)
-    irr = LabImageRecordReader('lab_images_*.tfrecord', dir_tfrecord)
+    irr = LabImageRecordReader('val_lab_images_*.tfrecord', dir_tfrecord)
     read_batched_examples = irr.read_batch(number_of_images, shuffle=False)
     imgs_l_val = read_batched_examples['image_l']
     imgs_true_ab_val = read_batched_examples['image_ab']

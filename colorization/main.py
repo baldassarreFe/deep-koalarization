@@ -8,9 +8,10 @@ from colorization.training_utils import evaluation_pipeline, \
 
 # PARAMETERS
 run_id = 'run{}'.format(1)
-epochs = 100
-number_of_images = 10
-batch_size = 10
+epochs = 10
+val_number_of_images = 20
+total_train_images = 130
+batch_size = 130
 learning_rate = 0.001
 
 # START
@@ -20,7 +21,7 @@ K.set_session(sess)
 # Build the network and the various operations
 col = Colorization(256)
 opt_operations = training_pipeline(col, learning_rate, batch_size)
-evaluations_ops = evaluation_pipeline(col, number_of_images)
+evaluations_ops = evaluation_pipeline(col, val_number_of_images)
 summary_writer = metrics_system(run_id, sess)
 saver, checkpoint_paths, latest_checkpoint = checkpointing_system(run_id)
 
@@ -35,11 +36,13 @@ with sess.as_default():
 
     # Restore
     if latest_checkpoint is not None:
+        print('Restoring from:', latest_checkpoint, end='')
         saver.restore(sess, latest_checkpoint)
+        print('done!')
 
     for epoch in range(epochs):
         # Training step
-        for batch in range(number_of_images // batch_size):
+        for batch in range(total_train_images // batch_size):
             print('Epoch:', epoch, 'Batch:', batch, end=' ')
             res = sess.run(opt_operations)
             summary_writer.add_summary(res['summary'], 5 * epoch + batch)
