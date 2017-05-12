@@ -37,8 +37,11 @@ def training_pipeline(col, learning_rate, batch_size):
     imgs_emb = read_batched_examples['image_embedding']
     imgs_ab = col.build(imgs_l, imgs_emb)
     cost, summary = loss_with_metrics(imgs_ab, imgs_true_ab, 'training')
-    optimizer = tf.train.AdamOptimizer(learning_rate).minimize(cost)
+    global_step = tf.Variable(0, name='global_step', trainable=False)
+    optimizer = tf.train.AdamOptimizer(learning_rate).minimize(
+        cost, global_step=global_step)
     return {
+        'global_step': global_step,
         'optimizer': optimizer,
         'cost': cost,
         'summary': summary
