@@ -1,4 +1,5 @@
 import pickle
+import time
 from os.path import join
 
 import matplotlib
@@ -68,6 +69,11 @@ def evaluation_pipeline(col, number_of_images):
     }
 
 
+def print_log(content, run_id):
+    with open('output_{}.txt'.format(run_id), mode='a') as f:
+        f.write('[{}] {}\n'.format(time.strftime("%c"), content))
+
+
 def metrics_system(run_id, sess):
     # Merge all the summaries and set up the writers
     train_writer = tf.summary.FileWriter(join(dir_metrics, run_id), sess.graph)
@@ -91,7 +97,10 @@ def plot_evaluation(res, run_id, epoch):
         img_true = lab_to_rgb(res['imgs_l'][k][:, :, 0],
                               res['imgs_true_ab'][k])
         top_5 = np.argsort(res['imgs_emb'][k])[-5:]
-        top_5 = ' / '.join(labels_to_categories[i] for i in top_5)
+        try:
+            top_5 = ' / '.join(labels_to_categories[i] for i in top_5)
+        except:
+            ptop_5 = str(top_5)
 
         plt.subplot(1, 3, 1)
         plt.imshow(img_gray)

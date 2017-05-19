@@ -4,14 +4,14 @@ from keras import backend as K
 from colorization import Colorization
 from colorization.training_utils import evaluation_pipeline, \
     checkpointing_system, \
-    plot_evaluation, training_pipeline, metrics_system
+    plot_evaluation, training_pipeline, metrics_system, print_log
 
 # PARAMETERS
 run_id = 'run{}'.format(1)
-epochs = 1
-val_number_of_images = 20
-total_train_images = 10
-batch_size = 10
+epochs = 100
+val_number_of_images = 10
+total_train_images = 40 * 1000
+batch_size = 100
 learning_rate = 0.001
 batches = total_train_images // batch_size
 
@@ -37,26 +37,27 @@ with sess.as_default():
 
     # Restore
     if latest_checkpoint is not None:
-        print('Restoring from:', latest_checkpoint, end='')
+        print_log('Restoring from: {}'.format(latest_checkpoint), run_id)
         saver.restore(sess, latest_checkpoint)
-        print('done!')
+        print_log(' done!', run_id)
     else:
-        print('No checkpoint found in:', checkpoint_paths)
+        print_log('No checkpoint found in:', checkpoint_paths)
 
     for epoch in range(epochs):
-        print('Starting epoch: {} (total images {})'
-              .format(epoch, total_train_images))
+        print_log('Starting epoch: {} (total images {})'
+                  .format(epoch, total_train_images), run_id)
         # Training step
         for batch in range(batches):
-            print(' Batch: {}/{}'.format(batch, batches), end=' ')
+            print_log('Batch: {}/{}'.format(batch, batches), run_id)
             res = sess.run(opt_operations)
             global_step = res['global_step']
-            print('Cost:', res['cost'], 'Global step', global_step, )
+            print_log('Cost: {} Global step: {}'
+                      .format(res['cost'], global_step), run_id)
             summary_writer.add_summary(res['summary'], global_step)
 
         # Save the variables to disk
         save_path = saver.save(sess, checkpoint_paths, global_step)
-        print("Model saved in: %s" % save_path)
+        print_log("Model saved in: %s" % save_path, run_id)
 
         # Evaluation step on validation
         res = sess.run(evaluations_ops)
