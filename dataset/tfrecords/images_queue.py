@@ -1,10 +1,7 @@
 import multiprocessing
-from os import listdir
-from os.path import join, expanduser, isfile
+from os.path import join, expanduser
 
 import tensorflow as tf
-
-from dataset.filtering import filtered_filename
 
 
 def queue_single_images_from_folder(folder):
@@ -33,67 +30,6 @@ def queue_single_images_from_folder(folder):
     # Note: nothing has happened yet, we've only defined operations,
     # what we return are tensors
     return image_key, image_tensor, image_shape
-
-
-def image_pair_paths_generator(inputs_folder, target_folder, suffixes):
-    for target_file in listdir(target_folder):
-        target_path = join(target_folder, target_file)
-        if isfile(target_path):
-            for suff in suffixes:
-                input_file = filtered_filename(target_file, suff)
-                input_path = join(inputs_folder, input_file)
-                if isfile(input_path):
-                    yield input_path, target_path
-
-
-def queue_paired_images_from_folders(inputs_folder, targets_folder, suffixes):
-    """
-    If the suffixes given are `['one', 'two']`
-    The expected folder structure is:
-
-    inputs
-    ├── aaa.jpeg
-    └── bbb.jpeg
-
-    targets
-    ├── aaa_one.jpeg
-    ├── aaa_two.jpeg
-    ├── bbb_one.jpeg
-    └── bbb_two.jpeg
-
-    :param inputs_folder:
-    :param targets_folder:
-    :param suffixes:
-    :return:
-    """
-    # TODO this docstring needs formatting
-
-    # Normalize paths
-    inputs_folder = expanduser(inputs_folder)
-    targets_folder = expanduser(targets_folder)
-
-    # Create two lists with the matching files in the corresponding positions
-    inputs_paths, targets_paths = zip(*image_pair_paths_generator(
-        inputs_folder, targets_folder, suffixes))
-
-    # Create two queues from the lists
-    inputs_queue = tf.train.string_input_producer(inputs_paths, shuffle=False,
-                                                  num_epochs=1)
-    targets_queue = tf.train.string_input_producer(targets_paths, shuffle=False,
-                                                   num_epochs=1)
-
-    # Read paired images from the two queues
-    image_reader = tf.WholeFileReader()
-    input_key, input_file = image_reader.read(inputs_queue)
-    target_key, target_file = image_reader.read(targets_queue)
-
-    # The file needs to be decoded as image and we also need its dimensions
-    input_tensor = tf.image.decode_jpeg(input_file)
-    target_tensor = tf.image.decode_jpeg(target_file)
-
-    # Note: nothing has happened yet, we've only defined operations,
-    # what we return are tensors
-    return input_key, input_tensor, target_key, target_tensor
 
 
 def batch_operations(operations, batch_size):

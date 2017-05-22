@@ -11,7 +11,6 @@ recommended folder structure is:
 ├── inception_resnet_v2_2016_08_30.ckpt
 ├── original
 ├── resized
-├── filtered
 └── tfrecords
 ```
 
@@ -33,15 +32,6 @@ python3 -m dataset.resize <args>
 
 Use `-h` to see the available options
 
-#### Filtering
-
-```bash
-python3 -m dataset.filter <args>
-```
-
-Use `-h` to see the available options
-
-
 #### Converting to TFRecords
 
 ```bash
@@ -51,9 +41,9 @@ python3 -O -m dataset.batch <args>
 Passing `-c path/to/inception_resnet_v2_2016_08_30.ckpt` is highly recommended
 over passing a url.
 
-Omitting the `-O` will print all image pairs at the moment they are written to
+Omitting the `-O` will print all image names at the moment they are written to
 a TFRecord. Given that we batch the inception operations, they will most likely
-appear all at once when the batch gets written to disk.
+appear all at once, when the batch gets written to disk.
 
 Use `-h` to see the available options
 
@@ -71,9 +61,10 @@ size pretty small. On the other hand, once stored in a TFRecord they will simply
 be in raw byte format and take up much more space.
 
 Keep in mind that one example is made of:
-- 2 images (299x299x3 uint8)
-- 2 byte strings
+- 1 image `L` (299x299x1 float32)
+- 1 image `a*b*` (299x299x2 float32)
 - 1 embedding (1001 float32)
+- 1 byte string
 
 To save space we can use one of TFRecord compression options, or compress the
 files after creation with a command like:
@@ -81,15 +72,3 @@ files after creation with a command like:
 ```
 7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on "$RECORD.7z" "$RECORD"
 ```
-
-Here is a comparison of the various compression options for a TFRecord:
-- `tf.python_io.TFRecordCompressionType.NONE`
-- `tf.python_io.TFRecordCompressionType.ZLIB`
-- `tf.python_io.TFRecordCompressionType.GZIP`
-
-|             |  NONE  |  ZLIB  |  GZIP  |
-|-------------|-------:|-------:|-------:|
-| Record size | 258 MB | 154 MB | 154 MB |
-| After 7z    |  79 MB | 154 MB | 154 MB |
-
-(tests made with the default value of 500 examples per tfrecord)

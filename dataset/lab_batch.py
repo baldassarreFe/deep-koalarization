@@ -67,9 +67,15 @@ class LabImagenetBatcher:
             queue_single_images_from_folder(self.inputs_dir)
 
         # Build Inception Resnet v2 operations using the image as input
-        scaled_input_tensor = prepare_image_for_inception(image_tensor)
+        # - from rgb to grayscale to loose the color information
+        # - from grayscale to rgb just to have 3 identical channels
+        # - from a [0, 255] int8 range to [-1,+1] float32
+        # - feed the image into inception and get the embedding
+        img_for_inception = tf.image.rgb_to_grayscale(image_tensor)
+        img_for_inception = tf.image.grayscale_to_rgb(img_for_inception)
+        img_for_inception = prepare_image_for_inception(img_for_inception)
         with slim.arg_scope(inception_resnet_v2_arg_scope()):
-            input_embedding, _ = inception_resnet_v2(scaled_input_tensor,
+            input_embedding, _ = inception_resnet_v2(img_for_inception,
                                                      is_training=False)
 
         operations = image_key, image_tensor, input_embedding
@@ -93,7 +99,7 @@ class LabImagenetBatcher:
         self._examples_count = 0
 
         # These are the only lines where something happens:
-        # we execute the operations to get the image pair, compute the
+        # we execute the operations to get the image, compute the
         # embedding and write everything in the TFRecord
         try:
             while not coord.should_stop():
@@ -104,7 +110,7 @@ class LabImagenetBatcher:
         finally:
             # Ask the threads (filename queue) to stop.
             coord.request_stop()
-            print('Finished writing {} pairs in {:.2f}s'
+            print('Finished writing {} images in {:.2f}s'
                   .format(self._examples_count, time.time() - start_time))
 
         # Wait for threads to finish.
@@ -130,7 +136,7 @@ class LabImagenetBatcher:
 
 
 # Run from the top folder as:
-# python3 -m dataset.batch <args>
+# python3 -m dataset.lab_batch <args>
 if __name__ == '__main__':
     import argparse
     from dataset.shared import dir_tfrecord
