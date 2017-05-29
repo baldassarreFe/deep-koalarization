@@ -1,4 +1,4 @@
-# Deep Koalarization
+# [Deep Koalarization](http://lcsrg.me/deep-koloarization)
 #### Image colorization using deep CNN and features extracted from Inception-ResNet-v2
 
 This project was developed as part of the [DD2424 Deep Learning in Data Science course](https://www.kth.se/student/kurser/kurs/DD2424?l=en) at [KTH Royal Institute of Technology](http://kth.se), spring 2017.
