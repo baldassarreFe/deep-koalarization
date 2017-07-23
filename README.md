@@ -11,6 +11,8 @@ We attach the full [report](report.pdf) and our [slides](slides.pdf).
 | Diego Gonzalez Morin | [diegomorin8](https://github.com/diegomorin8)     |
 | Lucas Rodés Guirao   | [lucasrodes](https://github.com/lucasrodes)       |
 
+Please star our work if you find it useful :star:!
+
 ## Intro
 We got the inspiration from the work of Richard Zhang, Phillip Isola and Alexei A. Efros, who realized a network able to colorize black and white images ([blog post](http://richzhang.github.io/colorization/) and [paper](https://arxiv.org/abs/1603.08511)). They trained a network on ImageNet pictures preprocessed to make them gray-scale, with the colored image as the output target.
 
