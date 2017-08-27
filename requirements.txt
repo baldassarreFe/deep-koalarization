@@ -26,6 +26,7 @@ python-resize-image==1.1.11
 pytz==2017.2
 PyYAML==3.12
 pyzmq==16.0.2
+scikit-image==0.13.0
 scipy==0.19.0
 simplegeneric==0.8.1
 six==1.10.0
