@@ -35,7 +35,7 @@ Use `-h` to see the available options
 #### Converting to TFRecords
 
 ```bash
-python3 -O -m dataset.batch <args>
+python3 -O -m dataset.lab_batch <args>
 ```
 
 Passing `-c path/to/inception_resnet_v2_2016_08_30.ckpt` is highly recommended
