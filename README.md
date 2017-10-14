@@ -47,3 +47,12 @@ Our project is implemented in Python 3, for it is widely used in the data scienc
 #### Historical Pictures
 
 ![Historical 1](assets/historical.png)
+
+## Thanks to the people who noticed our work!
+
+We are proud if our work gets noticed and helps/inspires other people on their path to knowledge. Here's a list of references we are aware of, some of the authors contacted us, some others we just happened to find online:
+
+- François Chollet [tweeted](https://twitter.com/fchollet/status/917846097430638592) about this project (thank you for Keras)
+- Emil Wallnér on [FloydHub Blog](https://blog.floydhub.com/colorizing-b&w-photos-with-neural-networks/)
+- sparkexpert on [CSDN](http://blog.csdn.net/sparkexpert/article/details/74452523)
+- someone on [Weibo](https://weibo.com/1402400261/FpP9H3Pa4)
