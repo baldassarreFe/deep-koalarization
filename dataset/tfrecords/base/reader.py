@@ -7,6 +7,12 @@ from .writer import compression
 
 
 class RecordReader(ABC):
+    """
+    A class to read examples from all the TFRecord matching a certain
+    filename pattern. The implementation of the read operation is left
+    to the subclasses, while the logic to queue all the record files as
+    a single data source is provided here.
+    """
     def __init__(self, tfrecord_pattern, folder=''):
         # Normalize the folder and build the path
         tfrecord_pattern = join(expanduser(folder), tfrecord_pattern)
@@ -18,10 +24,11 @@ class RecordReader(ABC):
         reader = tf.TFRecordReader(options=compression)
         tfrecord_key, self._tfrecord_serialized = reader.read(filename_queue)
 
-        self.path = tfrecord_key
+        self._path = tfrecord_key
         self._read_operation = None
 
-    def read_one(self):
+    @property
+    def read_operation(self):
         if self._read_operation is None:
             self._read_operation = self._create_read_operation()
         return self._read_operation
@@ -30,11 +37,10 @@ class RecordReader(ABC):
     def _create_read_operation(self):
         """
         Build the specific read operation that should be used to read
-        from this TFRecord, one Example at the time
-        (is what will be returned by a call to read_one)
+        from the TFRecords in the queue, one Example at the time
 
         Note: in order to prevent the creation of multiple identical operations,
-        this method will be called once, then the operation will be stored
-        and returned with very call to read_one
+        this method will be called once, then the operation will be available
+        as ``read_operation``
         """
         pass

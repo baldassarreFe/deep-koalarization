@@ -2,7 +2,7 @@
 Read and show single images from a tfrecord
 
 Run from the top folder as:
-python3 -m tests.batching.test_write_read_single_image
+python3 -m tests.batching.test_write_read_lab_image
 """
 import time
 import unittest
@@ -30,7 +30,7 @@ class TestLabImageWriteRead(unittest.TestCase):
         img_emb = tf.truncated_normal(shape=[1001])
 
         # Create a writer to write_image the images
-        lab_writer = LabImageRecordWriter('lab_images.tfrecord', dir_tfrecord)
+        lab_writer = LabImageRecordWriter('test_lab_images.tfrecord', dir_tfrecord)
 
         # Start a new session to run the operations
         with tf.Session() as sess:
@@ -50,6 +50,7 @@ class TestLabImageWriteRead(unittest.TestCase):
                     lab_writer.write_image(key, img, emb)
                     print('Written: {}'.format(key))
                     count += 1
+                    # Just write 10 images
                     if count > 10:
                         break
             except tf.errors.OutOfRangeError:
@@ -70,9 +71,9 @@ class TestLabImageWriteRead(unittest.TestCase):
         # Important: read_batch MUST be called before start_queue_runners,
         # otherwise the internal shuffle queue gets created but its
         # threads won't start
-        irr = LabImageRecordReader('lab_images.tfrecord', dir_tfrecord)
-        read_one_example = irr.read_one()
-        read_batched_examples = irr.read_batch(10)
+        irr = LabImageRecordReader('test_lab_images.tfrecord', dir_tfrecord)
+        read_one_example = irr.read_operation
+        read_batched_examples = irr.read_batch(20)
 
         with tf.Session() as sess:
             sess.run([tf.global_variables_initializer(),
@@ -98,10 +99,8 @@ class TestLabImageWriteRead(unittest.TestCase):
 
             # Reading images in batch
             res = sess.run(read_batched_examples)
-            print(res['image_name'],
-                  res['image_l'].shape,
-                  res['image_ab'].shape,
-                  res['image_embedding'].shape)
+            print(res['image_name'], res['image_l'].shape, res['image_ab'].shape,
+                  res['image_embedding'].shape, sep='\n')
 
             # Finish off the filename queue coordinator.
             coord.request_stop()

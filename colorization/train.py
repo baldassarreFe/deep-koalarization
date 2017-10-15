@@ -41,7 +41,7 @@ with sess.as_default():
         saver.restore(sess, latest_checkpoint)
         print_log(' done!', run_id)
     else:
-        print_log('No checkpoint found in:', checkpoint_paths)
+        print_log('No checkpoint found in: {}'.format(checkpoint_paths), run_id)
 
     for epoch in range(epochs):
         print_log('Starting epoch: {} (total images {})'

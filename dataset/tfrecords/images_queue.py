@@ -47,7 +47,7 @@ def batch_operations(operations, batch_size):
     :param batch_size: the batch
     :return:
     """
-    # The internet gave me these numbers
+    # Recommended configuration for these parameters (found online)
     num_threads = multiprocessing.cpu_count()
     min_after_dequeue = 3 * batch_size
     capacity = min_after_dequeue + (num_threads + 1) * batch_size

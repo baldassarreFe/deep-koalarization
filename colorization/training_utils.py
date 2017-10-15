@@ -46,7 +46,7 @@ def training_pipeline(col, learning_rate, batch_size):
         'optimizer': optimizer,
         'cost': cost,
         'summary': summary
-    }
+    }, irr, read_batched_examples
 
 
 def evaluation_pipeline(col, number_of_images):
@@ -122,18 +122,22 @@ def plot_evaluation(res, run_id, epoch):
         plt.close()
 
 
-"""
-The function l_to_rgb converts the numpy array l into an rgb image.
-The function lab_to_rgb converts the numpy arrays l and b into an rgb image.
-"""
-
-
 def l_to_rgb(img_l):
+    """
+    Convert a numpy array (l channel) into an rgb image
+    :param img_l:
+    :return:
+    """
     lab = np.squeeze(255 * (img_l + 1) / 2)
     return color.gray2rgb(lab) / 255
 
 
 def lab_to_rgb(img_l, img_ab):
+    """
+    Convert a pair of numpy arrays (l channel and ab channels) into an rgb image
+    :param img_l:
+    :return:
+    """
     lab = np.empty([*img_l.shape[0:2], 3])
     lab[:, :, 0] = np.squeeze(((img_l + 1) * 50))
     lab[:, :, 1:] = img_ab * 127

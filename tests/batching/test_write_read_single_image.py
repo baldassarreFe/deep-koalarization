@@ -66,7 +66,7 @@ class TestSingleImageWriteRead(unittest.TestCase):
         # otherwise the internal shuffle queue gets created but its
         # threads won't start
         irr = SingleImageRecordReader('single_images.tfrecord', dir_tfrecord)
-        read_one_example = irr.read_one()
+        read_one_example = irr.read_operation
         read_batched_examples = irr.read_batch(10)
 
         with tf.Session() as sess:

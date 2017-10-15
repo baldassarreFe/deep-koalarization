@@ -142,6 +142,8 @@ if __name__ == '__main__':
     from dataset.shared import dir_tfrecord
     from dataset.embedding.inception_utils import checkpoint_url
 
+    default_batch_size = 500
+
     # Argparse setup
     parser = argparse.ArgumentParser(
         description='Takes one folders containing 299x299 images, extracts '
@@ -174,12 +176,12 @@ if __name__ == '__main__':
                              'file itself (default: {}) '
                         .format(checkpoint_url))
     parser.add_argument('-b', '--batch-size',
-                        default=500,
+                        default=default_batch_size,
                         type=int,
                         metavar='N',
                         dest='batch_size',
                         help='every batch will contain N images, except maybe '
-                             'the last one (default: 500)')
+                             'the last one (default: {})'.format(default_batch_size))
 
     args = parser.parse_args()
     LabImagenetBatcher(args.inputs, args.records, args.checkpoint) \

@@ -2,7 +2,6 @@ from os import listdir
 from os.path import join, isfile, isdir
 from typing import Tuple
 
-import numpy as np
 from PIL import Image
 from resizeimage import resizeimage
 
@@ -27,25 +26,23 @@ class ImagenetResizer:
         :param size:
         """
         img = Image.open(join(self.source_dir, filename))
-        width, height = img.size
-        orig_shape = np.array(img.size)
-        wanted_shape = np.array(size)
-        ratios = wanted_shape / orig_shape
+        orig_width, orig_height = img.size
         wanted_width, wanted_height = size
-        ratio_w, ratio_h = wanted_width / width, wanted_height / height
+        ratio_w, ratio_h = wanted_width / orig_width, wanted_height / orig_height
 
-        if np.alltrue(ratios > 1):
+        enlarge_factor = min(ratio_h, ratio_w)
+        if enlarge_factor > 1:
             # Both sides of the image are shorter than the desired dimension,
             # so take the side that's closer in size and enlarge the image
             # in both directions to make that one fit
-            factor = min(ratio_h, ratio_w)
-            img = img.resize((int(width * factor), int(height * factor)))
+            enlarged_size = (int(orig_width * enlarge_factor), int(orig_height * enlarge_factor))
+            img = img.resize(enlarged_size)
 
         # Now we have an image that's either larger than the desired shape
         # or at least one side matches the desired shape and we can resize
         # with contain
-        cover = resizeimage.resize_contain(img, size)
-        cover.save(join(self.dest_dir, filename), 'JPEG')
+        res = resizeimage.resize_contain(img, size).convert('RGB')
+        res.save(join(self.dest_dir, filename), res.format)
 
     def resize_all(self, size=(299, 299)):
         for filename in listdir(self.source_dir):

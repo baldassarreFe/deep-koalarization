@@ -35,8 +35,10 @@ We have used the MSE loss as the objective function.
 ## Dataset
 Training data for this experiment could actually come from every source, but we rather prefer using images from [ImageNet](http://www.image-net.org), which nowadays is considered the de-facto reference for image tasks. It will also make our experiments easily reproducible, compared to using our own images.
 
-## Software packages
-Our project is implemented in Python 3, for it is widely used in the data science and machine learning communities. As for additional libraries, for machine learning, deep learning and image manipulation we rely on Keras/TensorFlow, NumPy/SciPy, Scikit. Refer to [requirements.txt](requirements.txt) for a complete list of the dependencies.
+## Software packages and instructions 
+Our project is implemented in Python 3.6, for it is widely used in the data science and machine learning communities. As for additional libraries, for machine learning, deep learning and image manipulation we rely on Keras/TensorFlow, NumPy/SciPy, Scikit. 
+
+Refer to [INSTRUCTIONS](INSTRUCTIONS.md) to setup and use the code in this repo.
 
 ## Results
 
@@ -44,7 +46,7 @@ Our project is implemented in Python 3, for it is widely used in the data scienc
 
 ![ImageNet 1](assets/comparison.png)
 
-#### Historical Pictures
+#### Historical pictures
 
 ![Historical 1](assets/historical.png)
 

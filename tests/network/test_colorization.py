@@ -1,3 +1,7 @@
+"""
+Train the network on a single sample, a colored checkboard pattern, for 100 epochs
+"""
+
 import unittest
 
 import matplotlib.pyplot as plt
@@ -5,8 +9,7 @@ import numpy as np
 import tensorflow as tf
 from skimage import color
 
-from colorization import Colorization
-from colorization import color_optimizer, lab_to_rgb, l_to_rgb
+from colorization import Colorization, lab_to_rgb, l_to_rgb
 
 
 class TestColorization(unittest.TestCase):
@@ -16,7 +19,13 @@ class TestColorization(unittest.TestCase):
         # Build the network and the optimizer step
         col = Colorization(256)
         imgs_ab = col.build(imgs_l, imgs_emb)
-        opt_operations = color_optimizer(imgs_ab, imgs_true_ab)
+        cost = tf.reduce_mean(tf.squared_difference(imgs_ab, imgs_true_ab))
+        optimizer = tf.train.AdamOptimizer(0.001).minimize(cost)
+
+        opt_operations = {
+            'cost': cost,
+            'optimizer': optimizer
+        }
 
         self._run(imgs_l, imgs_ab, imgs_true_ab, opt_operations)
 
@@ -91,6 +100,11 @@ class TestColorization(unittest.TestCase):
             coord.join(threads)
 
     def _tensors(self):
+        """
+        Create the input and target tensors to feed the network.
+        Even if the actual sample is just one, it is batched in a batch of 10
+        :return:
+        """
         # Image sizes
         width = 128
         height = 64

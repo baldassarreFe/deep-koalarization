@@ -36,7 +36,6 @@ class TestFilenameQueues(unittest.TestCase):
                         [image_key, image_tensor, image_shape])
                     print(key)
                     count += 1
-                    # show_image(key, img, shape)
             except tf.errors.OutOfRangeError:
                 # It's all right, it's just the string_input_producer queue telling
                 # us that it has run out of strings
