@@ -58,3 +58,29 @@ We are proud if our work gets noticed and helps/inspires other people on their p
 - Emil Wallnér on [FloydHub Blog](https://blog.floydhub.com/colorizing-b&w-photos-with-neural-networks/)
 - Amir Kalron on [Logz.io Blog](https://logz.io/blog/open-source-machine-learning/)
 - sparkexpert on [CSDN](http://blog.csdn.net/sparkexpert/article/details/74452523)
+
+## Citation
+
+Please cite this GitHub repo as
+
+```
+@misc{deepkoal2017,
+  author = {Federico Baldassarre, Diego Gonzalez-Morin, Lucas Rodes-Guirao},
+  title = {Deep-Koalarization},
+  year = {2017},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/baldassarreFe/deep-koalarization}},
+}
+```
+
+or our [report](https://github.com/baldassarreFe/deep-koalarization/blob/master/report.pdf) as
+
+```
+@misc{deepkoal2017,
+  author = {Federico Baldassarre, Diego Gonzalez-Morin, Lucas Rodes-Guirao},
+  title = {Deep-Koalarization: Image Colorization using CNNs and Inception-Resnet-v2},
+  year = {2017},
+  howpublished = {\url{https://github.com/baldassarreFe/deep-koalarization/blob/master/report.pdf}},
+}
+```
