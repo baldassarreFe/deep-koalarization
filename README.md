@@ -1,4 +1,11 @@
 # [Deep Koalarization](http://lcsrg.me/deep-koalarization)
+
+[![GitHub license](https://img.shields.io/github/license/baldassarreFe/deep-koalarization.svg)](https://github.com/baldassarreFe/deep-koalarization/blob/master/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/baldassarreFe/deep-koalarization.svg)](https://github.com/baldassarreFe/deep-koalarization/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/baldassarreFe/deep-koalarization.svg)](https://github.com/baldassarreFe/deep-koalarization/network)
+[![Twitter](https://img.shields.io/twitter/url/https/github.com/baldassarreFe/deep-koalarization.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2FbaldassarreFe%2Fdeep-koalarization)
+
+
 #### Image colorization using deep CNN and features extracted from Inception-ResNet-v2
 
 This project was developed as part of the [DD2424 Deep Learning in Data Science course](https://www.kth.se/student/kurser/kurs/DD2424?l=en) at [KTH Royal Institute of Technology](http://kth.se), spring 2017.
