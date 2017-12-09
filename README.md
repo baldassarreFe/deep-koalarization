@@ -5,16 +5,15 @@
 [![GitHub forks](https://img.shields.io/github/forks/baldassarreFe/deep-koalarization.svg)](https://github.com/baldassarreFe/deep-koalarization/network)
 [![Twitter](https://img.shields.io/twitter/url/https/github.com/baldassarreFe/deep-koalarization.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2FbaldassarreFe%2Fdeep-koalarization)
 
-[Deep Koalarization: Image Colorization using CNNs and Inception-ResNet-v2](paper.pdf).
+[**Deep Koalarization: Image Colorization using CNNs and Inception-ResNet-v2** (2017)](paper.pdf).
 
 [Federico Baldassarre](https://github.com/baldassarreFe)\*, [Diego Gonzalez Morin](https://github.com/diegomorin8)\* and [Lucas Rodés Guirao](https://github.com/lucasrodes)\* (* Authors contributed equally)
 
-This project was developed as part of the [DD2424 Deep Learning in Data Science course](https://www.kth.se/student/kurser/kurs/DD2424?l=en) at [KTH Royal Institute of Technology](http://kth.se), spring 2017.
+This project was developed during as part of the [DD2424 Deep Learning in Data Science course](https://www.kth.se/student/kurser/kurs/DD2424?l=en) at [KTH Royal Institute of Technology](http://kth.se), spring 2017.
 
 The code is built using [Keras](http://keras.io) and [Tensorflow](https://www.tensorflow.org/).
 
-Please star our work if you find it useful :star:!
-
+Consider starrring this project if you found it useful :star:!
 
 <!---### Citation
 
