@@ -3,7 +3,9 @@
 [![GitHub license](https://img.shields.io/github/license/baldassarreFe/deep-koalarization.svg)](https://github.com/baldassarreFe/deep-koalarization/blob/master/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/baldassarreFe/deep-koalarization.svg)](https://github.com/baldassarreFe/deep-koalarization/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/baldassarreFe/deep-koalarization.svg)](https://github.com/baldassarreFe/deep-koalarization/network)
+[![arXiv](https://img.shields.io/badge/paper-arXiv-red.svg)](https://arxiv.org/abs/1712.03400)
 [![Twitter](https://img.shields.io/twitter/url/https/github.com/baldassarreFe/deep-koalarization.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2FbaldassarreFe%2Fdeep-koalarization)
+
 
 [**Deep Koalarization: Image Colorization using CNNs and Inception-ResNet-v2** (2017)](https://arxiv.org/abs/1712.03400).
 
