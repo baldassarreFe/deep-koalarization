@@ -5,7 +5,7 @@
 [![GitHub forks](https://img.shields.io/github/forks/baldassarreFe/deep-koalarization.svg)](https://github.com/baldassarreFe/deep-koalarization/network)
 [![Twitter](https://img.shields.io/twitter/url/https/github.com/baldassarreFe/deep-koalarization.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2FbaldassarreFe%2Fdeep-koalarization)
 
-[**Deep Koalarization: Image Colorization using CNNs and Inception-ResNet-v2** (2017)](paper.pdf).
+[**Deep Koalarization: Image Colorization using CNNs and Inception-ResNet-v2** (2017)](https://arxiv.org/abs/1712.03400).
 
 [Federico Baldassarre](https://github.com/baldassarreFe)\*, [Diego Gonzalez Morin](https://github.com/diegomorin8)\* and [Lucas Rodés Guirao](https://github.com/lucasrodes)\* (* Authors contributed equally)
 
@@ -15,9 +15,8 @@ The code is built using [Keras](http://keras.io) and [Tensorflow](https://www.te
 
 Consider starrring this project if you found it useful :star:!
 
-<!---### Citation
-
 If you find Deep Koalarization useful in your research, please consider citing:
+
 
 
 ```
@@ -27,13 +26,14 @@ If you find Deep Koalarization useful in your research, please consider citing:
             Lucas Rodes-Guirao},
   title = {Deep-Koalarization: Image Colorization using CNNs and Inception-ResNet-v2},
   year      = {2017},
-  url       = {http://arxiv.org/abs/1709.07223},
+  url       = {https://arxiv.org/abs/1712.03400},
   archivePrefix = {arXiv},
-  eprint    = {1709.07223},
-  timestamp = {Tue, 12 Dec 2017 09:42:48 +0200},
+  eprint    = {1712.03400},
+  timestamp = {Sat, 9 Dec 2017},
 }
 ```
--->
+[arXiv preprint](https://arxiv.org/abs/1712.03400)
+
 
 ## Abstract
 
