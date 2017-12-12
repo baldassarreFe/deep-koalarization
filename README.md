@@ -15,9 +15,9 @@ The code is built using [Keras](http://keras.io) and [Tensorflow](https://www.te
 
 Consider starrring this project if you found it useful :star:!
 
-If you find Deep Koalarization useful in your research, please consider citing:
+## Citation
 
-
+If you find Deep Koalarization useful in your research, please consider citing our paper as
 
 ```
 @article{deepkoal2017,
