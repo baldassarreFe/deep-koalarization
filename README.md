@@ -32,7 +32,7 @@ If you find Deep Koalarization useful in your research, please consider citing o
   timestamp     = {Sat, 9 Dec 2017},
 }
 ```
-[arXiv preprint](https://arxiv.org/abs/1712.03400)
+[arXiv e-print](https://arxiv.org/abs/1712.03400)
 
 
 ## Abstract
