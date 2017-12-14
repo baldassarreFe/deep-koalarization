@@ -81,6 +81,6 @@ Refer to [INSTRUCTIONS](INSTRUCTIONS.md) to setup and use the code in this repo.
 We are proud if our work gets noticed and helps/inspires other people on their path to knowledge. Here's a list of references we are aware of, some of the authors contacted us, some others we just happened to find online:
 
 - François Chollet [tweeted](https://twitter.com/fchollet/status/917846097430638592) about this project (thank you for Keras)
-- Emil Wallnér on [FloydHub Blog](https://blog.floydhub.com/colorizing-b&w-photos-with-neural-networks/)
+- Emil Wallnér on [FloydHub Blog](https://blog.floydhub.com/colorizing-b&w-photos-with-neural-networks/) and [freecodecamp](https://medium.freecodecamp.org/colorize-b-w-photos-with-a-100-line-neural-network-53d9b4449f8d)
 - Amir Kalron on [Logz.io Blog](https://logz.io/blog/open-source-machine-learning/)
 - sparkexpert on [CSDN](http://blog.csdn.net/sparkexpert/article/details/74452523)
