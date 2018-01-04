@@ -46,7 +46,7 @@ def training_pipeline(col, learning_rate, batch_size):
         'optimizer': optimizer,
         'cost': cost,
         'summary': summary
-    }, irr, read_batched_examples
+    }#, irr, read_batched_examples
 
 
 def evaluation_pipeline(col, number_of_images):
