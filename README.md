@@ -11,7 +11,7 @@
 
 [Federico Baldassarre](https://github.com/baldassarreFe)\*, [Diego Gonzalez Morin](https://github.com/diegomorin8)\* and [Lucas Rodés Guirao](https://github.com/lucasrodes)\* (* Authors contributed equally)
 
-This project was developed during as part of the [DD2424 Deep Learning in Data Science course](https://www.kth.se/student/kurser/kurs/DD2424?l=en) at [KTH Royal Institute of Technology](http://kth.se), spring 2017.
+This project was developed as part of the [DD2424 Deep Learning in Data Science course](https://www.kth.se/student/kurser/kurs/DD2424?l=en) at [KTH Royal Institute of Technology](http://kth.se), spring 2017.
 
 The code is built using [Keras](http://keras.io) and [Tensorflow](https://www.tensorflow.org/).
 
