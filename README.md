@@ -15,7 +15,7 @@ This project was developed as part of the [DD2424 Deep Learning in Data Science 
 
 The code is built using [Keras](http://keras.io) and [Tensorflow](https://www.tensorflow.org/).
 
-Consider starrring this project if you found it useful :star:!
+Consider starring this project if you found it useful :star:!
 
 ## Citation
 
