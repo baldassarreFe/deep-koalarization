@@ -73,6 +73,8 @@ def print_log(content, run_id):
     with open('output_{}.txt'.format(run_id), mode='a') as f:
         f.write('[{}] {}\n'.format(time.strftime("%c"), content))
 
+def print_term(content, run_id):
+    print('{}[{}] {}\n'.format(run_id, time.strftime("%c"), content))
 
 def metrics_system(run_id, sess):
     # Merge all the summaries and set up the writers
