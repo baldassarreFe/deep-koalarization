@@ -3,6 +3,8 @@ from os.path import join, isfile, isdir
 from typing import Tuple
 
 from PIL import Image
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 from resizeimage import resizeimage
 
 from dataset.shared import maybe_create_folder
