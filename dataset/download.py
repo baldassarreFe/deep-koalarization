@@ -33,7 +33,7 @@ class ImagenetDownloader:
                 links_source = join(dir_root, 'fall11_urls.txt')
 
         if not isfile(links_source):
-            raise Exception('Links source not valid: {}'.format(links_source))
+            pass#raise Exception('Links source not valid: {}'.format(links_source))
 
         self.links_source = links_source
 
@@ -54,8 +54,8 @@ class ImagenetDownloader:
                     with open(image_path, "wb") as f:
                         f.write(image)
             except Exception as e:
-                print('Error downloading {}: {}'.format(image_url, e),
-                      file=sys.stderr)
+                #print('Error downloading {}: {}'.format(image_url, e),
+                #      file=sys.stderr)
                 return None
         return image_path
 
@@ -71,7 +71,7 @@ class ImagenetDownloader:
                         # End of file
                         return
                 except UnicodeDecodeError as ue:
-                    print('Unicode error: {}'.format(ue), file=sys.stderr)
+                    pass#print('Unicode error: {}'.format(ue), file=sys.stderr)
 
     @staticmethod
     def _encode_image_name(image_url: str) -> str:
