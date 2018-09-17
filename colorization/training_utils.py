@@ -11,6 +11,10 @@ from dataset.shared import dir_tfrecord, dir_metrics, dir_checkpoints, dir_root,
     maybe_create_folder
 from dataset.tfrecords import LabImageRecordReader
 
+# import datetime for clocking training speed per epoch
+from datetime import datetime
+prev_time = "00:00:00.000000"
+
 matplotlib.use('Agg')
 matplotlib.rcParams['figure.figsize'] = (10.0, 4.0)
 import matplotlib.pyplot as plt
@@ -74,7 +78,12 @@ def print_log(content, run_id):
         f.write('[{}] {}\n'.format(time.strftime("%c"), content))
 
 def print_term(content, run_id):
-    print('{}[{}] {}\n'.format(run_id, time.strftime("%c"), content))
+    global prev_time
+    curr_time = datetime.now().strftime("%H:%M:%S.%f")
+    FMT = '%H:%M:%S.%f'
+    time_diff = datetime.strptime(curr_time, FMT) - datetime.strptime(prev_time, FMT) if "Global step" in content else ""
+    print('{}[{}][{}] {}\n'.format(run_id, time.strftime("%c"), time_diff, content))
+    prev_time = curr_time
 
 def metrics_system(run_id, sess):
     # Merge all the summaries and set up the writers
