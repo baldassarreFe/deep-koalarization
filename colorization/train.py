@@ -51,6 +51,7 @@ with sess.as_default():
     else:
         print_term('No checkpoint found in: {}'.format(checkpoint_paths), run_id)
 
+    # Actual training with epochs as iteration
     for epoch in range(epochs):
         print_term('Starting epoch: {} (total images {})'
                   .format(epoch, total_train_images, run_id), run_id)
