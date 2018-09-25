@@ -50,6 +50,8 @@ saver, checkpoint_paths, latest_checkpoint = checkpointing_system(run_id)
 print_term('Built network', run_id)
 
 with sess.as_default():
+    writer = tf.summary.FileWriter('./graphs', sess.graph)
+
     # Initialize
     print_term('Initializing variables...', run_id)
     sess.run(tf.global_variables_initializer())
