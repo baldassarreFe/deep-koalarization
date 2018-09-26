@@ -64,9 +64,56 @@ def resUnit(input_layer, i):
         return output
 
 
+def colorizationResUnit(input_layer, i):
+    with tf.variable_scope("res_unit"+str(i)):
+        part1 = BatchNormalization()
+        model.add(part1)
+        part2 = Activation('relu')
+        model.add(part2)
+        part3 = Conv2D(64, (3, 3), activation=None, padding='same')
+        model.add(part3)
+        part4 = BatchNormalization()
+        model.add(part4)
+        part5 = Activation('relu')
+        model.add(part5)
+        part6 = Conv2D(64, (3, 3), activation=None, padding='same')
+        model.add(part6)
+        output = input_layer + part6
+        return output
+
+
 def _build_encoder():
     model = Sequential(name='encoder')
-    
+    input_layer = InputLayer(input_shape=(None, None, 1))
+    model.add(input_layer)
+    layer1 = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)
+    layer2 = colorizationResUnit(layer1, 0)
+    model.add(layer2)
+    # keras-resnet/resnet.py
+    '''
+    input_shape = (1, None, None)
+    num_outputs = 256
+    block_fn = basic_block
+    repetitions = [2, 2, 2, 2]
+    _handle_dim_ordering()
+    if len(input_shape) != 3:
+        raise Exception("Input shape should be a tuple (nb_channels, nb_rows, nb_cols)")
+
+    # Permute dimension order if necessary
+    if K.image_dim_ordering() == 'tf':
+        input_shape = (input_shape[1], input_shape[2], input_shape[0])
+
+    # Load function from str if needed.
+    block_fn = _get_block(block_fn)
+
+    input = Input(shape=input_shape)
+    conv1 = _conv_bn_relu(filters=64, kernel_size=(3, 3), strides=(2, 2))(input)
+    pool1 = MaxPooling2D(pool_size=(3, 3), strides=(2, 2), padding="same")(conv1)
+
+    block = pool1
+    filters = 64
+    '''
+    # tf-basics/simple-resnet/simple-resnet.py
     '''
     #input_layer = InputLayer(input_shape=(None, None, 1))
     input_layer = tf.placeholder(shape=[None, None, None, 1], dtype=tf.float32, name='input')
