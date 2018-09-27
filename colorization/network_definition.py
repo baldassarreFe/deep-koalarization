@@ -14,7 +14,7 @@ from colorization.fusion_layer import FusionLayer
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
 
-from __future__ import division
+#from __future__ import division
   
 import six
 from keras.models import Model
@@ -65,7 +65,7 @@ def resUnit(input_layer, i):
         return output
 
 
-def colorizationResUnit(input_layer, i):
+def colorizationResUnit(input_layer, i, model):
     with tf.variable_scope("res_unit"+str(i)):
         part1 = BatchNormalization()
         model.add(part1)
@@ -88,7 +88,7 @@ def _build_encoder():
     input_layer = InputLayer(input_shape=(None, None, 1))
     model.add(input_layer)
     layer1 = keras.layers.convolutional.Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)
-    layer2 = colorizationResUnit(layer1, 0)
+    layer2 = colorizationResUnit(layer1, 0, model)
     model.add(layer2)
     # keras-resnet/resnet.py
     '''
