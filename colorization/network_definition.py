@@ -14,7 +14,7 @@ from colorization.fusion_layer import FusionLayer
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
 
-from __future__ import division
+#from __future__ import division
   
 import six
 from keras.models import Model
@@ -33,6 +33,7 @@ from keras.layers.merge import add
 from keras.layers.normalization import BatchNormalization
 from keras.regularizers import l2
 from keras import backend as K
+import keras
 
 
 class Colorization:
@@ -64,7 +65,7 @@ def resUnit(input_layer, i):
         return output
 
 
-def colorizationResUnit(input_layer, i):
+def colorizationResUnit(input_layer, i, model):
     with tf.variable_scope("res_unit"+str(i)):
         part1 = BatchNormalization()
         model.add(part1)
@@ -76,9 +77,9 @@ def colorizationResUnit(input_layer, i):
         model.add(part4)
         part5 = Activation('relu')
         model.add(part5)
-        part6 = Conv2D(64, (3, 3), activation=None, padding='same')
+        part6 = keras.layers.convolutional.Conv2D(64, (3, 3), activation=None, padding='same')
         model.add(part6)
-        output = input_layer + part6
+        output = add([input_layer, part6])
         return output
 
 
@@ -86,8 +87,8 @@ def _build_encoder():
     model = Sequential(name='encoder')
     input_layer = InputLayer(input_shape=(None, None, 1))
     model.add(input_layer)
-    layer1 = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)
-    layer2 = colorizationResUnit(layer1, 0)
+    layer1 = keras.layers.convolutional.Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)
+    layer2 = colorizationResUnit(layer1, 0, model)
     model.add(layer2)
     # keras-resnet/resnet.py
     '''
@@ -269,18 +270,6 @@ def _shortcut(input, residual):
 
 
 def _residual_block(block_function, filters, repetitions, is_first_layer=False):
-    """Builds a residual block with repeating bottleneck blocks.
-    """
-    def f(input):
-        for i in range(repetitions):
-            init_strides = (1, 1)
-            if i == 0 and not is_first_layer:
-                init_strides = (2, 2)
-            input = block_function(filters=filters, init_strides=init_strides,
-                                   is_first_block_of_first_layer=(is_first_layer and i == 0))(input)
-        return input
-
-    return fdef _residual_block(block_function, filters, repetitions, is_first_layer=False):
     """Builds a residual block with repeating bottleneck blocks.
     """
     def f(input):
