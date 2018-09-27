@@ -33,6 +33,7 @@ from keras.layers.merge import add
 from keras.layers.normalization import BatchNormalization
 from keras.regularizers import l2
 from keras import backend as K
+import keras
 
 
 class Colorization:
@@ -76,9 +77,9 @@ def colorizationResUnit(input_layer, i):
         model.add(part4)
         part5 = Activation('relu')
         model.add(part5)
-        part6 = Conv2D(64, (3, 3), activation=None, padding='same')
+        part6 = keras.layers.convolutional.Conv2D(64, (3, 3), activation=None, padding='same')
         model.add(part6)
-        output = input_layer + part6
+        output = add([input_layer, part6])
         return output
 
 
@@ -86,7 +87,7 @@ def _build_encoder():
     model = Sequential(name='encoder')
     input_layer = InputLayer(input_shape=(None, None, 1))
     model.add(input_layer)
-    layer1 = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)
+    layer1 = keras.layers.convolutional.Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)
     layer2 = colorizationResUnit(layer1, 0)
     model.add(layer2)
     # keras-resnet/resnet.py
@@ -243,44 +244,9 @@ def _shortcut(input, residual):
                           kernel_regularizer=l2(0.0001))(input)
 
     return add([shortcut, residual])
-def _shortcut(input, residual):
-    """Adds a shortcut between input and residual block and merges them with "sum"
-    """
-    # Expand channels of shortcut to match residual.
-    # Stride appropriately to match residual (width, height)
-    # Should be int if network architecture is correctly configured.
-    input_shape = K.int_shape(input)
-    residual_shape = K.int_shape(residual)
-    stride_width = int(round(input_shape[ROW_AXIS] / residual_shape[ROW_AXIS]))
-    stride_height = int(round(input_shape[COL_AXIS] / residual_shape[COL_AXIS]))
-    equal_channels = input_shape[CHANNEL_AXIS] == residual_shape[CHANNEL_AXIS]
-
-    shortcut = input
-    # 1 X 1 conv if shape is different. Else identity.
-    if stride_width > 1 or stride_height > 1 or not equal_channels:
-        shortcut = Conv2D(filters=residual_shape[CHANNEL_AXIS],
-                          kernel_size=(1, 1),
-                          strides=(stride_width, stride_height),
-                          padding="valid",
-                          kernel_initializer="he_normal",
-                          kernel_regularizer=l2(0.0001))(input)
-
-    return add([shortcut, residual])
 
 
 def _residual_block(block_function, filters, repetitions, is_first_layer=False):
-    """Builds a residual block with repeating bottleneck blocks.
-    """
-    def f(input):
-        for i in range(repetitions):
-            init_strides = (1, 1)
-            if i == 0 and not is_first_layer:
-                init_strides = (2, 2)
-            input = block_function(filters=filters, init_strides=init_strides,
-                                   is_first_block_of_first_layer=(is_first_layer and i == 0))(input)
-        return input
-
-    return fdef _residual_block(block_function, filters, repetitions, is_first_layer=False):
     """Builds a residual block with repeating bottleneck blocks.
     """
     def f(input):
