@@ -67,19 +67,19 @@ def resUnit(input_layer, i):
 
 def colorizationResUnit(input_layer, i, model):
     with tf.variable_scope("res_unit"+str(i)):
-        part1 = BatchNormalization()
-        model.add(part1)
-        part2 = Activation('relu')
-        model.add(part2)
-        part3 = Conv2D(64, (3, 3), activation=None, padding='same')
-        model.add(part3)
-        part4 = BatchNormalization()
-        model.add(part4)
-        part5 = Activation('relu')
-        model.add(part5)
-        part6 = keras.layers.convolutional.Conv2D(64, (3, 3), activation=None, padding='same')
-        model.add(part6)
-        output = add([input_layer, part6])
+        part1 = BatchNormalization()(input_layer)
+        # model.add(part1)
+        part2 = Activation('relu')(part1)
+        # model.add(part2)
+        part3 = Conv2D(64, (3, 3), activation=None, padding='same')(part2)
+        # model.add(part3)
+        part4 = BatchNormalization()(part3)
+        # model.add(part4)
+        part5 = Activation('relu')(part4)
+        # model.add(part5)
+        part6 = Conv2D(64, (3, 3), activation=None, padding='same')(part5)
+        # model.add(part6)
+        # output = add([input_layer, part6])
         return output
 
 
@@ -87,8 +87,10 @@ def _build_encoder():
     model = Sequential(name='encoder')
     input_layer = InputLayer(input_shape=(None, None, 1))
     model.add(input_layer)
-    layer1 = keras.layers.convolutional.Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)
-    layer2 = colorizationResUnit(layer1, 0, model)
+    layer1 = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)
+    model.add(layer1)
+    residual = colorizationResUnit(layer1, 0, model)
+    layer2 = add([layer1, residual])
     model.add(layer2)
     # keras-resnet/resnet.py
     '''
