@@ -22,7 +22,9 @@ from keras.layers import (
     Input,
     Activation,
     Dense,
-    Flatten
+    Flatten,
+    LeakyReLU,
+    add
 )
 from keras.layers.convolutional import (
     Conv2D,
@@ -81,6 +83,44 @@ def colorizationResUnit(input_layer, i, model):
         # model.add(part6)
         # output = add([input_layer, part6])
         return output
+
+
+def add_common_layers(y):
+    y = BatchNormalization()(y)
+    y = LeakyReLU()(y)
+    return y
+
+
+def residual_block(y, nb_channels_in, nb_channels_out, _strides=(1, 1), _project_shortcut=False):
+    """
+    Our network consists of a stack of residual blocks. These blocks have the same topology,
+    and are subject to two simple rules:
+
+    - If producing spatial maps of the same size, the blocks share the same hyper-parameters (width and filter sizes).
+    - Each time the spatial map is down-sampled by a factor of 2, the width of the blocks is multiplied by a factor of 2.
+    """
+    shortcut = y
+
+    # we modify the residual building block as a bottleneck design to make the network more economical
+    y = Conv2D(nb_channels_in, kernel_size=(1, 1), strides=(1, 1), padding='same')(y)
+    y = add_common_layers(y)
+    # ResNeXt (identical to ResNet when `cardinality` == 1)
+    y = Conv2D(nb_channels, kernel_size=(3, 3), strides=_strides, padding='same')(y)
+    y = add_common_layers(y)
+    y = Conv2D(nb_channels_out, kernel_size=(1, 1), strides=(1, 1), padding='same')(y)
+    # batch normalization is employed after aggregating the transformations and before adding to the shortcut
+    y = BatchNormalization()(y)
+    # identity shortcuts used directly when the input and output are of the same dimensions
+    if _project_shortcut or _strides != (1, 1):
+        # when the dimensions increase projection shortcut is used to match dimensions (done by 1×1 convolutions)
+        # when the shortcuts go across feature maps of two sizes, they are performed with a stride of 2
+        shortcut = Conv2D(nb_channels_out, kernel_size=(1, 1), strides=_strides, padding='same')(shortcut)
+        shortcut = BatchNormalization()(shortcut)
+    y = add([shortcut, y])
+    # relu is performed right after each batch normalization,
+    # expect for the output of the block where relu is performed after the adding to the shortcut
+    y = LeakyReLU()(y)
+    return y
 
 
 def _build_encoder():
@@ -142,6 +182,9 @@ def _build_encoder():
     # ????????????????????????????????????????????????
     image_tensor = Input(shape=(None, None, 1))
     x = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)(image_tensor)
+    for i in range(3):
+        project_shortcut = True if i == 0 else False
+        x = residual_block(x, 64, 128, _project_shortcut=project_shortcut)
     x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
     x = Conv2D(128, (3, 3), activation='relu', padding='same', strides=2)(x)
     x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
