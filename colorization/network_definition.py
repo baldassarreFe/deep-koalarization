@@ -67,7 +67,7 @@ def resUnit(input_layer, i):
 
 def colorizationResUnit(input_layer, i, model):
     with tf.variable_scope("res_unit"+str(i)):
-        part1 = BatchNormalization()(input_layer)
+        part1 = BatchNormalization()(Input(shape=(None,None,1)))
         # model.add(part1)
         part2 = Activation('relu')(part1)
         # model.add(part2)
@@ -84,16 +84,17 @@ def colorizationResUnit(input_layer, i, model):
 
 
 def _build_encoder():
+    '''
     model = Sequential(name='encoder')
     input_layer = InputLayer(input_shape=(None, None, 1))
     model.add(input_layer)
     layer1 = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)
     model.add(layer1)
-    residual = colorizationResUnit(layer1, 0, model)
-    layer2 = add([layer1, residual])
-    model.add(layer2)
+    #residual = colorizationResUnit(layer1, 0, model)
+    #layer2 = add([layer1, residual])
+    #model.add(layer2)
     # keras-resnet/resnet.py
-    '''
+    
     input_shape = (1, None, None)
     num_outputs = 256
     block_fn = basic_block
@@ -129,7 +130,7 @@ def _build_encoder():
         model.add(layer2)
         layer3 = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)
         model.add(layer3)
-    '''
+    
     model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
     model.add(Conv2D(128, (3, 3), activation='relu', padding='same', strides=2))
     model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
@@ -137,6 +138,19 @@ def _build_encoder():
     model.add(Conv2D(512, (3, 3), activation='relu', padding='same'))
     model.add(Conv2D(512, (3, 3), activation='relu', padding='same'))
     model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
+    '''
+    # ????????????????????????????????????????????????
+    image_tensor = Input(shape=(None, None, 1))
+    x = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)(image_tensor)
+    x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(128, (3, 3), activation='relu', padding='same', strides=2)(x)
+    x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(256, (3, 3), activation='relu', padding='same', strides=2)(x)
+    x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
+
+    model = Model(inputs=[image_tensor], outputs=[x])
     return model
 
 
