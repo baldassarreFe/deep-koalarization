@@ -105,7 +105,7 @@ def residual_block(y, nb_channels_in, nb_channels_out, _strides=(1, 1), _project
     y = Conv2D(nb_channels_in, kernel_size=(1, 1), strides=(1, 1), padding='same')(y)
     y = add_common_layers(y)
     # ResNeXt (identical to ResNet when `cardinality` == 1)
-    y = Conv2D(nb_channels, kernel_size=(3, 3), strides=_strides, padding='same')(y)
+    y = Conv2D(nb_channels_in, kernel_size=(3, 3), strides=_strides, padding='same')(y)
     y = add_common_layers(y)
     y = Conv2D(nb_channels_out, kernel_size=(1, 1), strides=(1, 1), padding='same')(y)
     # batch normalization is employed after aggregating the transformations and before adding to the shortcut
