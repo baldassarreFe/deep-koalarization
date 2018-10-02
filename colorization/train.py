@@ -25,7 +25,7 @@ time.sleep(10)
 '''
 
 # PARAMETERS
-run_id = 'run7'
+run_id = 'run1'
 epochs = 150
 val_number_of_images = 10
 total_train_images = 28389 #default 130 * 500

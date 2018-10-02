@@ -24,14 +24,18 @@ from keras.layers import (
     Dense,
     Flatten,
     LeakyReLU,
-    add
+    add,
+    merge
 )
 from keras.layers.convolutional import (
     Conv2D,
     MaxPooling2D,
     AveragePooling2D
 )
-from keras.layers.merge import add
+from keras.layers.merge import (
+    add,
+    concatenate
+)
 from keras.layers.normalization import BatchNormalization
 from keras.regularizers import l2
 from keras import backend as K
@@ -81,7 +85,8 @@ def colorizationResUnit(input_layer, i, model):
         # model.add(part5)
         part6 = Conv2D(64, (3, 3), activation=None, padding='same')(part5)
         # model.add(part6)
-        # output = add([input_layer, part6])
+        output = add([input_layer, part6])
+        #output = input_layer + part6
         return output
 
 
@@ -116,11 +121,15 @@ def residual_block(y, nb_channels_in, nb_channels_out, _strides=(1, 1), _project
         # when the shortcuts go across feature maps of two sizes, they are performed with a stride of 2
         shortcut = Conv2D(nb_channels_out, kernel_size=(1, 1), strides=_strides, padding='same')(shortcut)
         shortcut = BatchNormalization()(shortcut)
-    y = add([shortcut, y])
+    #y = add([shortcut, y])
+    #y = shortcut + y
+    y = concatenate([shortcut, y])
     # relu is performed right after each batch normalization,
     # expect for the output of the block where relu is performed after the adding to the shortcut
     y = LeakyReLU()(y)
-    return y
+    #y = Conv2D(nb_channels_out, kernel_size=(3, 3), strides=(1, 1), padding='same')(y)
+    model = Model(inputs=shortcut, outputs=y)
+    return model
 
 
 def _build_encoder():
@@ -180,21 +189,45 @@ def _build_encoder():
     model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
     '''
     # ????????????????????????????????????????????????
+    model = Sequential()
     image_tensor = Input(shape=(None, None, 1))
-    x = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)(image_tensor)
+    input_layer = InputLayer(input_tensor=image_tensor)
+    model.add(input_layer)
+    #image_tensor = Input(shape=(None, None, 1))
+    x = image_tensor#Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)(image_tensor)
+    #model.add(x)
+    '''
     for i in range(3):
         project_shortcut = True if i == 0 else False
-        x = residual_block(x, 64, 128, _project_shortcut=project_shortcut)
-    x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
-    x = Conv2D(128, (3, 3), activation='relu', padding='same', strides=2)(x)
-    x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
-    x = Conv2D(256, (3, 3), activation='relu', padding='same', strides=2)(x)
-    x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
-    x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
-    x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
+    '''
+    project_shortcut = False
+    shortcut = x
+    #x = BatchNormalization()(x)
+    #x = Activation('relu')(x)
+    x = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2); model.add(x)#(x)
+    y = Conv2D(64, (1, 1), activation=None, padding='same')(image_tensor)
+    #x = BatchNormalization()(y)
+    x = Activation('relu')(y)
+    #x = concatenate([image_tensor, y])
+    x = add([image_tensor, y])
+    #x = add([shortcut, x])
+    #x = Activation('relu')(x)
+    #x = concatenate([shortcut, x])
+    #x = shortcut + x
+    #x = residual_block(x, 64, 64, _project_shortcut=project_shortcut)
+    #x = colorizationResUnit(image_tensor, 0, None)
+    #model.add(x)
+    #model = Model(inputs=[image_tensor], outputs=[x])
+    x = Conv2D(128, (3, 3), activation='relu', padding='same'); model.add(x)
+    x = Conv2D(128, (3, 3), activation='relu', padding='same', strides=2); model.add(x)
+    x = Conv2D(256, (3, 3), activation='relu', padding='same'); model.add(x)
+    x = Conv2D(256, (3, 3), activation='relu', padding='same', strides=2); model.add(x)
+    x = Conv2D(512, (3, 3), activation='relu', padding='same'); model.add(x)
+    x = Conv2D(512, (3, 3), activation='relu', padding='same'); model.add(x)
+    x = Conv2D(256, (3, 3), activation='relu', padding='same'); model.add(x)
 
-    model = Model(inputs=[image_tensor], outputs=[x])
-    return model
+    #model = Model(inputs=[image_tensor], outputs=[x])
+    return model#Sequential(layers=model.layers)
 
 
 def _build_decoder(encoding_depth):
