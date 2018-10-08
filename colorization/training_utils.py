@@ -1,10 +1,10 @@
+import tensorflow as tf
 import pickle
 import time
 from os.path import join
 
 import matplotlib
 import numpy as np
-import tensorflow as tf
 from skimage import color
 
 from dataset.shared import dir_tfrecord, dir_metrics, dir_checkpoints, dir_root, \
@@ -18,6 +18,7 @@ prev_time = "00:00:00.000000"
 matplotlib.use('Agg')
 matplotlib.rcParams['figure.figsize'] = (10.0, 4.0)
 import matplotlib.pyplot as plt
+
 
 labels_to_categories = pickle.load(
     open(join(dir_root, 'imagenet1000_clsid_to_human.pkl'), 'rb'))

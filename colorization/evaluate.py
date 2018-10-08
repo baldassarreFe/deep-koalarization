@@ -5,6 +5,7 @@ from colorization import Colorization
 from colorization.training_utils import evaluation_pipeline, \
     checkpointing_system, plot_evaluation, metrics_system
 
+
 # PARAMETERS
 run_id = 'run{}'.format(1)
 val_number_of_images = 100

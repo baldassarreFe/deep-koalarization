@@ -8,28 +8,13 @@ from colorization.training_utils import evaluation_pipeline, \
 
 import time
 
-'''
-# Creates a graph.
-with tf.device('/cpu:0'):
-    a = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[2, 3], name='a')
-    b = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[3, 2], name='b')
-c = tf.matmul(a, b)
-# Creates a session with log_device_placement set to True.
-sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
-# Runs the op.
-print(sess.run(c))
-sess.close()
-
-# Wait for 10 seconds
-time.sleep(10)
-'''
 
 # PARAMETERS
 run_id = 'run1'
-epochs = 150
+epochs = 150 #prev 50 < 150
 val_number_of_images = 10
 total_train_images = 28389 #default 130 * 500
-batch_size = 100 #default 100
+batch_size = 35 #prev 35 < 100 #default 100
 learning_rate = 0.001
 batches = total_train_images // batch_size
 
