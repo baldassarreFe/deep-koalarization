@@ -11,68 +11,68 @@ import time
 
 # PARAMETERS
 run_id = 'run1'
-epochs = 150 #prev 50 < 150
+epochs = 20 #prev 50 < 150
 val_number_of_images = 10
-total_train_images = 28389 #default 130 * 500
-batch_size = 35 #prev 35 < 100 #default 100
+total_train_images = 28389#45 * 500#28389 #default 130 * 500
+batch_size = 100 #prev 35 < 100 #default 100
 learning_rate = 0.001
 batches = total_train_images // batch_size
 
 # START
-print_term('Starting session...', run_id)
+print_term('Starting session...', run_id, None)
 sess = tf.Session()
 K.set_session(sess)
-print_term('Started session...', run_id)
+print_term('Started session...', run_id, None)
 
 # Build the network and the various operations
-print_term('Building network...', run_id)
+print_term('Building network...', run_id, None)
 col = Colorization(256)
 
 opt_operations = training_pipeline(col, learning_rate, batch_size)
 evaluations_ops = evaluation_pipeline(col, val_number_of_images)
 summary_writer = metrics_system(run_id, sess)
 saver, checkpoint_paths, latest_checkpoint = checkpointing_system(run_id)
-print_term('Built network', run_id)
+print_term('Built network', run_id, None)
 
 with sess.as_default():
     writer = tf.summary.FileWriter('./graphs', sess.graph)
 
     # Initialize
-    print_term('Initializing variables...', run_id)
-    sess.run(tf.global_variables_initializer())
+    print_term('Initializing variables...', run_id, None)
     sess.run(tf.local_variables_initializer())
-    print_term('Initialized variables', run_id)
+    sess.run(tf.global_variables_initializer())
+    print_term('Initialized variables', run_id, None)
 
     # Coordinate the loading of image files.
-    print_term('Coordinating loaded image files...', run_id)
+    print_term('Coordinating loaded image files...', run_id, None)
     coord = tf.train.Coordinator()
     threads = tf.train.start_queue_runners(coord=coord)
-    print_term('Coordinate loaded image files', run_id)
+    print_term('Coordinate loaded image files', run_id, None)
 
     # Restore
     if latest_checkpoint is not None:
-        print_term('Restoring from: {}'.format(latest_checkpoint), run_id)
+        print_term('Restoring from: {}'.format(latest_checkpoint), run_id, None)
         saver.restore(sess, latest_checkpoint)
-        print_term(' done!', run_id)
+        print_term(' done!', run_id, None)
     else:
-        print_term('No checkpoint found in: {}'.format(checkpoint_paths), run_id)
+        print_term('No checkpoint found in: {}'.format(checkpoint_paths), run_id, None)
 
     # Actual training with epochs as iteration
     for epoch in range(epochs):
         print_term('Starting epoch: {} (total images {})'
-                  .format(epoch, total_train_images, run_id), run_id)
+                  .format(epoch, total_train_images), run_id, None)
         # Training step
         for batch in range(batches):
-            print_term('Batch: {}/{}'.format(batch, batches), run_id)
+            print_term('Batch: {}/{}'.format(batch, batches), run_id, None)
             res = sess.run(opt_operations)
             global_step = res['global_step']
             print_term('Cost: {} Global step: {}'
-                      .format(res['cost'], global_step), run_id)
+                      .format(res['cost'], global_step), run_id, res['cost'])
             summary_writer.add_summary(res['summary'], global_step)
 
         # Save the variables to disk
         save_path = saver.save(sess, checkpoint_paths, global_step)
-        print_term("Model saved in: %s" % save_path, run_id)
+        print_term("Model saved in: %s" % save_path, run_id, None)
 
         # Evaluation step on validation
         res = sess.run(evaluations_ops)

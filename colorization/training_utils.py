@@ -5,6 +5,7 @@ from os.path import join
 
 import matplotlib
 import numpy as np
+import cv2
 from skimage import color
 
 from dataset.shared import dir_tfrecord, dir_metrics, dir_checkpoints, dir_root, \
@@ -78,12 +79,18 @@ def print_log(content, run_id):
     with open('output_{}.txt'.format(run_id), mode='a') as f:
         f.write('[{}] {}\n'.format(time.strftime("%c"), content))
 
-def print_term(content, run_id):
+def print_term(content, run_id, cost):
     global prev_time
     curr_time = datetime.now().strftime("%H:%M:%S.%f")
     FMT = '%H:%M:%S.%f'
     time_diff = datetime.strptime(curr_time, FMT) - datetime.strptime(prev_time, FMT) if "Global step" in content else ""
     print('{}[{}][{}] {}\n'.format(run_id, time.strftime("%c"), time_diff, content))
+    # write on the output_train_time_per_batch_*.txt file the train_time_time_per_batch or time_diff 
+    with open('output_train_time_per_batch_{}.txt'.format(run_id), mode='a') as f:
+        f.write('{}\n'.format(time_diff))
+    if cost:
+        with open('output_cost_{}.txt'.format(run_id), mode='a') as f:
+            f.write('{}\n'.format(cost))
     prev_time = curr_time
 
 def metrics_system(run_id, sess):
@@ -100,19 +107,50 @@ def checkpointing_system(run_id):
     return saver, checkpoint_paths, latest_checkpoint
 
 
+def image_colorfulness(image):
+	# split the image into its respective RGB components
+	(B, G, R) = cv2.split(image.astype("float"))
+
+	# compute rg = R - G
+	rg = np.absolute(R - G)
+
+	# compute yb = 0.5 * (R + G) - B
+	yb = np.absolute(0.5 * (R + G) - B)
+
+	# compute the mean and standard deviation of both `rg` and `yb`
+	(rgMean, rgStd) = (np.mean(rg), np.std(rg))
+	(ybMean, ybStd) = (np.mean(yb), np.std(yb))
+
+	# combine the mean and standard deviations
+	stdRoot = np.sqrt((rgStd ** 2) + (ybStd ** 2))
+	meanRoot = np.sqrt((rgMean ** 2) + (ybMean ** 2))
+
+	# derive the "colorfulness" metric and return it
+	return stdRoot + (0.3 * meanRoot)
+
+
 def plot_evaluation(res, run_id, epoch):
     maybe_create_folder(join(dir_root, 'images', run_id))
     for k in range(len(res['imgs_l'])):
         img_gray = l_to_rgb(res['imgs_l'][k][:, :, 0])
         img_output = lab_to_rgb(res['imgs_l'][k][:, :, 0],
                                 res['imgs_ab'][k])
+        C_output = image_colorfulness(img_output)
+        # display the colorfulness score on the image
+        cv2.putText(img_output, "{:.4f}".format(C_output), (40, 40), cv2.FONT_HERSHEY_SIMPLEX, 1.4, (0, 255, 0), 3)
         img_true = lab_to_rgb(res['imgs_l'][k][:, :, 0],
                               res['imgs_true_ab'][k])
+        C_true = image_colorfulness(img_true)
+        cv2.putText(img_true, "{:.4f}".format(C_true), (40, 40), cv2.FONT_HERSHEY_SIMPLEX, 1.4, (0, 255, 0), 3)
+        # display the cost function(MSE) output of the image
+        cost = res['cost']
+        '''
         top_5 = np.argsort(res['imgs_emb'][k])[-5:]
         try:
             top_5 = ' / '.join(labels_to_categories[i] for i in top_5)
         except:
             ptop_5 = str(top_5)
+        '''
 
         plt.subplot(1, 3, 1)
         plt.imshow(img_gray)
@@ -126,12 +164,17 @@ def plot_evaluation(res, run_id, epoch):
         plt.imshow(img_true)
         plt.title('Target (original)')
         plt.axis('off')
-        plt.suptitle(top_5, fontsize=7)
+        plt.suptitle('Cost(MSE): ' + str(cost), fontsize=7)
+        # plt.suptitle(top_5, fontsize=7)
 
         plt.savefig(join(
             dir_root, 'images', run_id, '{}_{}.png'.format(epoch, k)))
         plt.clf()
         plt.close()
+
+        # write on the output_colorfulness_*.txt file the colorfulness of the output image and the groundtruth image
+        with open('output_colorfulness_{}.txt'.format(run_id), mode='a') as f:
+            f.write('{},{}\n'.format(C_output, C_true))
 
 
 def l_to_rgb(img_l):

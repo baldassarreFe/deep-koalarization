@@ -41,7 +41,7 @@ from keras import backend as K
 import keras
 
 from keras.engine.topology import Layer
-import tensorflow.contrib.slim as slim
+#import tensorflow.contrib.slim as slim
 
 
 # Define the residual block as a new Layer
@@ -91,6 +91,7 @@ class Colorization:
         return self.decoder(fusion)
 
 
+'''
 def resUnit(input_layer, i):
     with tf.variable_scope("res_unit"+str(i)):
         part1 = slim.batch_norm(input_layer, activation_fn=None)
@@ -101,8 +102,10 @@ def resUnit(input_layer, i):
         part6 = slim.conv2d(part5, 64, [3, 3], activation_fn=None)
         output = input_layer + part6
         return output
+'''
 
 
+'''
 def colorizationResUnit(input_layer, i, model):
     with tf.variable_scope("res_unit"+str(i)):
         part1 = BatchNormalization()(Input(shape=(None,None,1)))
@@ -120,6 +123,7 @@ def colorizationResUnit(input_layer, i, model):
         output = add([input_layer, part6])
         #output = input_layer + part6
         return output
+'''
 
 
 def add_common_layers(y):
@@ -289,19 +293,17 @@ def _build_encoder():
     # Functional implementation
     image_tensor = Input(shape=(None, None, 1))#(224, 224, 1))
     x = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)(image_tensor)
-    x = residual_block(x, 64, 64)
+    # x = residual_block(x, 64, 64)
     x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
-    x = residual_block(x, 128, 128)
+    # x = residual_block(x, 128, 128)
     x = Conv2D(128, (3, 3), activation='relu', padding='same', strides=2)(x)
     x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
-    x = residual_block(x, 256, 256)
+    # x = residual_block(x, 256, 256)
     x = Conv2D(256, (3, 3), activation='relu', padding='same', strides=2)(x)
     x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
     x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
-    # x = residual_block(x, 512, 512)
     x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
     model = Model(inputs=[image_tensor], outputs=[x])
-    return model#Sequential(layers=model.layers)
     '''
     # Sequential Model implementation
     model = Sequential(name='encoder')
@@ -326,6 +328,7 @@ def _build_encoder():
     model.add(x)
     return model
     '''
+    return model#Sequential(layers=model.layers)
 
 
 def _build_decoder(encoding_depth):
@@ -342,6 +345,7 @@ def _build_decoder(encoding_depth):
     return model
 
 
+'''
 def resnet_v1_block(scope, base_depth, num_units, stride):
   """Helper function for creating a resnet_v1 bottleneck block.
   Args:
@@ -522,4 +526,4 @@ def _get_block(identifier):
             raise ValueError('Invalid {}'.format(identifier))
         return res
     return identifier
-
+'''
