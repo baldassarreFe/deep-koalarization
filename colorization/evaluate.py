@@ -1,9 +1,9 @@
-import tensorflow as tf
 from keras import backend as K
 
 from colorization import Colorization
 from colorization.training_utils import evaluation_pipeline, \
     checkpointing_system, plot_evaluation, metrics_system
+import tensorflow as tf
 
 
 # PARAMETERS

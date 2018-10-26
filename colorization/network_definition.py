@@ -5,7 +5,6 @@ In the neck of the conv-deconv network use the features from a feature extractor
 (e.g. Inception) and fuse them with the conv output.
 """
 
-import tensorflow as tf
 from keras.engine import InputLayer
 from keras.layers import Conv2D, UpSampling2D
 from keras.models import Sequential
@@ -42,6 +41,7 @@ import keras
 
 from keras.engine.topology import Layer
 #import tensorflow.contrib.slim as slim
+import tensorflow as tf
 
 
 # Define the residual block as a new Layer
@@ -293,12 +293,12 @@ def _build_encoder():
     # Functional implementation
     image_tensor = Input(shape=(None, None, 1))#(224, 224, 1))
     x = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)(image_tensor)
-    # x = residual_block(x, 64, 64)
+    x = residual_block(x, 64, 64)
     x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
-    # x = residual_block(x, 128, 128)
+    x = residual_block(x, 128, 128)
     x = Conv2D(128, (3, 3), activation='relu', padding='same', strides=2)(x)
     x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
-    # x = residual_block(x, 256, 256)
+    x = residual_block(x, 256, 256)
     x = Conv2D(256, (3, 3), activation='relu', padding='same', strides=2)(x)
     x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
     x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)

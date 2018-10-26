@@ -1,4 +1,3 @@
-import tensorflow as tf
 import pickle
 import time
 from os.path import join
@@ -19,6 +18,7 @@ prev_time = "00:00:00.000000"
 matplotlib.use('Agg')
 matplotlib.rcParams['figure.figsize'] = (10.0, 4.0)
 import matplotlib.pyplot as plt
+import tensorflow as tf
 
 
 labels_to_categories = pickle.load(
@@ -79,7 +79,7 @@ def print_log(content, run_id):
     with open('output_{}.txt'.format(run_id), mode='a') as f:
         f.write('[{}] {}\n'.format(time.strftime("%c"), content))
 
-def print_term(content, run_id, cost):
+def print_term(content, run_id, cost=None):
     global prev_time
     curr_time = datetime.now().strftime("%H:%M:%S.%f")
     FMT = '%H:%M:%S.%f'

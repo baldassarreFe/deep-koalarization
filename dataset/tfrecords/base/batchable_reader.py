@@ -21,6 +21,8 @@ class BatchableRecordReader(RecordReader):
         min_after_dequeue = 10 * batch_size
         capacity = min_after_dequeue + (num_threads + 1) * batch_size
 
+        print('min_after_dequeue = {}, capacity = {}'.format(min_after_dequeue, capacity))
+
         if shuffle:
             return tf.train.shuffle_batch(
                 self.read_operation,
