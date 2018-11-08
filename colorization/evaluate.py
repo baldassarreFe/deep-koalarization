@@ -40,7 +40,7 @@ with sess.as_default():
     # Evaluation (epoch=-1 to say that this is an evaluation after training)
     res = sess.run(evaluations_ops)
     print('Cost: {}'.format(res['cost']))
-    plot_evaluation(res, run_id, epoch=-1)
+    plot_evaluation(res, run_id, epoch=-1, is_eval=True)
 
     # Finish off the filename queue coordinator.
     coord.request_stop()

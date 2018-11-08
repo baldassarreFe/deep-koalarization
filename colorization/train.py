@@ -13,8 +13,8 @@ import tensorflow as tf
 run_id = 'run1'
 epochs = 100 #prev 50 < 150 #default 100
 val_number_of_images = 10
-total_train_images = 20000#45 * 500#28389 #default 130 * 500
-batch_size = 35 #prev 35 < 100 #default 100
+total_train_images = 78000#45 * 500#28389 #default 130 * 500
+batch_size = 100 #prev 35 < 100 #default 100
 learning_rate = 0.001
 batches = total_train_images // batch_size
 
