@@ -5,16 +5,15 @@ from colorization.training_utils import evaluation_pipeline, \
     checkpointing_system, \
     plot_evaluation, training_pipeline, metrics_system, print_log, print_term
 
-import time
 import tensorflow as tf
 
 
 # PARAMETERS
 run_id = 'run1'
-epochs = 100 #prev 50 < 150 #default 100
+epochs = 100  #default 100
 val_number_of_images = 10
-total_train_images = 78000#45 * 500#28389 #default 130 * 500
-batch_size = 100 #prev 35 < 100 #default 100
+total_train_images = 78000  #default 130 * 500
+batch_size = 100  #default 100
 learning_rate = 0.001
 batches = total_train_images // batch_size
 
