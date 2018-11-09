@@ -187,7 +187,7 @@ def plot_evaluation(res, run_id, epoch, is_eval=False):
         plt.axis('off')
         plt.subplot(1, 3, 3)
         plt.imshow(img_true)
-        plt.title('Target (original)\n' + ("{:.4f}".format(C_true))
+        plt.title('Target (original)\n' + ("{:.4f}".format(C_true)))
         plt.axis('off')
         plt.suptitle('Cost(MSE): ' + str(cost), fontsize=7)
 
