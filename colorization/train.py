@@ -12,8 +12,8 @@ import tensorflow as tf
 run_id = 'run1'
 epochs = 100  #default 100
 val_number_of_images = 10
-total_train_images = 78000  #default 130 * 500
-batch_size = 100  #default 100
+total_train_images = 75000  #default 130 * 500
+batch_size = 32  #default 100
 learning_rate = 0.001
 batches = total_train_images // batch_size
 
@@ -34,7 +34,8 @@ saver, checkpoint_paths, latest_checkpoint = checkpointing_system(run_id)
 print_term('Built network', run_id)
 
 with sess.as_default():
-    writer = tf.summary.FileWriter('./graphs', sess.graph)
+    # tf.summary.merge_all()
+    # writer = tf.summary.FileWriter('./graphs', sess.graph)
 
     # Initialize
     print_term('Initializing variables...', run_id)

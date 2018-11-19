@@ -90,16 +90,18 @@ def print_term(content, run_id, cost=None):
     print_log(content, run_id)
     # write on the output_train_time_per_batch_*.txt file the train_time_time_per_batch or time_diff 
     if time_diff:
+        # tf.summary.scalar('time_diff', time_diff)
         with open('output_train_time_per_batch_{}.txt'.format(run_id), mode='a') as f:
             f.write('{}\n'.format(time_diff))
-    if cost:
-        with open('output_cost_{}.txt'.format(run_id), mode='a') as f:
-            f.write('{}\n'.format(cost))
+    # if cost:
+    #     with open('output_cost_{}.txt'.format(run_id), mode='a') as f:
+    #         f.write('{}\n'.format(cost))
     prev_time = curr_time
 
 
 def metrics_system(run_id, sess):
     # Merge all the summaries and set up the writers
+    merged = tf.summary.merge_all()
     train_writer = tf.summary.FileWriter(join(dir_metrics, run_id), sess.graph)
     return train_writer
 
