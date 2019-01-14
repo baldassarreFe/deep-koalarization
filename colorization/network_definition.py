@@ -98,7 +98,7 @@ def _build_encoder():
     # Functional implementation
     image_tensor = Input(shape=(None, None, 1))
     x = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)(image_tensor)
-    x = wideResUnit(x, 64, 64, 'res1')
+    #x = wideResUnit(x, 64, 64, 'res1')
     # x = residual_block(x, 64, 64, 'res1')
     x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
     # x = wideResUnit(x, 128, 128, 'res2')

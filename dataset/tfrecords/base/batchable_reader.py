@@ -1,8 +1,8 @@
 import multiprocessing
 
-import tensorflow as tf
-
 from .reader import RecordReader
+
+import tensorflow as tf
 
 
 class BatchableRecordReader(RecordReader):

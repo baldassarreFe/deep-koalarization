@@ -1,9 +1,9 @@
 from abc import abstractmethod, ABC
 from os.path import join, expanduser
 
-import tensorflow as tf
-
 from .writer import compression
+
+import tensorflow as tf
 
 
 class RecordReader(ABC):

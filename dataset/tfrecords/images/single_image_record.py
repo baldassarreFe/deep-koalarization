@@ -1,6 +1,6 @@
-import tensorflow as tf
-
 from ..base import BatchableRecordReader, RecordWriter
+
+import tensorflow as tf
 
 
 class SingleImageRecordWriter(RecordWriter):

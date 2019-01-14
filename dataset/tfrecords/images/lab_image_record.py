@@ -1,8 +1,9 @@
 import numpy as np
-import tensorflow as tf
 from skimage import color, transform
 
 from ..base import BatchableRecordReader, RecordWriter
+
+import tensorflow as tf
 
 width = 224
 height = 224

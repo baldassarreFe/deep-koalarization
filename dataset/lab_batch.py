@@ -1,7 +1,6 @@
 import time
 from os.path import isdir, join, basename
 
-import tensorflow as tf
 import tensorflow.contrib.slim as slim
 
 from dataset.embedding import prepare_image_for_inception, \
@@ -11,6 +10,8 @@ from dataset.shared import progressive_filename_generator
 from dataset.tfrecords import batch_operations
 from dataset.tfrecords.images.lab_image_record import LabImageRecordWriter
 from dataset.tfrecords.images_queue import queue_single_images_from_folder
+
+import tensorflow as tf
 
 
 class LabImagenetBatcher:

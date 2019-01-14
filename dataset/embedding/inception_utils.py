@@ -5,9 +5,9 @@ import urllib
 import urllib.request
 from os.path import join, isfile, expanduser
 
-import tensorflow as tf
-
 from dataset.shared import dir_root
+
+import tensorflow as tf
 
 checkpoint_url = 'http://download.tensorflow.org/models/inception_resnet_v2_2016_08_30.tar.gz'
 
