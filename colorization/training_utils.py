@@ -27,7 +27,7 @@ labels_to_categories = pickle.load(
 
 
 def loss_with_metrics(img_ab_out, img_ab_true, name=''):
-    # Loss is mean square erros
+    # Loss is mean square error
     cost = tf.reduce_mean(
         tf.squared_difference(img_ab_out, img_ab_true), name="mse")
     # Metrics for tensorboard

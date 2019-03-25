@@ -1,3 +1,6 @@
+import os
+os.environ['KERAS_BACKEND'] = 'tensorflow'
+
 from keras import backend as K
 from keras.engine import Layer
 

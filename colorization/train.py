@@ -1,3 +1,6 @@
+import os
+os.environ['KERAS_BACKEND'] = 'tensorflow'
+
 from keras import backend as K
 
 from colorization import Colorization
@@ -10,9 +13,9 @@ import tensorflow as tf
 
 # PARAMETERS
 run_id = 'run1'
-epochs = 100  #default 100
+epochs = 50  #default 100
 val_number_of_images = 10
-total_train_images = 500  #default 130 * 500
+total_train_images = 65000  #default 130 * 500
 batch_size = 100  #default 100
 learning_rate = 0.001
 batches = total_train_images // batch_size
