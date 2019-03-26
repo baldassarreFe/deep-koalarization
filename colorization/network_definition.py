@@ -127,6 +127,7 @@ def _build_network():
     x = Conv2D(32, (3, 3), activation='relu', padding='same')(x)
     x = Conv2D(32, (3, 3), activation='relu', padding='same')(x)
     x = Conv2D(2, (3, 3), activation='tanh', padding='same')(x)
+    x = UpSampling2D((2, 2), interpolation='bilinear')(x)
     model = Model(inputs=[image_tensor], outputs=[x])
     return model
 
