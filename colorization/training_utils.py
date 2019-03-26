@@ -17,7 +17,7 @@ from datetime import datetime
 prev_time = "00:00:00.000000"
 
 matplotlib.use('Agg')
-matplotlib.rcParams['figure.figsize'] = (10.0, 4.0)
+matplotlib.rcParams['figure.figsize'] = (14.0, 4.0)
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
@@ -35,28 +35,37 @@ def loss_with_metrics(img_ab_out, img_ab_true, name=''):
     return cost, summary
 
 
-def training_pipeline(col, learning_rate, batch_size):
+def training_pipeline(col, ref, learning_rate, batch_size):
     # Set up training (input queues, graph, optimizer)
     irr = LabImageRecordReader('lab_images_*.tfrecord', dir_tfrecord)
     read_batched_examples = irr.read_batch(batch_size, shuffle=True)
     # read_batched_examples = irr.read_one()
     imgs_l = read_batched_examples['image_l']
     imgs_true_ab = read_batched_examples['image_ab']
+    # Concatenate imgs_l and imgs_true_ab as imgs_lab to train on Refinement Network
+    imgs_lab = tf.concat([imgs_l, imgs_true_ab], axis=3)
     imgs_emb = read_batched_examples['image_embedding']
     imgs_ab = col.build(imgs_l, imgs_emb)
+    imgs_ref_ab = ref.build(imgs_lab)
     cost, summary = loss_with_metrics(imgs_ab, imgs_true_ab, 'training')
+    cost_ref, summary_ref = loss_with_metrics(imgs_ref_ab, imgs_true_ab, 'training_ref')
     global_step = tf.Variable(0, name='global_step', trainable=False)
     optimizer = tf.train.AdamOptimizer(learning_rate).minimize(
         cost, global_step=global_step)
+    optimizer_ref = tf.train.AdamOptimizer(learning_rate).minimize(
+        cost_ref, global_step=global_step)
     return {
         'global_step': global_step,
         'optimizer': optimizer,
+        'optimizer_ref': optimizer_ref,
         'cost': cost,
-        'summary': summary
+        'cost_ref': cost_ref,
+        'summary': summary,
+        'summary_ref': summary_ref,
     }#, irr, read_batched_examples
 
 
-def evaluation_pipeline(col, number_of_images):
+def evaluation_pipeline(col, ref, number_of_images):
     # Set up validation (input queues, graph)
     irr = LabImageRecordReader('val_lab_images_*.tfrecord', dir_tfrecord)
     read_batched_examples = irr.read_batch(number_of_images, shuffle=False)
@@ -64,15 +73,24 @@ def evaluation_pipeline(col, number_of_images):
     imgs_true_ab_val = read_batched_examples['image_ab']
     imgs_emb_val = read_batched_examples['image_embedding']
     imgs_ab_val = col.build(imgs_l_val, imgs_emb_val)
+    # Concatenate imgs_l_val and imgs_ab_val as imgs_lab_val to eval on Refinement Network
+    imgs_lab_val = tf.concat([imgs_l_val, imgs_ab_val], axis=3)
+    imgs_ref_ab_val = ref.build(imgs_lab_val)
     cost, summary = loss_with_metrics(imgs_ab_val, imgs_true_ab_val,
                                       'validation')
+    cost_ref, summary_ref = loss_with_metrics(imgs_ref_ab_val, imgs_true_ab_val,
+                                      'validation_ref')
     return {
         'imgs_l': imgs_l_val,
         'imgs_ab': imgs_ab_val,
         'imgs_true_ab': imgs_true_ab_val,
         'imgs_emb': imgs_emb_val,
+        'imgs_lab': imgs_lab_val,
+        'imgs_ref_ab': imgs_ref_ab_val,
         'cost': cost,
-        'summary': summary
+        'summary': summary,
+        'cost_ref': cost_ref,
+        'summary_ref': summary_ref,
     }
 
 
@@ -162,32 +180,54 @@ def trim(im):
 def plot_evaluation(res, run_id, epoch, is_eval=False):
     maybe_create_folder(join(dir_root, 'images', run_id))
     for k in range(len(res['imgs_l'])):
-        img_gray = l_to_rgb(res['imgs_l'][k][:, :, 0])
-        img_output = lab_to_rgb(res['imgs_l'][k][:, :, 0],
+        imgs_l = res['imgs_l'][k][:, :, 0]
+        l_shape = imgs_l.shape
+        img_gray = l_to_rgb(imgs_l)
+        zeros = np.zeros(l_shape)
+        img_ab = lab_to_rgb(zeros,
                                 res['imgs_ab'][k])
+        img_ref_ab = lab_to_rgb(zeros,
+                                res['imgs_ref_ab'][k])
+        img_output = lab_to_rgb(imgs_l,
+                                res['imgs_ab'][k])
+        img_ref_output = lab_to_rgb(imgs_l,
+                                res['imgs_ref_ab'][k])
         
         # save simple single image output
         if is_eval:
-            im = trim(img_output)
+            im = trim(img_ref_output)
             im.save(join(dir_root, 'images', run_id, '{}.png'.format(k)), "PNG")
 
-        # display the colorfulness score on the image
+        # display the colorfulness score on the image 
         C_output = image_colorfulness(img_output)
+        C_ref_output = image_colorfulness(img_ref_output)
         img_true = lab_to_rgb(res['imgs_l'][k][:, :, 0],
                               res['imgs_true_ab'][k])
         C_true = image_colorfulness(img_true)
         # display the cost function(MSE) output of the image
         cost = res['cost']
 
-        plt.subplot(1, 3, 1)
+        plt.subplot(1, 6, 0)
         plt.imshow(img_gray)
         plt.title('Input (grayscale)')
         plt.axis('off')
-        plt.subplot(1, 3, 2)
-        plt.imshow(img_output)
-        plt.title('Network output\n' + ("{:.4f}".format(C_output)))
+        plt.subplot(1, 6, 1)
+        plt.imshow(img_ab)
+        plt.title('Colorization ab')
         plt.axis('off')
-        plt.subplot(1, 3, 3)
+        plt.subplot(1, 6, 2)
+        plt.imshow(img_ref_ab)
+        plt.title('Refined ab')
+        plt.axis('off')
+        plt.subplot(1, 6, 3)
+        plt.imshow(img_output)
+        plt.title('Colorization output\n' + ("{:.4f}".format(C_output)))
+        plt.axis('off')
+        plt.subplot(1, 6, 4)
+        plt.imshow(img_ref_output)
+        plt.title('Refinement output\n' + ("{:.4f}".format(C_ref_output)))
+        plt.axis('off')
+        plt.subplot(1, 6, 5)
         plt.imshow(img_true)
         plt.title('Target (original)\n' + ("{:.4f}".format(C_true)))
         plt.axis('off')

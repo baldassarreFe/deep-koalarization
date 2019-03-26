@@ -16,7 +16,7 @@ from keras.layers import (
     Input,
     LeakyReLU,
     ReLU,
-    Dropout
+    Dropout,
 )
 from keras.layers.merge import (
     add
@@ -40,6 +40,14 @@ class Colorization:
         fusion = self.after_fusion(fusion)
 
         return self.decoder(fusion)
+
+
+class Refinement:
+    def __init__(self):
+        self.network = _build_network()
+
+    def build(self, img_lab):
+        return self.network(img_lab)
 
 
 def wideResUnit(y, nb_channels_in, nb_channels_out, name):
@@ -92,6 +100,35 @@ def residual_block(y, nb_channels_in, nb_channels_out, name, _strides=(1, 1), _p
         # expect for the output of the block where relu is performed after the adding to the shortcut
         y = LeakyReLU()(y)
         return y
+
+
+def _build_network():
+    image_tensor = Input(shape=(None, None, 3))
+    x = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)(image_tensor)
+    x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(128, (3, 3), activation='relu', padding='same', strides=2)(x)
+    x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(256, (3, 3), activation='relu', padding='same', strides=2)(x)
+    x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(512, (3, 3), activation='relu', padding='same', strides=2)(x)
+    x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(512, (3, 3), activation='relu', padding='same', strides=2)(x)
+    x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(1024, (5, 5), activation='relu', padding='same')(x)
+    x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
+    x = UpSampling2D((4, 4), interpolation='bilinear')(x)
+    x = Conv2D(64, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(64, (3, 3), activation='relu', padding='same')(x)
+    x = UpSampling2D((4, 4), interpolation='bilinear')(x)
+    x = Conv2D(32, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(32, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(2, (3, 3), activation='tanh', padding='same')(x)
+    model = Model(inputs=[image_tensor], outputs=[x])
+    return model
 
 
 def _build_encoder():    
