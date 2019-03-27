@@ -118,6 +118,7 @@ def _build_network():
     x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
     x = Conv2D(1024, (5, 5), activation='relu', padding='same')(x)
     x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
+    #x = UpSampling2D((2, 2), interpolation='bilinear')(x)
     x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
     x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
     x = UpSampling2D((4, 4), interpolation='bilinear')(x)
@@ -129,6 +130,7 @@ def _build_network():
     x = Conv2D(2, (3, 3), activation='tanh', padding='same')(x)
     x = UpSampling2D((2, 2), interpolation='bilinear')(x)
     model = Model(inputs=[image_tensor], outputs=[x])
+    print(model.summary())
     return model
 
 
@@ -150,6 +152,7 @@ def _build_encoder():
     x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
     x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
     model = Model(inputs=[image_tensor], outputs=[x])
+    print(model.summary())
     return model
 
 
@@ -164,4 +167,5 @@ def _build_decoder(encoding_depth):
     model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
     model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
     model.add(UpSampling2D((2, 2)))
+    print(model.summary())
     return model

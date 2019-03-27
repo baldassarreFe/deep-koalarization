@@ -181,9 +181,8 @@ def plot_evaluation(res, run_id, epoch, is_eval=False):
     maybe_create_folder(join(dir_root, 'images', run_id))
     for k in range(len(res['imgs_l'])):
         imgs_l = res['imgs_l'][k][:, :, 0]
-        l_shape = imgs_l.shape
         img_gray = l_to_rgb(imgs_l)
-        zeros = np.zeros(l_shape)
+        zeros = np.zeros(res['imgs_ref_ab'][k][:, :, 0].shape)
         img_ab = lab_to_rgb(zeros,
                                 res['imgs_ab'][k])
         img_ref_ab = lab_to_rgb(zeros,
@@ -207,27 +206,27 @@ def plot_evaluation(res, run_id, epoch, is_eval=False):
         # display the cost function(MSE) output of the image
         cost = res['cost']
 
-        plt.subplot(1, 6, 0)
+        plt.subplot(1, 6, 1)
         plt.imshow(img_gray)
         plt.title('Input (grayscale)')
         plt.axis('off')
-        plt.subplot(1, 6, 1)
+        plt.subplot(1, 6, 2)
         plt.imshow(img_ab)
         plt.title('Colorization ab')
         plt.axis('off')
-        plt.subplot(1, 6, 2)
+        plt.subplot(1, 6, 3)
         plt.imshow(img_ref_ab)
         plt.title('Refined ab')
         plt.axis('off')
-        plt.subplot(1, 6, 3)
+        plt.subplot(1, 6, 4)
         plt.imshow(img_output)
         plt.title('Colorization output\n' + ("{:.4f}".format(C_output)))
         plt.axis('off')
-        plt.subplot(1, 6, 4)
+        plt.subplot(1, 6, 5)
         plt.imshow(img_ref_output)
         plt.title('Refinement output\n' + ("{:.4f}".format(C_ref_output)))
         plt.axis('off')
-        plt.subplot(1, 6, 5)
+        plt.subplot(1, 6, 6)
         plt.imshow(img_true)
         plt.title('Target (original)\n' + ("{:.4f}".format(C_true)))
         plt.axis('off')
