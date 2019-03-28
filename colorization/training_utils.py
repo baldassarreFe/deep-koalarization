@@ -35,37 +35,46 @@ def loss_with_metrics(img_ab_out, img_ab_true, name=''):
     return cost, summary
 
 
-def training_pipeline(col, ref, learning_rate, batch_size):
+def training_pipeline(col, lowres_col, ref, learning_rate, batch_size):
     # Set up training (input queues, graph, optimizer)
     irr = LabImageRecordReader('lab_images_*.tfrecord', dir_tfrecord)
     read_batched_examples = irr.read_batch(batch_size, shuffle=True)
     # read_batched_examples = irr.read_one()
     imgs_l = read_batched_examples['image_l']
     imgs_true_ab = read_batched_examples['image_ab']
-    # Concatenate imgs_l and imgs_true_ab as imgs_lab to train on Refinement Network
-    imgs_lab = tf.concat([imgs_l, imgs_true_ab], axis=3)
     imgs_emb = read_batched_examples['image_embedding']
     imgs_ab = col.build(imgs_l, imgs_emb)
+    imgs_lowres_ab = lowres_col.build(imgs_l, imgs_emb)
+    shape = imgs_ab.shape
+    imgs_lowres_ab = tf.image.resize_images(imgs_lowres_ab, (shape[1], shape[2]))
+    # Concatenate imgs_l, imgs_lowres_ab and imgs_true_ab as imgs_lab to train on Refinement Network
+    imgs_lab = tf.concat([imgs_l, imgs_lowres_ab, imgs_true_ab], axis=3)
     imgs_ref_ab = ref.build(imgs_lab)
     cost, summary = loss_with_metrics(imgs_ab, imgs_true_ab, 'training')
+    cost_lowres, summary_lowres = loss_with_metrics(imgs_lowres_ab, imgs_true_ab, 'training_lowres')
     cost_ref, summary_ref = loss_with_metrics(imgs_ref_ab, imgs_true_ab, 'training_ref')
     global_step = tf.Variable(0, name='global_step', trainable=False)
     optimizer = tf.train.AdamOptimizer(learning_rate).minimize(
         cost, global_step=global_step)
+    optimizer_lowres = tf.train.AdamOptimizer(learning_rate).minimize(
+        cost_lowres, global_step=global_step)
     optimizer_ref = tf.train.AdamOptimizer(learning_rate).minimize(
         cost_ref, global_step=global_step)
     return {
         'global_step': global_step,
         'optimizer': optimizer,
+        'optimizer_lowres': optimizer_lowres,
         'optimizer_ref': optimizer_ref,
         'cost': cost,
+        'cost_lowres': cost_lowres,
         'cost_ref': cost_ref,
         'summary': summary,
+        'summary_lowres': summary_lowres,
         'summary_ref': summary_ref,
     }#, irr, read_batched_examples
 
 
-def evaluation_pipeline(col, ref, number_of_images):
+def evaluation_pipeline(col, lowres_col, ref, number_of_images):
     # Set up validation (input queues, graph)
     irr = LabImageRecordReader('val_lab_images_*.tfrecord', dir_tfrecord)
     read_batched_examples = irr.read_batch(number_of_images, shuffle=False)
@@ -73,22 +82,30 @@ def evaluation_pipeline(col, ref, number_of_images):
     imgs_true_ab_val = read_batched_examples['image_ab']
     imgs_emb_val = read_batched_examples['image_embedding']
     imgs_ab_val = col.build(imgs_l_val, imgs_emb_val)
-    # Concatenate imgs_l_val and imgs_ab_val as imgs_lab_val to eval on Refinement Network
-    imgs_lab_val = tf.concat([imgs_l_val, imgs_ab_val], axis=3)
+    imgs_lowres_ab_val = lowres_col.build(imgs_l_val, imgs_emb_val)
+    shape = imgs_ab_val.shape
+    imgs_lowres_ab_val = tf.image.resize_images(imgs_lowres_ab_val, (shape[1], shape[2]))
+    # Concatenate imgs_l_val, imgs_lowres_ab_val and imgs_ab_val as imgs_lab_val to eval on Refinement Network
+    imgs_lab_val = tf.concat([imgs_l_val, imgs_lowres_ab_val, imgs_ab_val], axis=3)
     imgs_ref_ab_val = ref.build(imgs_lab_val)
     cost, summary = loss_with_metrics(imgs_ab_val, imgs_true_ab_val,
                                       'validation')
+    cost_lowres, summary_lowres = loss_with_metrics(imgs_lowres_ab_val, imgs_true_ab_val,
+                                      'validation_lowres')
     cost_ref, summary_ref = loss_with_metrics(imgs_ref_ab_val, imgs_true_ab_val,
                                       'validation_ref')
     return {
         'imgs_l': imgs_l_val,
         'imgs_ab': imgs_ab_val,
+        'imgs_lowres_ab': imgs_lowres_ab_val,
         'imgs_true_ab': imgs_true_ab_val,
         'imgs_emb': imgs_emb_val,
         'imgs_lab': imgs_lab_val,
         'imgs_ref_ab': imgs_ref_ab_val,
         'cost': cost,
         'summary': summary,
+        'cost_lowres': cost_lowres,
+        'summary_lowres': summary_lowres,
         'cost_ref': cost_ref,
         'summary_ref': summary_ref,
     }
@@ -185,12 +202,18 @@ def plot_evaluation(res, run_id, epoch, is_eval=False):
         zeros = np.zeros(res['imgs_ref_ab'][k][:, :, 0].shape)
         img_ab = lab_to_rgb(zeros,
                                 res['imgs_ab'][k])
+        img_lowres_ab = lab_to_rgb(zeros,
+                                res['imgs_lowres_ab'][k])
         img_ref_ab = lab_to_rgb(zeros,
                                 res['imgs_ref_ab'][k])
         img_output = lab_to_rgb(imgs_l,
                                 res['imgs_ab'][k])
+        img_lowres_output = lab_to_rgb(imgs_l,
+                                res['imgs_lowres_ab'][k])
         img_ref_output = lab_to_rgb(imgs_l,
                                 res['imgs_ref_ab'][k])
+        img_true = lab_to_rgb(imgs_l,
+                              res['imgs_true_ab'][k])
         
         # save simple single image output
         if is_eval:
@@ -199,38 +222,46 @@ def plot_evaluation(res, run_id, epoch, is_eval=False):
 
         # display the colorfulness score on the image 
         C_output = image_colorfulness(img_output)
+        C_lowres_output = image_colorfulness(img_lowres_output)
         C_ref_output = image_colorfulness(img_ref_output)
-        img_true = lab_to_rgb(res['imgs_l'][k][:, :, 0],
-                              res['imgs_true_ab'][k])
         C_true = image_colorfulness(img_true)
         # display the cost function(MSE) output of the image
         cost = res['cost']
 
-        plt.subplot(1, 6, 1)
+        plt.subplot(1, 8, 1)
         plt.imshow(img_gray)
         plt.title('Input (grayscale)')
         plt.axis('off')
-        plt.subplot(1, 6, 2)
+        plt.subplot(1, 8, 2)
         plt.imshow(img_ab)
         plt.title('Colorization ab')
         plt.axis('off')
-        plt.subplot(1, 6, 3)
+        plt.subplot(1, 8, 3)
+        plt.imshow(img_lowres_ab)
+        plt.title('Low res ab')
+        plt.axis('off')
+        plt.subplot(1, 8, 4)
         plt.imshow(img_ref_ab)
         plt.title('Refined ab')
         plt.axis('off')
-        plt.subplot(1, 6, 4)
+        plt.subplot(1, 8, 5)
         plt.imshow(img_output)
         plt.title('Colorization output\n' + ("{:.4f}".format(C_output)))
         plt.axis('off')
-        plt.subplot(1, 6, 5)
+        plt.subplot(1, 8, 6)
+        plt.imshow(img_lowres_output)
+        plt.title('LowRes output\n' + ("{:.4f}".format(C_lowres_output)))
+        plt.axis('off')
+        plt.subplot(1, 8, 7)
         plt.imshow(img_ref_output)
         plt.title('Refinement output\n' + ("{:.4f}".format(C_ref_output)))
         plt.axis('off')
-        plt.subplot(1, 6, 6)
+        plt.subplot(1, 8, 8)
         plt.imshow(img_true)
         plt.title('Target (original)\n' + ("{:.4f}".format(C_true)))
         plt.axis('off')
         plt.suptitle('Cost(MSE): ' + str(cost), fontsize=7)
+        plt.tight_layout()
 
         plt.savefig(join(
             dir_root, 'images', run_id, '{}_{}.png'.format(epoch, k)))

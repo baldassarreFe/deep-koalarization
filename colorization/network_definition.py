@@ -42,6 +42,23 @@ class Colorization:
         return self.decoder(fusion)
 
 
+class LowRes_Colorization:
+    def __init__(self, depth_after_fusion):
+        self.encoder = _build_encoder()
+        self.fusion = FusionLayer()
+        self.after_fusion = Conv2D(
+            depth_after_fusion, (1, 1), activation='relu')
+        self.decoder = _build_lowres_decoder(depth_after_fusion)
+
+    def build(self, img_l, img_emb):
+        img_enc = self.encoder(img_l)
+
+        fusion = self.fusion([img_enc, img_emb])
+        fusion = self.after_fusion(fusion)
+
+        return self.decoder(fusion)
+
+
 class Refinement:
     def __init__(self):
         self.network = _build_network()
@@ -103,7 +120,7 @@ def residual_block(y, nb_channels_in, nb_channels_out, name, _strides=(1, 1), _p
 
 
 def _build_network():
-    image_tensor = Input(shape=(None, None, 3))
+    image_tensor = Input(shape=(None, None, 5))
     x = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)(image_tensor)
     x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
     x = Conv2D(128, (3, 3), activation='relu', padding='same', strides=2)(x)
@@ -177,5 +194,19 @@ def _build_decoder(encoding_depth):
     #model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
     model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
     model.add(UpSampling2D((2, 2), interpolation='bilinear'))
+    print(model.summary())
+    return model
+
+
+def _build_lowres_decoder(encoding_depth):
+    model = Sequential(name='decoder')
+    model.add(InputLayer(input_shape=(None, None, encoding_depth)))
+    model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
     print(model.summary())
     return model
