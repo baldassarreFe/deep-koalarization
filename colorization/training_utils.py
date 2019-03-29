@@ -17,7 +17,7 @@ from datetime import datetime
 prev_time = "00:00:00.000000"
 
 matplotlib.use('Agg')
-matplotlib.rcParams['figure.figsize'] = (14.0, 4.0)
+matplotlib.rcParams['figure.figsize'] = (14.0, 6.0)
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
@@ -48,7 +48,7 @@ def training_pipeline(col, lowres_col, ref, learning_rate, batch_size):
     shape = imgs_ab.shape
     imgs_lowres_ab = tf.image.resize_images(imgs_lowres_ab, (shape[1], shape[2]))
     # Concatenate imgs_l, imgs_lowres_ab and imgs_true_ab as imgs_lab to train on Refinement Network
-    imgs_lab = tf.concat([imgs_l, imgs_lowres_ab, imgs_true_ab], axis=3)
+    imgs_lab = tf.concat([imgs_l, imgs_lowres_ab, imgs_ab], axis=3)
     imgs_ref_ab = ref.build(imgs_lab)
     cost, summary = loss_with_metrics(imgs_ab, imgs_true_ab, 'training')
     cost_lowres, summary_lowres = loss_with_metrics(imgs_lowres_ab, imgs_true_ab, 'training_lowres')
@@ -228,35 +228,35 @@ def plot_evaluation(res, run_id, epoch, is_eval=False):
         # display the cost function(MSE) output of the image
         cost = res['cost']
 
-        plt.subplot(1, 8, 1)
+        plt.subplot(1, 4, 1)
         plt.imshow(img_gray)
         plt.title('Input (grayscale)')
         plt.axis('off')
-        plt.subplot(1, 8, 2)
+        plt.subplot(1, 4, 2)
         plt.imshow(img_ab)
         plt.title('Colorization ab')
         plt.axis('off')
-        plt.subplot(1, 8, 3)
+        plt.subplot(1, 4, 3)
         plt.imshow(img_lowres_ab)
         plt.title('Low res ab')
         plt.axis('off')
-        plt.subplot(1, 8, 4)
+        plt.subplot(1, 4, 4)
         plt.imshow(img_ref_ab)
         plt.title('Refined ab')
         plt.axis('off')
-        plt.subplot(1, 8, 5)
+        plt.subplot(2, 4, 1)
         plt.imshow(img_output)
         plt.title('Colorization output\n' + ("{:.4f}".format(C_output)))
         plt.axis('off')
-        plt.subplot(1, 8, 6)
+        plt.subplot(2, 4, 2)
         plt.imshow(img_lowres_output)
         plt.title('LowRes output\n' + ("{:.4f}".format(C_lowres_output)))
         plt.axis('off')
-        plt.subplot(1, 8, 7)
+        plt.subplot(2, 4, 3)
         plt.imshow(img_ref_output)
         plt.title('Refinement output\n' + ("{:.4f}".format(C_ref_output)))
         plt.axis('off')
-        plt.subplot(1, 8, 8)
+        plt.subplot(2, 4, 4)
         plt.imshow(img_true)
         plt.title('Target (original)\n' + ("{:.4f}".format(C_true)))
         plt.axis('off')

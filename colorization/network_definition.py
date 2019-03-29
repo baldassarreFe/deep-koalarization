@@ -44,7 +44,7 @@ class Colorization:
 
 class LowRes_Colorization:
     def __init__(self, depth_after_fusion):
-        self.encoder = _build_encoder()
+        self.encoder = _build_lowres_encoder()
         self.fusion = FusionLayer()
         self.after_fusion = Conv2D(
             depth_after_fusion, (1, 1), activation='relu')
@@ -179,6 +179,32 @@ def _build_encoder():
     return model
 
 
+def _build_lowres_encoder():    
+    # Functional implementation
+    image_tensor = Input(shape=(None, None, 1))
+    x = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)(image_tensor)
+    #x = wideResUnit(x, 64, 64, 'res1')
+    # x = residual_block(x, 64, 64, 'res1')
+    #x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
+    # x = wideResUnit(x, 128, 128, 'res2')
+    # x = residual_block(x, 128, 128, 'res2')
+    x = Conv2D(128, (3, 3), activation='relu', padding='same', strides=2)(x)
+    #x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
+    # x = wideResUnit(x, 256, 256, 'res3')
+    # x = residual_block(x, 256, 256, 'res3')
+    x = Conv2D(256, (3, 3), activation='relu', padding='same', strides=2)(x)
+    #x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
+    #x = Conv2D(512, (3, 3), activation='relu', padding='same', strides=2)(x)
+    #x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
+    #x = Conv2D(512, (3, 3), activation='relu', padding='same', strides=2)(x)
+    #x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
+    model = Model(inputs=[image_tensor], outputs=[x])
+    print(model.summary())
+    return model
+
+
 def _build_decoder(encoding_depth):
     model = Sequential(name='decoder')
     model.add(InputLayer(input_shape=(None, None, encoding_depth)))
@@ -202,11 +228,11 @@ def _build_lowres_decoder(encoding_depth):
     model = Sequential(name='decoder')
     model.add(InputLayer(input_shape=(None, None, encoding_depth)))
     model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
-    model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
+    #model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
     model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
-    model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+    #model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
     model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
-    model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
+    #model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
     model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
     print(model.summary())
     return model

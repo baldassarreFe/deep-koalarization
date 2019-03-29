@@ -63,6 +63,12 @@ with sess.as_default():
         print_term('No checkpoint found in: {}'.format(checkpoint_paths), run_id)
 
     # Actual training with epochs as iteration
+    avg = 0
+    avg_lowres = 0
+    avg_ref = 0
+    tf.summary.scalar('loss_avg', avg)
+    tf.summary.scalar('loss_avg_lowres', avg_lowres)
+    tf.summary.scalar('loss_avg_ref', avg_ref)
     for epoch in range(epochs):
         print_term('Starting epoch: {} (total images {})'
                   .format(epoch, total_train_images), run_id)
@@ -80,6 +86,19 @@ with sess.as_default():
             summary_writer.add_summary(res['summary'], global_step)
             summary_writer.add_summary(res['summary_lowres'], global_step)
             summary_writer.add_summary(res['summary_ref'], global_step)
+            cost = res['cost']
+            cost_lowres = res['cost']
+            cost_ref = res['cost_ref']
+            avg = (avg*(global_step-1)+cost)/global_step
+            avg_lowres = (avg_lowres*(global_step-1)+cost_lowres)/global_step
+            avg_ref = (avg_ref*(global_step-1)+cost_ref)/global_step
+            if global_step % batches == 0:
+                av = sess.run(tf.constant(avg))
+                av_lowres = sess.run(tf.constant(avg_lowres))
+                av_ref = sess.run(tf.constant(avg_ref))
+                summary_writer.add_summary(av, epoch)
+                summary_writer.add_summary(av_lowres, epoch)
+                summary_writer.add_summary(av_ref, epoch)
 
         # Save the variables to disk
         save_path = saver.save(sess, checkpoint_paths, global_step)
