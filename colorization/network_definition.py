@@ -179,7 +179,7 @@ def _build_encoder():
     return model
 
 
-def _build_lowres_encoder():    
+def _build_lowres_encoder():
     # Functional implementation
     image_tensor = Input(shape=(None, None, 1))
     x = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)(image_tensor)

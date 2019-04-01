@@ -34,7 +34,7 @@ ref = Refinement()
 
 opt_operations = training_pipeline(col, lowres_col, ref, learning_rate, batch_size)
 evaluations_ops = evaluation_pipeline(col, lowres_col, ref, val_number_of_images)
-summary_writer = metrics_system(run_id, sess)
+summary_writer, lowres_writer, ref_writer = metrics_system(run_id, sess)
 saver, checkpoint_paths, latest_checkpoint = checkpointing_system(run_id)
 print_term('Built network', run_id)
 
@@ -63,12 +63,14 @@ with sess.as_default():
         print_term('No checkpoint found in: {}'.format(checkpoint_paths), run_id)
 
     # Actual training with epochs as iteration
+    '''
     avg = 0
     avg_lowres = 0
     avg_ref = 0
     tf.summary.scalar('loss_avg', avg)
     tf.summary.scalar('loss_avg_lowres', avg_lowres)
     tf.summary.scalar('loss_avg_ref', avg_ref)
+    '''
     for epoch in range(epochs):
         print_term('Starting epoch: {} (total images {})'
                   .format(epoch, total_train_images), run_id)
@@ -84,10 +86,14 @@ with sess.as_default():
             print_term('Cost_Ref: {} Global step: {}'
                       .format(res['cost_ref'], global_step), run_id, res['cost_ref'])
             summary_writer.add_summary(res['summary'], global_step)
-            summary_writer.add_summary(res['summary_lowres'], global_step)
-            summary_writer.add_summary(res['summary_ref'], global_step)
+            summary_writer.flush()
+            lowres_writer.add_summary(res['summary_lowres'], global_step)
+            lowres_writer.flush()
+            ref_writer.add_summary(res['summary_ref'], global_step)
+            ref_writer.flush()
+            '''
             cost = res['cost']
-            cost_lowres = res['cost']
+            cost_lowres = res['cost_lowres']
             cost_ref = res['cost_ref']
             avg = (avg*(global_step-1)+cost)/global_step
             avg_lowres = (avg_lowres*(global_step-1)+cost_lowres)/global_step
@@ -99,6 +105,7 @@ with sess.as_default():
                 summary_writer.add_summary(av, epoch)
                 summary_writer.add_summary(av_lowres, epoch)
                 summary_writer.add_summary(av_ref, epoch)
+            '''
 
         # Save the variables to disk
         save_path = saver.save(sess, checkpoint_paths, global_step)
@@ -107,8 +114,11 @@ with sess.as_default():
         # Evaluation step on validation
         res = sess.run(evaluations_ops)
         summary_writer.add_summary(res['summary'], global_step)
-        summary_writer.add_summary(res['summary_lowres'], global_step)
-        summary_writer.add_summary(res['summary_ref'], global_step)
+        summary_writer.flush()
+        lowres_writer.add_summary(res['summary_lowres'], global_step)
+        lowres_writer.flush()
+        ref_writer.add_summary(res['summary_ref'], global_step)
+        ref_writer.flush()
         plot_evaluation(res, run_id, epoch)
 
     # Finish off the filename queue coordinator.

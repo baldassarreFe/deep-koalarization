@@ -32,7 +32,13 @@ def loss_with_metrics(img_ab_out, img_ab_true, name=''):
         tf.squared_difference(img_ab_out, img_ab_true), name="mse")
     # Metrics for tensorboard
     summary = tf.summary.scalar('cost ' + name, cost)
-    return cost, summary
+    '''
+    summary_val = None
+    if 'validation' in name:
+        name = 'validation'#name.replace('validation', 'training')
+        summary_val = tf.summary.scalar('cost ' + name, cost)
+    '''
+    return cost, summary#, summary_val
 
 
 def training_pipeline(col, lowres_col, ref, learning_rate, batch_size):
@@ -51,8 +57,8 @@ def training_pipeline(col, lowres_col, ref, learning_rate, batch_size):
     imgs_lab = tf.concat([imgs_l, imgs_lowres_ab, imgs_ab], axis=3)
     imgs_ref_ab = ref.build(imgs_lab)
     cost, summary = loss_with_metrics(imgs_ab, imgs_true_ab, 'training')
-    cost_lowres, summary_lowres = loss_with_metrics(imgs_lowres_ab, imgs_true_ab, 'training_lowres')
-    cost_ref, summary_ref = loss_with_metrics(imgs_ref_ab, imgs_true_ab, 'training_ref')
+    cost_lowres, summary_lowres = loss_with_metrics(imgs_lowres_ab, imgs_true_ab, 'training')
+    cost_ref, summary_ref = loss_with_metrics(imgs_ref_ab, imgs_true_ab, 'training')
     global_step = tf.Variable(0, name='global_step', trainable=False)
     optimizer = tf.train.AdamOptimizer(learning_rate).minimize(
         cost, global_step=global_step)
@@ -91,9 +97,9 @@ def evaluation_pipeline(col, lowres_col, ref, number_of_images):
     cost, summary = loss_with_metrics(imgs_ab_val, imgs_true_ab_val,
                                       'validation')
     cost_lowres, summary_lowres = loss_with_metrics(imgs_lowres_ab_val, imgs_true_ab_val,
-                                      'validation_lowres')
+                                      'validation')
     cost_ref, summary_ref = loss_with_metrics(imgs_ref_ab_val, imgs_true_ab_val,
-                                      'validation_ref')
+                                      'validation')
     return {
         'imgs_l': imgs_l_val,
         'imgs_ab': imgs_ab_val,
@@ -103,10 +109,10 @@ def evaluation_pipeline(col, lowres_col, ref, number_of_images):
         'imgs_lab': imgs_lab_val,
         'imgs_ref_ab': imgs_ref_ab_val,
         'cost': cost,
-        'summary': summary,
         'cost_lowres': cost_lowres,
-        'summary_lowres': summary_lowres,
         'cost_ref': cost_ref,
+        'summary': summary,
+        'summary_lowres': summary_lowres,
         'summary_ref': summary_ref,
     }
 
@@ -136,9 +142,11 @@ def print_term(content, run_id, cost=None):
 
 def metrics_system(run_id, sess):
     # Merge all the summaries and set up the writers
-    merged = tf.summary.merge_all()
-    train_writer = tf.summary.FileWriter(join(dir_metrics, run_id), sess.graph)
-    return train_writer
+    #merged = tf.summary.merge_all()
+    train_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'col'), sess.graph)
+    lowres_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'lowres'), sess.graph)
+    ref_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'ref'), sess.graph)
+    return train_writer, lowres_writer, ref_writer
 
 
 def checkpointing_system(run_id):
@@ -244,19 +252,19 @@ def plot_evaluation(res, run_id, epoch, is_eval=False):
         plt.imshow(img_ref_ab)
         plt.title('Refined ab')
         plt.axis('off')
-        plt.subplot(2, 4, 1)
+        plt.subplot(2, 4, 5)
         plt.imshow(img_output)
         plt.title('Colorization output\n' + ("{:.4f}".format(C_output)))
         plt.axis('off')
-        plt.subplot(2, 4, 2)
+        plt.subplot(2, 4, 6)
         plt.imshow(img_lowres_output)
         plt.title('LowRes output\n' + ("{:.4f}".format(C_lowres_output)))
         plt.axis('off')
-        plt.subplot(2, 4, 3)
+        plt.subplot(2, 4, 7)
         plt.imshow(img_ref_output)
         plt.title('Refinement output\n' + ("{:.4f}".format(C_ref_output)))
         plt.axis('off')
-        plt.subplot(2, 4, 4)
+        plt.subplot(2, 4, 8)
         plt.imshow(img_true)
         plt.title('Target (original)\n' + ("{:.4f}".format(C_true)))
         plt.axis('off')
