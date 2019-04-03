@@ -8,6 +8,9 @@ import cv2
 from skimage import color
 from PIL import Image, ImageChops
 
+import tensorboard
+from tensorboard import summary as summary_lib
+
 from dataset.shared import dir_tfrecord, dir_metrics, dir_checkpoints, dir_root, \
     maybe_create_folder
 from dataset.tfrecords import LabImageRecordReader
@@ -31,14 +34,8 @@ def loss_with_metrics(img_ab_out, img_ab_true, name=''):
     cost = tf.reduce_mean(
         tf.squared_difference(img_ab_out, img_ab_true), name="mse")
     # Metrics for tensorboard
-    summary = tf.summary.scalar('cost ' + name, cost)
-    '''
-    summary_val = None
-    if 'validation' in name:
-        name = 'validation'#name.replace('validation', 'training')
-        summary_val = tf.summary.scalar('cost ' + name, cost)
-    '''
-    return cost, summary#, summary_val
+    summary = summary_lib.scalar(name, cost)
+    return cost, summary
 
 
 def training_pipeline(col, lowres_col, ref, learning_rate, batch_size):
@@ -56,21 +53,21 @@ def training_pipeline(col, lowres_col, ref, learning_rate, batch_size):
     # Concatenate imgs_l, imgs_lowres_ab and imgs_true_ab as imgs_lab to train on Refinement Network
     imgs_lab = tf.concat([imgs_l, imgs_lowres_ab, imgs_ab], axis=3)
     imgs_ref_ab = ref.build(imgs_lab)
-    cost, summary = loss_with_metrics(imgs_ab, imgs_true_ab, 'training')
-    cost_lowres, summary_lowres = loss_with_metrics(imgs_lowres_ab, imgs_true_ab, 'training')
-    cost_ref, summary_ref = loss_with_metrics(imgs_ref_ab, imgs_true_ab, 'training')
+    cost, summary = loss_with_metrics(imgs_ab, imgs_true_ab, 'training_col')
+    cost_lowres, summary_lowres = loss_with_metrics(imgs_lowres_ab, imgs_true_ab, 'training_lowres')
+    cost_ref, summary_ref = loss_with_metrics(imgs_ref_ab, imgs_true_ab, 'training_ref')
     global_step = tf.Variable(0, name='global_step', trainable=False)
     optimizer = tf.train.AdamOptimizer(learning_rate).minimize(
         cost, global_step=global_step)
     optimizer_lowres = tf.train.AdamOptimizer(learning_rate).minimize(
         cost_lowres, global_step=global_step)
-    optimizer_ref = tf.train.AdamOptimizer(learning_rate).minimize(
-        cost_ref, global_step=global_step)
+    #optimizer_ref = tf.train.AdamOptimizer(learning_rate).minimize(
+    #    cost_ref, global_step=global_step)
     return {
         'global_step': global_step,
         'optimizer': optimizer,
         'optimizer_lowres': optimizer_lowres,
-        'optimizer_ref': optimizer_ref,
+        #'optimizer_ref': optimizer_ref,
         'cost': cost,
         'cost_lowres': cost_lowres,
         'cost_ref': cost_ref,
@@ -95,11 +92,11 @@ def evaluation_pipeline(col, lowres_col, ref, number_of_images):
     imgs_lab_val = tf.concat([imgs_l_val, imgs_lowres_ab_val, imgs_ab_val], axis=3)
     imgs_ref_ab_val = ref.build(imgs_lab_val)
     cost, summary = loss_with_metrics(imgs_ab_val, imgs_true_ab_val,
-                                      'validation')
+                                      'validation_col')
     cost_lowres, summary_lowres = loss_with_metrics(imgs_lowres_ab_val, imgs_true_ab_val,
-                                      'validation')
+                                      'validation_lowres')
     cost_ref, summary_ref = loss_with_metrics(imgs_ref_ab_val, imgs_true_ab_val,
-                                      'validation')
+                                      'validation_ref')
     return {
         'imgs_l': imgs_l_val,
         'imgs_ab': imgs_ab_val,
@@ -143,10 +140,13 @@ def print_term(content, run_id, cost=None):
 def metrics_system(run_id, sess):
     # Merge all the summaries and set up the writers
     #merged = tf.summary.merge_all()
-    train_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'col'), sess.graph)
-    lowres_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'lowres'), sess.graph)
-    ref_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'ref'), sess.graph)
-    return train_writer, lowres_writer, ref_writer
+    train_col_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'train/col'), sess.graph)
+    train_lowres_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'train/lowres'), sess.graph)
+    train_ref_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'train/ref'), sess.graph)
+    val_col_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'val/col'), sess.graph)
+    val_lowres_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'val/lowres'), sess.graph)
+    val_ref_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'val/ref'), sess.graph)
+    return train_col_writer, train_lowres_writer, train_ref_writer, val_col_writer, val_lowres_writer, val_ref_writer
 
 
 def checkpointing_system(run_id):
