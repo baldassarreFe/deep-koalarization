@@ -20,7 +20,7 @@ from datetime import datetime
 prev_time = "00:00:00.000000"
 
 matplotlib.use('Agg')
-matplotlib.rcParams['figure.figsize'] = (14.0, 6.0)
+matplotlib.rcParams['figure.figsize'] = (14.0, 8.0)
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
@@ -61,13 +61,13 @@ def training_pipeline(col, lowres_col, ref, learning_rate, batch_size):
         cost, global_step=global_step)
     optimizer_lowres = tf.train.AdamOptimizer(learning_rate).minimize(
         cost_lowres, global_step=global_step)
-    #optimizer_ref = tf.train.AdamOptimizer(learning_rate).minimize(
-    #    cost_ref, global_step=global_step)
+    optimizer_ref = tf.train.AdamOptimizer(learning_rate).minimize(
+        cost_ref, global_step=global_step)
     return {
         'global_step': global_step,
         'optimizer': optimizer,
         'optimizer_lowres': optimizer_lowres,
-        #'optimizer_ref': optimizer_ref,
+        'optimizer_ref': optimizer_ref,
         'cost': cost,
         'cost_lowres': cost_lowres,
         'cost_ref': cost_ref,
@@ -236,40 +236,40 @@ def plot_evaluation(res, run_id, epoch, is_eval=False):
         # display the cost function(MSE) output of the image
         cost = res['cost']
 
-        plt.subplot(1, 4, 1)
-        plt.imshow(img_gray)
-        plt.title('Input (grayscale)')
-        plt.axis('off')
-        plt.subplot(1, 4, 2)
-        plt.imshow(img_ab)
-        plt.title('Colorization ab')
-        plt.axis('off')
-        plt.subplot(1, 4, 3)
-        plt.imshow(img_lowres_ab)
-        plt.title('Low res ab')
-        plt.axis('off')
-        plt.subplot(1, 4, 4)
-        plt.imshow(img_ref_ab)
-        plt.title('Refined ab')
-        plt.axis('off')
-        plt.subplot(2, 4, 5)
-        plt.imshow(img_output)
-        plt.title('Colorization output\n' + ("{:.4f}".format(C_output)))
-        plt.axis('off')
-        plt.subplot(2, 4, 6)
-        plt.imshow(img_lowres_output)
-        plt.title('LowRes output\n' + ("{:.4f}".format(C_lowres_output)))
-        plt.axis('off')
-        plt.subplot(2, 4, 7)
-        plt.imshow(img_ref_output)
-        plt.title('Refinement output\n' + ("{:.4f}".format(C_ref_output)))
-        plt.axis('off')
-        plt.subplot(2, 4, 8)
-        plt.imshow(img_true)
-        plt.title('Target (original)\n' + ("{:.4f}".format(C_true)))
-        plt.axis('off')
+        fig, axes = plt.subplots(2, 4)
+        # Colorization ab
+        axes[0,0].imshow(img_ab)
+        axes[0,0].set_title('Colorization ab')
+        axes[0,0].axis('off')
+        # Low res ab
+        axes[0,1].imshow(img_lowres_ab)
+        axes[0,1].set_title('Low resolution ab')
+        axes[0,1].axis('off')
+        # Refined ab
+        axes[0,2].imshow(img_ref_ab)
+        axes[0,2].set_title('Refined ab')
+        axes[0,2].axis('off')
+        # Input (grayscale)
+        axes[0,3].imshow(img_gray)
+        axes[0,3].set_title('Input (grayscale)')
+        axes[0,3].axis('off')
+        # Colorization output
+        axes[1,0].imshow(img_output)
+        axes[1,0].set_title('Colorization output\n' + ("{:.4f}".format(C_output)))
+        axes[1,0].axis('off')
+        # Low Resolution output
+        axes[1,1].imshow(img_lowres_output)
+        axes[1,1].set_title('Low Resolution output\n' + ("{:.4f}".format(C_lowres_output)))
+        axes[1,1].axis('off')
+        # Refinement output
+        axes[1,2].imshow(img_ref_output)
+        axes[1,2].set_title('Refinement output\n' + ("{:.4f}".format(C_ref_output)))
+        axes[1,2].axis('off')
+        # Target (original)
+        axes[1,3].imshow(img_true)
+        axes[1,3].set_title('Target (original)\n' + ("{:.4f}".format(C_true)))
+        axes[1,3].axis('off')
         plt.suptitle('Cost(MSE): ' + str(cost), fontsize=7)
-        plt.tight_layout()
 
         plt.savefig(join(
             dir_root, 'images', run_id, '{}_{}.png'.format(epoch, k)))

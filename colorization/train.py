@@ -115,3 +115,4 @@ with sess.as_default():
     # Finish off the filename queue coordinator.
     coord.request_stop()
     coord.join(threads)
+print('Done training...')
