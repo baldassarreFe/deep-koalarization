@@ -44,19 +44,20 @@ class Colorization:
 
 class LowRes_Colorization:
     def __init__(self, depth_after_fusion):
-        self.encoder = _build_lowres_encoder()
-        self.fusion = FusionLayer()
-        self.after_fusion = Conv2D(
-            depth_after_fusion, (1, 1), activation='relu')
-        self.decoder = _build_lowres_decoder(depth_after_fusion)
+        self.network = _build_lowres_network()
+        #self.encoder = _build_lowres_encoder()
+        #self.fusion = FusionLayer()
+        #self.after_fusion = Conv2D(
+        #    depth_after_fusion, (1, 1), activation='relu')
+        #self.decoder = _build_lowres_decoder(depth_after_fusion)
 
-    def build(self, img_l, img_emb):
-        img_enc = self.encoder(img_l)
+    def build(self, img_l):
+        #img_enc = self.encoder(img_l)
 
-        fusion = self.fusion([img_enc, img_emb])
-        fusion = self.after_fusion(fusion)
+        #fusion = self.fusion([img_enc, img_emb])
+        #fusion = self.after_fusion(fusion)
 
-        return self.decoder(fusion)
+        return self.network(img_l)#self.decoder(fusion)
 
 
 class Refinement:
@@ -127,6 +128,42 @@ def _build_network():
     x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
     x = Conv2D(256, (3, 3), activation='relu', padding='same', strides=2)(x)
     x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(512, (3, 3), activation='relu', padding='same', strides=2)(x)
+    x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
+    x = Dropout(0.2)(x)
+    x = Conv2D(512, (3, 3), activation='relu', padding='same', strides=2)(x)
+    x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
+    x = Dropout(0.2)(x)
+    x = Conv2D(1024, (5, 5), activation='relu', padding='same')(x)
+    x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
+    #x = UpSampling2D((2, 2), interpolation='bilinear')(x)
+    x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
+    #x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
+    x = UpSampling2D((8, 8), interpolation='bilinear')(x)
+    #x = UpSampling2D((2, 2), interpolation='bilinear')(x)
+    x = Conv2D(64, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(64, (3, 3), activation='relu', padding='same')(x)
+    x = UpSampling2D((4, 4), interpolation='bilinear')(x)
+    #x = UpSampling2D((2, 2), interpolation='bilinear')(x)
+    x = Conv2D(32, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(32, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(2, (3, 3), activation='tanh', padding='same')(x)
+    #x = UpSampling2D((2, 2), interpolation='bilinear')(x)
+    model = Model(inputs=[image_tensor], outputs=[x])
+    print(model.summary())
+    return model
+
+
+def _build_lowres_network():
+    image_tensor = Input(shape=(None, None, 1))
+    x = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)(image_tensor)
+    x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(128, (3, 3), activation='relu', padding='same', strides=2)(x)
+    #x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
+    x = Conv2D(256, (3, 3), activation='relu', padding='same', strides=2)(x)
+    #x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
     x = Conv2D(512, (3, 3), activation='relu', padding='same')(x)
     x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
     #x = Conv2D(512, (3, 3), activation='relu', padding='same', strides=2)(x)
@@ -211,15 +248,15 @@ def _build_decoder(encoding_depth):
     model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
     #model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
     #model.add(UpSampling2D((4, 4), interpolation='bilinear'))
-    model.add(UpSampling2D((2, 2), interpolation='bilinear'))
+    model.add(UpSampling2D((2, 2)))#, interpolation='bilinear'))
     model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
     model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
     #model.add(UpSampling2D((4, 4), interpolation='bilinear'))
-    model.add(UpSampling2D((2, 2), interpolation='bilinear'))
+    model.add(UpSampling2D((2, 2)))#, interpolation='bilinear'))
     model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
     #model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
     model.add(Conv2D(2, (3, 3), activation='tanh', padding='same'))
-    model.add(UpSampling2D((2, 2), interpolation='bilinear'))
+    model.add(UpSampling2D((2, 2)))#, interpolation='bilinear'))
     print(model.summary())
     return model
 

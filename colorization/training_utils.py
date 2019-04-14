@@ -47,9 +47,9 @@ def training_pipeline(col, lowres_col, ref, learning_rate, batch_size):
     imgs_true_ab = read_batched_examples['image_ab']
     imgs_emb = read_batched_examples['image_embedding']
     imgs_ab = col.build(imgs_l, imgs_emb)
-    imgs_lowres_ab = lowres_col.build(imgs_l, imgs_emb)
-    shape = imgs_ab.shape
-    imgs_lowres_ab = tf.image.resize_images(imgs_lowres_ab, (shape[1], shape[2]))
+    imgs_lowres_ab = lowres_col.build(imgs_l)#, imgs_emb)
+    #shape = imgs_ab.shape
+    #imgs_lowres_ab = tf.image.resize_images(imgs_lowres_ab, (shape[1], shape[2]))
     # Concatenate imgs_l, imgs_lowres_ab and imgs_true_ab as imgs_lab to train on Refinement Network
     imgs_lab = tf.concat([imgs_l, imgs_lowres_ab, imgs_ab], axis=3)
     imgs_ref_ab = ref.build(imgs_lab)
@@ -85,9 +85,9 @@ def evaluation_pipeline(col, lowres_col, ref, number_of_images):
     imgs_true_ab_val = read_batched_examples['image_ab']
     imgs_emb_val = read_batched_examples['image_embedding']
     imgs_ab_val = col.build(imgs_l_val, imgs_emb_val)
-    imgs_lowres_ab_val = lowres_col.build(imgs_l_val, imgs_emb_val)
-    shape = imgs_ab_val.shape
-    imgs_lowres_ab_val = tf.image.resize_images(imgs_lowres_ab_val, (shape[1], shape[2]))
+    imgs_lowres_ab_val = lowres_col.build(imgs_l_val)#, imgs_emb_val)
+    #shape = imgs_ab_val.shape
+    #imgs_lowres_ab_val = tf.image.resize_images(imgs_lowres_ab_val, (shape[1], shape[2]))
     # Concatenate imgs_l_val, imgs_lowres_ab_val and imgs_ab_val as imgs_lab_val to eval on Refinement Network
     imgs_lab_val = tf.concat([imgs_l_val, imgs_lowres_ab_val, imgs_ab_val], axis=3)
     imgs_ref_ab_val = ref.build(imgs_lab_val)
