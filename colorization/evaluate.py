@@ -1,6 +1,6 @@
 from keras import backend as K
 
-from colorization import Colorization, LowRes_Colorization, Refinement
+from colorization import Colorization, Feedforward_Colorization, Refinement
 from colorization.training_utils import evaluation_pipeline, \
     checkpointing_system, plot_evaluation, metrics_system
 import tensorflow as tf
@@ -16,9 +16,9 @@ K.set_session(sess)
 
 # Build the network and the various operations
 col = Colorization(256)
-lowres_col = LowRes_Colorization(256)
+fwd_col = Feedforward_Colorization(256)
 ref = Refinement()
-evaluations_ops = evaluation_pipeline(col, lowres_col, ref, val_number_of_images)
+evaluations_ops = evaluation_pipeline(col, fwd_col, ref, val_number_of_images)
 summary_writer = metrics_system(run_id, sess)
 saver, checkpoint_paths, latest_checkpoint = checkpointing_system(run_id)
 

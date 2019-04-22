@@ -38,7 +38,7 @@ def loss_with_metrics(img_ab_out, img_ab_true, name=''):
     return cost, summary
 
 
-def training_pipeline(col, lowres_col, ref, learning_rate, batch_size):
+def training_pipeline(col, fwd_col, ref, learning_rate, batch_size):
     # Set up training (input queues, graph, optimizer)
     irr = LabImageRecordReader('lab_images_*.tfrecord', dir_tfrecord)
     read_batched_examples = irr.read_batch(batch_size, shuffle=True)
@@ -47,37 +47,37 @@ def training_pipeline(col, lowres_col, ref, learning_rate, batch_size):
     imgs_true_ab = read_batched_examples['image_ab']
     imgs_emb = read_batched_examples['image_embedding']
     imgs_ab = col.build(imgs_l, imgs_emb)
-    imgs_lowres_ab = lowres_col.build(imgs_l)#, imgs_emb)
+    imgs_fwd_ab = fwd_col.build(imgs_l)#, imgs_emb)
     #shape = imgs_ab.shape
-    #imgs_lowres_ab = tf.image.resize_images(imgs_lowres_ab, (shape[1], shape[2]))
-    # Concatenate imgs_l, imgs_lowres_ab and imgs_true_ab as imgs_lab to train on Refinement Network
-    imgs_lab = tf.concat([imgs_l, imgs_lowres_ab, imgs_ab], axis=3)
+    #imgs_fwd_ab = tf.image.resize_images(imgs_fwd_ab, (shape[1], shape[2]))
+    # Concatenate imgs_l, imgs_fwd_ab and imgs_true_ab as imgs_lab to train on Refinement Network
+    imgs_lab = tf.concat([imgs_l, imgs_fwd_ab, imgs_ab], axis=3)
     imgs_ref_ab = ref.build(imgs_lab)
     cost, summary = loss_with_metrics(imgs_ab, imgs_true_ab, 'training_col')
-    cost_lowres, summary_lowres = loss_with_metrics(imgs_lowres_ab, imgs_true_ab, 'training_lowres')
+    cost_fwd, summary_fwd = loss_with_metrics(imgs_fwd_ab, imgs_true_ab, 'training_fwd')
     cost_ref, summary_ref = loss_with_metrics(imgs_ref_ab, imgs_true_ab, 'training_ref')
     global_step = tf.Variable(0, name='global_step', trainable=False)
     optimizer = tf.train.AdamOptimizer(learning_rate).minimize(
         cost, global_step=global_step)
-    optimizer_lowres = tf.train.AdamOptimizer(learning_rate).minimize(
-        cost_lowres, global_step=global_step)
+    optimizer_fwd = tf.train.AdamOptimizer(learning_rate).minimize(
+        cost_fwd, global_step=global_step)
     optimizer_ref = tf.train.AdamOptimizer(learning_rate).minimize(
         cost_ref, global_step=global_step)
     return {
         'global_step': global_step,
         'optimizer': optimizer,
-        'optimizer_lowres': optimizer_lowres,
+        'optimizer_fwd': optimizer_fwd,
         'optimizer_ref': optimizer_ref,
         'cost': cost,
-        'cost_lowres': cost_lowres,
+        'cost_fwd': cost_fwd,
         'cost_ref': cost_ref,
         'summary': summary,
-        'summary_lowres': summary_lowres,
+        'summary_fwd': summary_fwd,
         'summary_ref': summary_ref,
     }#, irr, read_batched_examples
 
 
-def evaluation_pipeline(col, lowres_col, ref, number_of_images):
+def evaluation_pipeline(col, fwd_col, ref, number_of_images):
     # Set up validation (input queues, graph)
     irr = LabImageRecordReader('val_lab_images_*.tfrecord', dir_tfrecord)
     read_batched_examples = irr.read_batch(number_of_images, shuffle=False)
@@ -85,31 +85,31 @@ def evaluation_pipeline(col, lowres_col, ref, number_of_images):
     imgs_true_ab_val = read_batched_examples['image_ab']
     imgs_emb_val = read_batched_examples['image_embedding']
     imgs_ab_val = col.build(imgs_l_val, imgs_emb_val)
-    imgs_lowres_ab_val = lowres_col.build(imgs_l_val)#, imgs_emb_val)
+    imgs_fwd_ab_val = fwd_col.build(imgs_l_val)#, imgs_emb_val)
     #shape = imgs_ab_val.shape
-    #imgs_lowres_ab_val = tf.image.resize_images(imgs_lowres_ab_val, (shape[1], shape[2]))
-    # Concatenate imgs_l_val, imgs_lowres_ab_val and imgs_ab_val as imgs_lab_val to eval on Refinement Network
-    imgs_lab_val = tf.concat([imgs_l_val, imgs_lowres_ab_val, imgs_ab_val], axis=3)
+    #imgs_fwd_ab_val = tf.image.resize_images(imgs_fwd_ab_val, (shape[1], shape[2]))
+    # Concatenate imgs_l_val, imgs_fwd_ab_val and imgs_ab_val as imgs_lab_val to eval on Refinement Network
+    imgs_lab_val = tf.concat([imgs_l_val, imgs_fwd_ab_val, imgs_ab_val], axis=3)
     imgs_ref_ab_val = ref.build(imgs_lab_val)
     cost, summary = loss_with_metrics(imgs_ab_val, imgs_true_ab_val,
                                       'validation_col')
-    cost_lowres, summary_lowres = loss_with_metrics(imgs_lowres_ab_val, imgs_true_ab_val,
-                                      'validation_lowres')
+    cost_fwd, summary_fwd = loss_with_metrics(imgs_fwd_ab_val, imgs_true_ab_val,
+                                      'validation_fwd')
     cost_ref, summary_ref = loss_with_metrics(imgs_ref_ab_val, imgs_true_ab_val,
                                       'validation_ref')
     return {
         'imgs_l': imgs_l_val,
         'imgs_ab': imgs_ab_val,
-        'imgs_lowres_ab': imgs_lowres_ab_val,
+        'imgs_fwd_ab': imgs_fwd_ab_val,
         'imgs_true_ab': imgs_true_ab_val,
         'imgs_emb': imgs_emb_val,
         'imgs_lab': imgs_lab_val,
         'imgs_ref_ab': imgs_ref_ab_val,
         'cost': cost,
-        'cost_lowres': cost_lowres,
+        'cost_fwd': cost_fwd,
         'cost_ref': cost_ref,
         'summary': summary,
-        'summary_lowres': summary_lowres,
+        'summary_fwd': summary_fwd,
         'summary_ref': summary_ref,
     }
 
@@ -141,12 +141,12 @@ def metrics_system(run_id, sess):
     # Merge all the summaries and set up the writers
     #merged = tf.summary.merge_all()
     train_col_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'train/col'), sess.graph)
-    train_lowres_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'train/lowres'), sess.graph)
+    train_fwd_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'train/fwd'), sess.graph)
     train_ref_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'train/ref'), sess.graph)
     val_col_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'val/col'), sess.graph)
-    val_lowres_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'val/lowres'), sess.graph)
+    val_fwd_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'val/fwd'), sess.graph)
     val_ref_writer = tf.summary.FileWriter(join(dir_metrics, run_id, 'val/ref'), sess.graph)
-    return train_col_writer, train_lowres_writer, train_ref_writer, val_col_writer, val_lowres_writer, val_ref_writer
+    return train_col_writer, train_fwd_writer, train_ref_writer, val_col_writer, val_fwd_writer, val_ref_writer
 
 
 def checkpointing_system(run_id):
@@ -210,14 +210,14 @@ def plot_evaluation(res, run_id, epoch, is_eval=False):
         zeros = np.zeros(res['imgs_ref_ab'][k][:, :, 0].shape)
         img_ab = lab_to_rgb(zeros,
                                 res['imgs_ab'][k])
-        img_lowres_ab = lab_to_rgb(zeros,
-                                res['imgs_lowres_ab'][k])
+        img_fwd_ab = lab_to_rgb(zeros,
+                                res['imgs_fwd_ab'][k])
         img_ref_ab = lab_to_rgb(zeros,
                                 res['imgs_ref_ab'][k])
         img_output = lab_to_rgb(imgs_l,
                                 res['imgs_ab'][k])
-        img_lowres_output = lab_to_rgb(imgs_l,
-                                res['imgs_lowres_ab'][k])
+        img_fwd_output = lab_to_rgb(imgs_l,
+                                res['imgs_fwd_ab'][k])
         img_ref_output = lab_to_rgb(imgs_l,
                                 res['imgs_ref_ab'][k])
         img_true = lab_to_rgb(imgs_l,
@@ -230,7 +230,7 @@ def plot_evaluation(res, run_id, epoch, is_eval=False):
 
         # display the colorfulness score on the image 
         C_output = image_colorfulness(img_output)
-        C_lowres_output = image_colorfulness(img_lowres_output)
+        C_fwd_output = image_colorfulness(img_fwd_output)
         C_ref_output = image_colorfulness(img_ref_output)
         C_true = image_colorfulness(img_true)
         # display the cost function(MSE) output of the image
@@ -239,11 +239,11 @@ def plot_evaluation(res, run_id, epoch, is_eval=False):
         fig, axes = plt.subplots(2, 4)
         # Colorization ab
         axes[0,0].imshow(img_ab)
-        axes[0,0].set_title('Colorization ab')
+        axes[0,0].set_title('Deep Koalarization ab')
         axes[0,0].axis('off')
         # Low res ab
-        axes[0,1].imshow(img_lowres_ab)
-        axes[0,1].set_title('Low resolution ab')
+        axes[0,1].imshow(img_fwd_ab)
+        axes[0,1].set_title('Feedforward Colorization ab')
         axes[0,1].axis('off')
         # Refined ab
         axes[0,2].imshow(img_ref_ab)
@@ -255,11 +255,11 @@ def plot_evaluation(res, run_id, epoch, is_eval=False):
         axes[0,3].axis('off')
         # Colorization output
         axes[1,0].imshow(img_output)
-        axes[1,0].set_title('Colorization output\n' + ("{:.4f}".format(C_output)))
+        axes[1,0].set_title('Deep Koalarization output\n' + ("{:.4f}".format(C_output)))
         axes[1,0].axis('off')
         # Low Resolution output
-        axes[1,1].imshow(img_lowres_output)
-        axes[1,1].set_title('Low Resolution output\n' + ("{:.4f}".format(C_lowres_output)))
+        axes[1,1].imshow(img_fwd_output)
+        axes[1,1].set_title('Feedforward Colorization output\n' + ("{:.4f}".format(C_fwd_output)))
         axes[1,1].axis('off')
         # Refinement output
         axes[1,2].imshow(img_ref_output)

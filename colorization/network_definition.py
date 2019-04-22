@@ -42,14 +42,14 @@ class Colorization:
         return self.decoder(fusion)
 
 
-class LowRes_Colorization:
+class Feedforward_Colorization:
     def __init__(self, depth_after_fusion):
-        self.network = _build_lowres_network()
-        #self.encoder = _build_lowres_encoder()
+        self.network = _build_fwd_network()
+        #self.encoder = _build_fwd_encoder()
         #self.fusion = FusionLayer()
         #self.after_fusion = Conv2D(
         #    depth_after_fusion, (1, 1), activation='relu')
-        #self.decoder = _build_lowres_decoder(depth_after_fusion)
+        #self.decoder = _build_fwd_decoder(depth_after_fusion)
 
     def build(self, img_l):
         #img_enc = self.encoder(img_l)
@@ -163,7 +163,7 @@ def _build_network():
     return model
 
 
-def _build_lowres_network():
+def _build_fwd_network():
     image_tensor = Input(shape=(None, None, 1))
     x = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)(image_tensor)
     x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
@@ -227,7 +227,7 @@ def _build_encoder():
     return model
 
 
-def _build_lowres_encoder():
+def _build_fwd_encoder():
     # Functional implementation
     image_tensor = Input(shape=(None, None, 1))
     x = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)(image_tensor)
@@ -272,7 +272,7 @@ def _build_decoder(encoding_depth):
     return model
 
 
-def _build_lowres_decoder(encoding_depth):
+def _build_fwd_decoder(encoding_depth):
     model = Sequential(name='decoder')
     model.add(InputLayer(input_shape=(None, None, encoding_depth)))
     model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
