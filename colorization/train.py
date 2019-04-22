@@ -3,7 +3,7 @@ os.environ['KERAS_BACKEND'] = 'tensorflow'
 
 from keras import backend as K
 
-from colorization import Colorization, FeedForward_Colorization, Refinement
+from colorization import Colorization, Feedforward_Colorization, Refinement
 from colorization.training_utils import evaluation_pipeline, \
     checkpointing_system, \
     plot_evaluation, training_pipeline, metrics_system, print_log, print_term
