@@ -123,8 +123,9 @@ def residual_block(y, nb_channels_in, nb_channels_out, name, _strides=(1, 1), _p
 def _build_network():
     image_tensor = Input(shape=(None, None, 5))
     x = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)(image_tensor)
+    x = Dropout(0.2)(x)
     x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
-    #x = Dropout(0.2)(x)
+    x = Dropout(0.2)(x)
     x = Conv2D(128, (3, 3), activation='relu', padding='same', strides=2)(x)
     #x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
     x = Dropout(0.2)(x)
@@ -166,7 +167,9 @@ def _build_network():
 def _build_fwd_network():
     image_tensor = Input(shape=(None, None, 1))
     x = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)(image_tensor)
+    x = Dropout(0.2)(x)
     x = Conv2D(128, (3, 3), activation='relu', padding='same')(x)
+    x = Dropout(0.2)(x)
     x = Conv2D(128, (3, 3), activation='relu', padding='same', strides=2)(x)
     #x = Conv2D(256, (3, 3), activation='relu', padding='same')(x)
     x = Dropout(0.2)(x)

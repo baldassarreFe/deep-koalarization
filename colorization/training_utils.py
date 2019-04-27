@@ -51,7 +51,7 @@ def training_pipeline(col, fwd_col, ref, learning_rate, batch_size):
     #shape = imgs_ab.shape
     #imgs_fwd_ab = tf.image.resize_images(imgs_fwd_ab, (shape[1], shape[2]))
     # Concatenate imgs_l, imgs_fwd_ab and imgs_true_ab as imgs_lab to train on Refinement Network
-    imgs_lab = tf.concat([imgs_l, imgs_fwd_ab, imgs_ab], axis=3)
+    imgs_lab = tf.concat([imgs_l, imgs_true_ab, imgs_true_ab], axis=3)
     imgs_ref_ab = ref.build(imgs_lab)
     cost, summary = loss_with_metrics(imgs_ab, imgs_true_ab, 'training_col')
     cost_fwd, summary_fwd = loss_with_metrics(imgs_fwd_ab, imgs_true_ab, 'training_fwd')
