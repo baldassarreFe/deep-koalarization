@@ -1,6 +1,6 @@
 # Instructions
 
-## Environment
+## Environment Setup using venv
 
 The project is based on Python 3.6, to manage the dependencies contained in 
 [`requirements.txt`](requirements.txt) a virtual environment is recommended.
@@ -9,6 +9,22 @@ The project is based on Python 3.6, to manage the dependencies contained in
 python3.6 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+```
+
+## Alternative Environment Setup using anaconda(preferred approach since this is what worked on all GPU computers used)
+
+First install anaconda package manager then create a conda environment on the project directory then input the following commands to install the dependency packages:
+
+```bash
+conda install cudnn
+conda install -c menpo opencv=3
+conda install -c anaconda glib
+conda install -c conda-forge tensorflow
+conda install -c anaconda tensorflow-gpu
+conda install -c conda-forge keras
+conda install -c conda-forge matplotlib
+conda install -c anaconda scikit-image
+conda install python=3.6.6
 ```
 
 ## Dataset
