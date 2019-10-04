@@ -1,3 +1,29 @@
+# Ensemble Image Colorization using Convolutional Neural Networks with Refinement Network
+
+(* This research is an extension of [Deep Koalarization](http://lcsrg.me/deep-koalarization) by Baldassarre et al. Click the link to read the initial research. I also included the original README of the initial research if you want to explore it.)
+
+## Abstract
+
+Colorization of grayscale images brings more life to images and presents a more realistic view of the objects present as in the real world. It can be applied on the restoration of historic monochrome images and films as well as assisting cartoon artists. Previous approaches in image colorization involve scribbling color hints on the input grayscale image or choosing a reference color image to be able to transfer the color traits into the input grayscale image. In this study, the burden of requiring user intervention in the colorization process is removed by using a convolutional neural network(CNN) that is trained on a large dataset of color images. Mode cost is evaluated using L2 regression loss  wherein the colorized image is compared with the ground truth image to achieve a relatively close colorization. Previous colorization results show effective colorizations on global image semantics like sky, grass, and trees, but suffers from color bleeding where certain colors exceed their assigned regions. Our proposed approach addresses this problem. We also propose a new approach in colorization using CNN by using ensemble colorization where separate colorizations are performed by two different CNNs then a refinement network combines and refines the results. The effectiveness of the approach is further evaluated by performing a "Colorization Turing Test" wherein participants are tasked to determine which of the given set of images are colorized or real.
+
+## Full Network Architecture
+
+![](assets/CNN_Diagram.png)
+
+## Colorization Results
+
+![](assets/col_results.png)
+
+
+
+
+
+
+
+________________________________________________________________________________________________________________________
+
+(** This part of the README is from the initial research.)
+
 # [Deep Koalarization](http://lcsrg.me/deep-koalarization)
 
 [![GitHub license](https://img.shields.io/github/license/baldassarreFe/deep-koalarization.svg)](https://github.com/baldassarreFe/deep-koalarization/blob/master/LICENSE)
