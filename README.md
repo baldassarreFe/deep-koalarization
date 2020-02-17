@@ -85,5 +85,5 @@ We are proud if our work gets noticed and helps/inspires other people on their p
 - Amir Kalron on [Logz.io Blog](https://logz.io/blog/open-source-machine-learning/)
 - sparkexpert on [CSDN](http://blog.csdn.net/sparkexpert/article/details/74452523)
 
-## Projects 
-- (Ensemble Image Colorization using Convolutional Neural Networks with Refinement Network)[https://github.com/Kriztoper/deep-koalarization] by Kriztoper a.k.a. **Deep Koalarization v2**.
+## Projects originated from here
+- [Ensemble Image Colorization using Convolutional Neural Networks with Refinement Network](https://github.com/Kriztoper/deep-koalarization) by Kriztoper a.k.a. **Deep Koalarization v2**.
