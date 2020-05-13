@@ -1,17 +1,42 @@
-# [Deep Koalarization](http://lcsrg.me/deep-koalarization)
+<h1 align="center" style="border-bottom: none;"> <a href="http://lcsrg.me/deep-koalarization">🐨 deep koalarization</a>
+</h1>
+<h3 align="center">Impementation of our paper <a href="https://arxiv.org/abs/1712.03400">Deep Koalarization: Image Colorization using CNNs and Inception-ResNet-v2 (2017)</a></h3>
 
-[![GitHub license](https://img.shields.io/github/license/baldassarreFe/deep-koalarization.svg)](https://github.com/baldassarreFe/deep-koalarization/blob/master/LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/baldassarreFe/deep-koalarization.svg)](https://github.com/baldassarreFe/deep-koalarization/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/baldassarreFe/deep-koalarization.svg)](https://github.com/baldassarreFe/deep-koalarization/network)
-[![arXiv](https://img.shields.io/badge/paper-arXiv-red.svg)](https://arxiv.org/abs/1712.03400)
-[![Twitter](https://img.shields.io/twitter/url/https/github.com/baldassarreFe/deep-koalarization.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2FbaldassarreFe%2Fdeep-koalarization)
+<p align="center">
+  <a href="">
+    <img alt="Package version" src="https://img.shields.io/badge/deepkoala-v0.1.0-blue.svg?style=for-the-badge&logo=python&logoColor=yellow">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/baldassarreFe/deep-koalarization/blob/master/LICENSE">
+    <img alt="GitHub License" src="https://img.shields.io/github/license/baldassarreFe/deep-koalarization.svg">
+  </a>
+  <a href="https://github.com/baldassarreFe/deep-koalarization/stargazers">
+    <img alt="GitHub stars" src="https://img.shields.io/github/stars/baldassarreFe/deep-koalarization.svg">
+  </a>
+  <a href="https://github.com/baldassarreFe/deep-koalarization/network">
+    <img alt="GitHub forks" src="https://img.shields.io/github/forks/baldassarreFe/deep-koalarization.svg">
+  </a>
+  <a href="https://arxiv.org/abs/1712.03400">
+    <img alt="arXiv" src="https://img.shields.io/badge/paper-arXiv-_.svg?&color=B31B1B">
+  </a>
+  <a href="https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2FbaldassarreFe%2Fdeep-koalarization">
+    <img alt="Twitter" src="https://img.shields.io/twitter/url/https/github.com/baldassarreFe/deep-koalarization.svg?style=social">
+  </a>
+</p>
 
 
-[**Deep Koalarization: Image Colorization using CNNs and Inception-ResNet-v2** (2017)](https://arxiv.org/abs/1712.03400).
+<p align="center">
+  <a href="https://github.com/baldassarreFe">Federico Baldassarre</a><sup>*</sup>,
+  <a href="https://github.com/diegomorin8">Diego Gonzalez Morín</a><sup>*</sup> and <a href="https://github.com/lucasrodes">Lucas Rodés-Guirao</a><sup>*</sup> 
+</p>
+<p align="center">
+  <sup>* Authors contributed equally</sup>
+</p> 
 
-[Federico Baldassarre](https://github.com/baldassarreFe)\*, [Diego Gonzalez Morin](https://github.com/diegomorin8)\* and [Lucas Rodés Guirao](https://github.com/lucasrodes)\* (* Authors contributed equally)
 
-This project was developed as part of the [DD2424 Deep Learning in Data Science course](https://www.kth.se/student/kurser/kurs/DD2424?l=en) at [KTH Royal Institute of Technology](http://kth.se), spring 2017.
+**deep-koalarization** was developed as part of the [DD2424 Deep Learning in Data Science course](https://www.kth.se/student/kurser/kurs/DD2424?l=en) at [KTH Royal Institute of Technology](http://kth.se), spring 2017.
 
 The code is built using [Keras](http://keras.io) and [Tensorflow](https://www.tensorflow.org/).
 
