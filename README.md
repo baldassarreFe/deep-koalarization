@@ -3,7 +3,7 @@
 <h3 align="center">Impementation of our paper <a href="https://arxiv.org/abs/1712.03400">Deep Koalarization: Image Colorization using CNNs and Inception-ResNet-v2 (2017)</a></h3>
 
 <p align="center">
-  <a href="">
+  <a href="https://github.com/baldassarreFe/deep-koalarization">
     <img alt="Package version" src="https://img.shields.io/badge/deepkoala-v0.1.0-blue.svg?style=for-the-badge&logo=python&logoColor=yellow">
   </a>
 </p>
