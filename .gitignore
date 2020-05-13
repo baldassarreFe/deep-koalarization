@@ -98,3 +98,7 @@ dataset/.DS_Store
 testing
 notebooks/graphs
 resized
+
+py36
+py37
+imagenet

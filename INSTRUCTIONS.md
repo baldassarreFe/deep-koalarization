@@ -23,7 +23,7 @@ Storing the images and the embedding as separate files on disk (`jpeg/png` and `
 the performances during training, so all the image-embedding pairs are stored in binary format in large 
 continuous [TFRecords](https://www.tensorflow.org/programmers_guide/datasets).
 
-Refer to [DATASET](dataset/DATASET.md) for detailed instructions on data preparation.
+Refer to [DATASET](DATASET.md) for detailed instructions on data preparation.
 
 ## Training and evaluation
 
