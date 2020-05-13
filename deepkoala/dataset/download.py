@@ -12,25 +12,30 @@ from deepkoala.dataset.shared import dir_root, maybe_create_folder
 
 class ImagenetDownloader:
     def __init__(self, links_source: str, dest_dir: str):
-
+        
+        print("xatu")
         # Destination folder
         maybe_create_folder(dest_dir)
         self.dest_dir = dest_dir
 
         # If the source is a link download it
+        print(links_source)
         if links_source.startswith('http://'):
             print('Using urllib.request for the link archive is extremely',
                   'slow, it\'s better to download the tgz archive manualy',
                   'and pass its path to this constructor', file=sys.stderr)
-            links_source, _ = urllib.request.urlretrieve(
-                links_source,
-                join(dir_root, 'imagenet_fall11_urls.tgz'))
+links_source, _ = urllib.request.urlretrieve(
+    links_source,
+    join(dir_root, 'imagenet_fall11_urls.tgz')
+)
 
         # If the source is an archive extract it
+        print(12222222)
         if links_source.endswith('.tgz'):
             with tarfile.open(links_source, 'r:gz') as tar:
                 tar.extractall(path=dir_root)
                 links_source = join(dir_root, 'fall11_urls.txt')
+        print(links_source)
 
         if not isfile(links_source):
             raise Exception('Links source not valid: {}'.format(links_source))
@@ -113,5 +118,6 @@ if __name__ == '__main__':
                         .format(dir_originals))
 
     args = parser.parse_args()
+    print("hello")
     ImagenetDownloader(args.source, args.output) \
         .download_images(args.count, args.skip)

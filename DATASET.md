@@ -34,7 +34,7 @@ wget https://gist.githubusercontent.com/yrevar/6135f1bd8dcf2e0cc683/raw/d133d61a
 #### Getting the images from Imagenet
 
 ```bash
-python3 -m dataset.download <args>
+python3 -m deepkoala.dataset.download <args>
 ```
 
 Passing `-s path/to/fall11_urls.txt` is highly recommended over passing a url.
@@ -44,7 +44,7 @@ Use `-h` to see the available options
 #### Resizing
 
 ```bash
-python3 -m dataset.resize <args>
+python3 -m deepkoala.dataset.resize <args>
 ```
 
 Use `-h` to see the available options
@@ -52,7 +52,7 @@ Use `-h` to see the available options
 #### Converting to TFRecords
 
 ```bash
-python3 -O -m dataset.lab_batch <args>
+python3 -O -m deepkoala.dataset.lab_batch <args>
 ```
 
 Passing `-c path/to/inception_resnet_v2_2016_08_30.ckpt` is highly recommended
