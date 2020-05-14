@@ -184,5 +184,8 @@ if __name__ == '__main__':
                              'the last one (default: {})'.format(default_batch_size))
 
     args = parser.parse_args()
-    LabImagenetBatcher(args.inputs, args.records, args.checkpoint) \
-        .batch_all(args.batch_size)
+    LabImagenetBatcher(
+        inputs_dir=args.inputs, 
+        records_dir=args.records, 
+        checkpoint_source=args.checkpoint
+    ).batch_all(examples_per_record=args.batch_size)

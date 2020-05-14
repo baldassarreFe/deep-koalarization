@@ -7,7 +7,7 @@ from os.path import join, isfile, expanduser
 
 import tensorflow as tf
 
-from koalarization.dataset.shared import dir_root
+from koalarization.dataset.shared import DIR_ROOT
 
 checkpoint_url = 'http://download.tensorflow.org/models/inception_resnet_v2_2016_08_30.tar.gz'
 
@@ -27,14 +27,14 @@ def maybe_download_inception(checkpoint_source):
               'and pass its path to this constructor', file=sys.stderr)
         checkpoint_source, _ = urllib.request.urlretrieve(
             checkpoint_source,
-            join(dir_root, 'inception_resnet_v2_2016_08_30.ckpt.tgz'))
+            join(DIR_ROOT, 'inception_resnet_v2_2016_08_30.ckpt.tgz'))
 
     # If the source is an archive extract it
     if checkpoint_source.endswith('.tgz'):
         with tarfile.open(checkpoint_source, 'r:gz') as tar:
-            tar.extractall(path=dir_root)
+            tar.extractall(path=DIR_ROOT)
             checkpoint_source = join(
-                dir_root, 'inception_resnet_v2_2016_08_30.ckpt')
+                DIR_ROOT, 'inception_resnet_v2_2016_08_30.ckpt')
 
     checkpoint_source = expanduser(checkpoint_source)
     if not isfile(checkpoint_source):

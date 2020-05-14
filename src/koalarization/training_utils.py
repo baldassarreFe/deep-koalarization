@@ -7,7 +7,7 @@ import numpy as np
 import tensorflow as tf
 from skimage import color
 
-from koalarization.dataset.shared import dir_tfrecord, dir_metrics, dir_checkpoints, dir_root, \
+from koalarization.dataset.shared import dir_tfrecord, dir_metrics, dir_checkpoints, DIR_ROOT, \
     maybe_create_folder
 from koalarization.dataset.tfrecords import LabImageRecordReader
 
@@ -16,7 +16,7 @@ matplotlib.rcParams['figure.figsize'] = (10.0, 4.0)
 import matplotlib.pyplot as plt
 
 labels_to_categories = pickle.load(
-    open(join(dir_root, 'imagenet1000_clsid_to_human.pkl'), 'rb'))
+    open(join(DIR_ROOT, 'imagenet1000_clsid_to_human.pkl'), 'rb'))
 
 
 def loss_with_metrics(img_ab_out, img_ab_true, name=''):
@@ -89,7 +89,7 @@ def checkpointing_system(run_id):
 
 
 def plot_evaluation(res, run_id, epoch):
-    maybe_create_folder(join(dir_root, 'images', run_id))
+    maybe_create_folder(join(DIR_ROOT, 'images', run_id))
     for k in range(len(res['imgs_l'])):
         img_gray = l_to_rgb(res['imgs_l'][k][:, :, 0])
         img_output = lab_to_rgb(res['imgs_l'][k][:, :, 0],
@@ -117,7 +117,7 @@ def plot_evaluation(res, run_id, epoch):
         plt.suptitle(top_5, fontsize=7)
 
         plt.savefig(join(
-            dir_root, 'images', run_id, '{}_{}.png'.format(epoch, k)))
+            DIR_ROOT, 'images', run_id, '{}_{}.png'.format(epoch, k)))
         plt.clf()
         plt.close()
 

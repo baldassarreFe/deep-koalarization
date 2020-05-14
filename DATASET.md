@@ -12,8 +12,7 @@ continuous [TFRecords](https://www.tensorflow.org/programmers_guide/datasets).
 
 ## Pipeline
 
-All the data preparation steps are independent and persisted on the disk, the default and
-recommended folder structure is:
+All the data preparation steps are independent and persisted on the disk, the default (and recommended) folder structure is:
 
 ```
 ~/imagenet
@@ -25,34 +24,43 @@ recommended folder structure is:
 └── tfrecords
 ```
 
-#### Imagenet labels
+### Imagenet labels
+
+Get ImageNet human-readable labels. 
 
 ```bash
-wget https://gist.githubusercontent.com/yrevar/6135f1bd8dcf2e0cc683/raw/d133d61a09d7e5a3b36b8c111a8dd5c4b5d560ee/imagenet1000_clsid_to_human.pkl
+$ wget https://gist.githubusercontent.com/yrevar/6135f1bd8dcf2e0cc683/raw/d133d61a09d7e5a3b36b8c111a8dd5c4b5d560ee/imagenet1000_clsid_to_human.pkl
 ```
 
-#### Getting the images from Imagenet
+### Getting the images from Imagenet
+To downoad ImageNet dataset, we provide a script which requires an input `txt` file containing the URLs to the images. 
+
+> **Note**: Previously, there was a file containing the URLs to all images from ImageNet 2011 dataset on the [official
+> website](http://www.image-net.org/imagenet_data/urls/imagenet_fall11_urls.tgz), but it is currently down. You may want to use this [non-official
+> file](http://github.com/akando42/1stPyTorch/blob/master/fall11_urls.txt) instead.
+
 
 ```bash
-python3 -m koalarization.dataset.download <args>
+$ python -m koalarization.dataset.download <args>
 ```
 
-Passing `-s path/to/fall11_urls.txt` is highly recommended over passing a url.
+Passing `-s path/to/fall11_urls.txt` is **highly recommended** over passing a url.
 
 Use `-h` to see the available options
 
-#### Resizing
+### Resizing the images for the model
+To be able to train in batches, we resize all images (in particular, we use shape _299 x 299_). Use the following script to achieve this:
 
 ```bash
-python3 -m koalarization.dataset.resize <args>
+$ python -m koalarization.dataset.resize <args>
 ```
 
 Use `-h` to see the available options
 
-#### Converting to TFRecords
+### Converting to TFRecords
 
 ```bash
-python3 -O -m koalarization.dataset.lab_batch <args>
+python -O -m koalarization.dataset.lab_batch <args>
 ```
 
 Passing `-c path/to/inception_resnet_v2_2016_08_30.ckpt` is highly recommended
