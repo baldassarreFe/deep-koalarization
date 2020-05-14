@@ -139,8 +139,8 @@ class LabImagenetBatcher:
 # python3 -m dataset.lab_batch <args>
 if __name__ == '__main__':
     import argparse
-    from deepkoala.dataset.shared import dir_tfrecord
-    from deepkoala.dataset.embedding.inception_utils import checkpoint_url
+    from koalarization.dataset.shared import dir_tfrecord
+    from koalarization.dataset.embedding.inception_utils import checkpoint_url
 
     default_batch_size = 500
 

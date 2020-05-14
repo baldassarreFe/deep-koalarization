@@ -82,7 +82,7 @@ class ImagenetDownloader:
 # python3 -m dataset.download <args>
 if __name__ == '__main__':
     import argparse
-    from deepkoala.dataset.shared import dir_originals
+    from koalarization.dataset.shared import dir_originals
 
     links_url = 'http://image-net.org/imagenet_data/urls/imagenet_fall11_urls.tgz'
     # links_url = http://www.image-net.org/image/tiny/tiny-imagenet-200.zip

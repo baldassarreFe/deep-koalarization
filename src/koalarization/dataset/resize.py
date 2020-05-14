@@ -54,7 +54,7 @@ class ImagenetResizer:
 # python3 -m dataset.resize <args>
 if __name__ == '__main__':
     import argparse
-    from deepkoala.dataset.shared import dir_originals, dir_resized
+    from koalarization.dataset.shared import dir_originals, dir_resized
 
     # Argparse setup
     parser = argparse.ArgumentParser(
