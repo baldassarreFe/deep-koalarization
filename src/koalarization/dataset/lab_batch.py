@@ -4,13 +4,13 @@ from os.path import isdir, join, basename
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
 
-from deepkoala.dataset.embedding import prepare_image_for_inception, \
+from koalarization.dataset.embedding import prepare_image_for_inception, \
     maybe_download_inception, inception_resnet_v2, inception_resnet_v2_arg_scope
-from deepkoala.dataset.shared import maybe_create_folder, dir_resized
-from deepkoala.dataset.shared import progressive_filename_generator
-from deepkoala.dataset.tfrecords import batch_operations
-from deepkoala.dataset.tfrecords.images.lab_image_record import LabImageRecordWriter
-from deepkoala.dataset.tfrecords.images_queue import queue_single_images_from_folder
+from koalarization.dataset.shared import maybe_create_folder, dir_resized
+from koalarization.dataset.shared import progressive_filename_generator
+from koalarization.dataset.tfrecords import batch_operations
+from koalarization.dataset.tfrecords.images.lab_image_record import LabImageRecordWriter
+from koalarization.dataset.tfrecords.images_queue import queue_single_images_from_folder
 
 
 class LabImagenetBatcher:

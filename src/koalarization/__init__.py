@@ -1,3 +1,6 @@
+__import__('pkg_resources').declare_namespace(__name__)
+
+
 from .fusion_layer import FusionLayer
 from .network_definition import Colorization
 from .training_utils import l_to_rgb, evaluation_pipeline, plot_evaluation, lab_to_rgb
@@ -10,3 +13,6 @@ __all__ = [
     'plot_evaluation',
     'lab_to_rgb',
 ]
+
+
+__version__ = "0.1.0"

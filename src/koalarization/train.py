@@ -1,8 +1,8 @@
 import tensorflow as tf
 from keras import backend as K
 
-from deepkoala.colorization import Colorization
-from deepkoala.colorization.training_utils import evaluation_pipeline, \
+from koalarization import Colorization
+from koalarization.training_utils import evaluation_pipeline, \
     checkpointing_system, \
     plot_evaluation, training_pipeline, metrics_system, print_log
 

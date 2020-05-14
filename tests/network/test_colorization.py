@@ -9,7 +9,7 @@ import numpy as np
 import tensorflow as tf
 from skimage import color
 
-from colorization import Colorization, lab_to_rgb, l_to_rgb
+from koalarization import Colorization, lab_to_rgb, l_to_rgb
 
 
 class TestColorization(unittest.TestCase):

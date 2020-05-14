@@ -5,7 +5,7 @@ from typing import Tuple
 from PIL import Image
 from resizeimage import resizeimage
 
-from deepkoala.dataset.shared import maybe_create_folder
+from koalarization.dataset.shared import maybe_create_folder
 
 
 class ImagenetResizer:

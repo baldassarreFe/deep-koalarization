@@ -7,9 +7,9 @@ import numpy as np
 import tensorflow as tf
 from skimage import color
 
-from deepkoala.dataset.shared import dir_tfrecord, dir_metrics, dir_checkpoints, dir_root, \
+from koalarization.dataset.shared import dir_tfrecord, dir_metrics, dir_checkpoints, dir_root, \
     maybe_create_folder
-from deepkoala.dataset.tfrecords import LabImageRecordReader
+from koalarization.dataset.tfrecords import LabImageRecordReader
 
 matplotlib.use('Agg')
 matplotlib.rcParams['figure.figsize'] = (10.0, 4.0)

@@ -10,8 +10,8 @@ import unittest
 import numpy as np
 import tensorflow as tf
 
-from dataset.shared import dir_tfrecord
-from dataset.tfrecords import RecordWriter, RecordReader
+from koalarization.dataset.shared import dir_tfrecord
+from koalarization.dataset.tfrecords import RecordWriter, RecordReader
 
 
 class VariableSizeTypesRecordWriter(RecordWriter):

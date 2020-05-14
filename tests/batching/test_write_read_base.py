@@ -9,8 +9,8 @@ import unittest
 
 import tensorflow as tf
 
-from dataset.shared import dir_tfrecord
-from dataset.tfrecords import RecordWriter, BatchableRecordReader
+from koalarization.dataset.shared import dir_tfrecord
+from koalarization.dataset.tfrecords import RecordWriter, BatchableRecordReader
 
 
 class BaseTypesRecordWriter(RecordWriter):

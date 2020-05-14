@@ -21,9 +21,10 @@ setup(
     author='Federico Baldassare, Diego González Morín, Lucas Rodés-Guirao',
     license='GPL-v3',
     install_requires=requirements,
-    packages=find_packages('.'),
-    package_dir={'': '.'},
-    py_modules=[os.path.splitext(os.path.basename(path))[0] for path in glob.glob('./*.py')],
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
+    namespace_packages=['koalarization'],
+    py_modules=[os.path.splitext(os.path.basename(path))[0] for path in glob.glob('src/*.py')],
     include_package_data=True,
     zip_safe=False,
     classifiers=[

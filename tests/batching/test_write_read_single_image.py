@@ -11,9 +11,9 @@ from os.path import basename
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
-from deepkoala.dataset.shared import dir_resized, dir_tfrecord
-from deepkoala.dataset.tfrecords import SingleImageRecordWriter, SingleImageRecordReader
-from deepkoala.dataset.tfrecords import queue_single_images_from_folder
+from koalarization.dataset.shared import dir_resized, dir_tfrecord
+from koalarization.dataset.tfrecords import SingleImageRecordWriter, SingleImageRecordReader
+from koalarization.dataset.tfrecords import queue_single_images_from_folder
 
 
 class TestSingleImageWriteRead(unittest.TestCase):

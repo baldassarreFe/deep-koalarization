@@ -7,7 +7,7 @@ from os.path import join, isfile, expanduser
 
 import tensorflow as tf
 
-from deepkoala.dataset.shared import dir_root
+from koalarization.dataset.shared import dir_root
 
 checkpoint_url = 'http://download.tensorflow.org/models/inception_resnet_v2_2016_08_30.tar.gz'
 

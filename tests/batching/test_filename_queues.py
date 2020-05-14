@@ -3,8 +3,8 @@ import unittest
 
 import tensorflow as tf
 
-from dataset.shared import dir_resized
-from dataset.tfrecords import \
+from koalarization.dataset.shared import dir_resized
+from koalarization.dataset.tfrecords import \
     queue_single_images_from_folder
 
 

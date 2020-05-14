@@ -11,12 +11,12 @@ from os.path import basename
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
-from colorization import l_to_rgb
-from colorization import lab_to_rgb
-from dataset.shared import dir_resized, dir_tfrecord
-from dataset.tfrecords import LabImageRecordReader
-from dataset.tfrecords import LabImageRecordWriter
-from dataset.tfrecords import queue_single_images_from_folder
+from koalarization import l_to_rgb
+from koalarization import lab_to_rgb
+from koalarization.dataset.shared import dir_resized, dir_tfrecord
+from koalarization.dataset.tfrecords import LabImageRecordReader
+from koalarization.dataset.tfrecords import LabImageRecordWriter
+from koalarization.dataset.tfrecords import queue_single_images_from_folder
 
 
 class TestLabImageWriteRead(unittest.TestCase):
