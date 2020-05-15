@@ -1,0 +1,8 @@
+# Ignore everything in this directory
+*
+imagenet_fall11_urls.txt
+imagenet1000_clsid_to_human.pkl
+inception_resnet_v2_2016_08_30.ckpt
+# Except these files
+!unsplash.txt
+!.gitignore
