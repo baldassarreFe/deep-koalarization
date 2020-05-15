@@ -9,7 +9,7 @@ from keras.engine import InputLayer
 from keras.layers import Conv2D, UpSampling2D
 from keras.models import Sequential
 
-from koalarization.fusion_layer import FusionLayer
+from .fusion_layer import FusionLayer
 
 
 class Colorization:
