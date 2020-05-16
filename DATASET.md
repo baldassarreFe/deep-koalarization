@@ -60,15 +60,15 @@ Use `-h` to see the available options
 ### Converting to TFRecords
 
 ```bash
-python -O -m koalarization.dataset.lab_batch <args>
+$ python -O -m koalarization.dataset.lab_batch <args>
 ```
 
 Passing `-c path/to/inception_resnet_v2_2016_08_30.ckpt` is highly recommended
 over passing a url. To download the checkpoint it separately:
 
 ```bash
-wget http://download.tensorflow.org/models/inception_resnet_v2_2016_08_30.tar.gz
-tar -xvf inception_resnet_v2_2016_08_30.tar.gz
+$ wget http://download.tensorflow.org/models/inception_resnet_v2_2016_08_30.tar.gz
+$ tar -xvf inception_resnet_v2_2016_08_30.tar.gz
 ```
 
 Omitting the `-O` (optimize) will print all image names at the moment they are written to
@@ -100,5 +100,5 @@ To save space we can use one of TFRecord compression options, or compress the
 files after creation with a command like:
 
 ```
-7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on "$RECORD.7z" "$RECORD"
+$ 7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on "$RECORD.7z" "$RECORD"
 ```
