@@ -115,7 +115,12 @@ The Training data for this experiment could come from any source. We decuded to 
 
 ### Installation
 
-Refer to [INSTRUCTIONS](INSTRUCTIONS.md) to setup and use the code in this repo.
+Refer to [INSTRUCTIONS](INSTRUCTIONS.md) to install and use the code in this repo. But in short, to install the package,
+simply run:
+
+```
+pip install -e .
+```
 
 
 ### Getting started
