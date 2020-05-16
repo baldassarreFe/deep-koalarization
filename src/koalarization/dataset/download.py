@@ -1,3 +1,21 @@
+"""Getting the images from Imagenet
+
+To downoad ImageNet dataset, we provide a script which requires an input `txt` file containing the URLs to the images.
+
+> Note: Previously, there was a file containing the URLs to all images from ImageNet 2011 dataset on the official 
+> website, but it is currently down. You may want to use this non-official file instead.
+
+```
+$ python3 -m koalarization.dataset.download <args>
+```
+
+Passing `-s path/to/fall11_urls.txt` is highly recommended over passing a url.
+
+Use `-h` to see the available options
+
+"""
+
+
 import argparse
 import hashlib
 import imghdr
@@ -126,6 +144,12 @@ class ImagenetDownloader:
 
 
 def _parse_args():
+    """Get args.
+
+    Returns:
+        Namespace: Contains args
+
+    """
     # Argparse setup
     parser = argparse.ArgumentParser(
         description='Download and process images from imagenet'
@@ -161,7 +185,7 @@ def _parse_args():
 # Run from the top folder as:
 # python3 -m dataset.download <args>
 if __name__ == '__main__':
-    links_url = 'http://image-net.org/imagenet_data/urls/imagenet_fall11_urls.tgz'
+    # links_url = 'http://image-net.org/imagenet_data/urls/imagenet_fall11_urls.tgz'
     # links_url = http://www.image-net.org/image/tiny/tiny-imagenet-200.zip
     links_url = 'http://media.githubusercontent.com/media/akando42/1stPyTorch/master/fall11_urls.txt'
 

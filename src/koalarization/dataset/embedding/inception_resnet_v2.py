@@ -30,7 +30,19 @@ slim = tf.contrib.slim
 
 
 def block35(net, scale=1.0, activation_fn=tf.nn.relu, scope=None, reuse=None):
-    """Builds the 35x35 resnet block."""
+    """Builds the 35x35 resnet block.
+
+    Args:
+        net (Network): .
+        scale (float, optional): [description]. Defaults to 1.0.
+        activation_fn ([type], optional): [description]. Defaults to tf.nn.relu.
+        scope ([type], optional): [description]. Defaults to None.
+        reuse ([type], optional): [description]. Defaults to None.
+
+    Returns:
+        Network: Network.
+
+    """
     with tf.variable_scope(scope, 'Block35', [net], reuse=reuse):
         with tf.variable_scope('Branch_0'):
             tower_conv = slim.conv2d(net, 32, 1, scope='Conv2d_1x1')
@@ -55,7 +67,19 @@ def block35(net, scale=1.0, activation_fn=tf.nn.relu, scope=None, reuse=None):
 
 
 def block17(net, scale=1.0, activation_fn=tf.nn.relu, scope=None, reuse=None):
-    """Builds the 17x17 resnet block."""
+    """Builds the 17x17 resnet block.
+
+    Args:
+        net ([type]): [description]
+        scale (float, optional): [description]. Defaults to 1.0.
+        activation_fn ([type], optional): [description]. Defaults to tf.nn.relu.
+        scope ([type], optional): [description]. Defaults to None.
+        reuse ([type], optional): [description]. Defaults to None.
+
+    Returns:
+        [type]: [description]
+
+    """
     with tf.variable_scope(scope, 'Block17', [net], reuse=reuse):
         with tf.variable_scope('Branch_0'):
             tower_conv = slim.conv2d(net, 192, 1, scope='Conv2d_1x1')
@@ -75,7 +99,19 @@ def block17(net, scale=1.0, activation_fn=tf.nn.relu, scope=None, reuse=None):
 
 
 def block8(net, scale=1.0, activation_fn=tf.nn.relu, scope=None, reuse=None):
-    """Builds the 8x8 resnet block."""
+    """Builds the 8x8 resnet block.
+
+    Args:
+        net ([type]): [description]
+        scale (float, optional): [description]. Defaults to 1.0.
+        activation_fn ([type], optional): [description]. Defaults to tf.nn.relu.
+        scope ([type], optional): [description]. Defaults to None.
+        reuse ([type], optional): [description]. Defaults to None.
+
+    Returns:
+        [type]: [description]
+
+    """
     with tf.variable_scope(scope, 'Block8', [net], reuse=reuse):
         with tf.variable_scope('Branch_0'):
             tower_conv = slim.conv2d(net, 192, 1, scope='Conv2d_1x1')
@@ -101,17 +137,18 @@ def inception_resnet_v2(inputs, num_classes=1001, is_training=True,
     """Creates the Inception Resnet V2 model.
 
     Args:
-      inputs: a 4-D tensor of size [batch_size, height, width, 3].
-      num_classes: number of predicted classes.
-      is_training: whether is training or not.
-      dropout_keep_prob: float, the fraction to keep before final layer.
-      reuse: whether or not the unfiltering and its variables should be reused. To be
-        able to reuse 'scope' must be given.
-      scope: Optional variable_scope.
+        inputs ([type]): A 4-D tensor of size [batch_size, height, width, 3].
+        num_classes (int, optional): Number of predicted classes. Defaults to 1001.
+        is_training (bool, optional): Whether is training or not.. Defaults to True.
+        dropout_keep_prob (float, optional): Float, the fraction to keep before final layer.. Defaults to 0.8.
+        reuse ([type], optional): Whether or not the unfiltering and its variables should be reused. To be
+                                    able to reuse 'scope' must be given. Defaults to None.
+        scope (str, optional): Optional variable_scope. Defaults to 'InceptionResnetV2'.
 
     Returns:
-      logits: the logits outputs of the model.
-      end_points: the set of end_points from the inception model.
+        logits: the logits outputs of the model.
+        end_points: the set of end_points from the inception model.
+
     """
     end_points = {}
 
@@ -283,12 +320,14 @@ def inception_resnet_v2_arg_scope(weight_decay=0.00004,
     """Yields the scope with the default parameters for inception_resnet_v2.
 
     Args:
-      weight_decay: the weight decay for weights variables.
-      batch_norm_decay: decay for the moving average of batch_norm momentums.
-      batch_norm_epsilon: small float added to variance to avoid dividing by zero.
+        weight_decay (float, optional): The weight decay for weights variables.. Defaults to 0.00004.
+        batch_norm_decay (float, optional): Decay for the moving average of batch_norm momentums. 
+                                            Defaults to 0.9997.
+        batch_norm_epsilon (float, optional): Small float added to variance to avoid dividing by zero. 
+                                                Defaults to 0.001.
 
     Returns:
-      a arg_scope with the parameters needed for inception_resnet_v2.
+        arg_scope with the parameters needed for inception_resnet_v2.
     """
     # Set weight_decay for weights in conv2d and fully_connected layers.
     with slim.arg_scope([slim.conv2d, slim.fully_connected],

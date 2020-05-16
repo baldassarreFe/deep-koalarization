@@ -1,11 +1,14 @@
-"""Run module script
+"""Resizing the images for the model
+
+To be able to train in batches, we resize all images (in particular, we use shape 299 x 299). Use the following script 
+to achieve this:
+
 
 ```
-$ python3 -m dataset.resize <args>
+$ python3 -m koalarization.dataset.resize <args>
 ```
 
-Raises:
-    Exception: [description]
+Use `-h` to see the available options
 
 """
 
