@@ -42,7 +42,7 @@ The code is built using [Keras](http://keras.io) and [Tensorflow](https://www.te
 
 Consider starring this project if you found it useful :star:!
 
-### Table of contents
+### Table of contents
 
 - [Citation](#citation)
 - [Abstract](#abstract)
@@ -107,6 +107,7 @@ The Training data for this experiment could come from any source. We decuded to 
 
 ![Historical 1](assets/historical.png)
 
+---
 
 ## Installation
 
