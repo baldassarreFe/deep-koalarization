@@ -1,14 +1,10 @@
-# Import libraries to list and create directories
 import sys
 import tarfile
 import urllib
 import urllib.request
-from os.path import join, isfile, expanduser
+from os.path import isfile, expanduser
 
 import tensorflow as tf
-
-from koalarization.dataset.shared import DIR_ROOT
-
 
 CHECKPOINT_URL = (
     "http://download.tensorflow.org/models/inception_resnet_v2_2016_08_30.tar.gz"
@@ -37,14 +33,14 @@ def maybe_download_inception(checkpoint_source):
             file=sys.stderr,
         )
         checkpoint_source, _ = urllib.request.urlretrieve(
-            checkpoint_source, join(DIR_ROOT, "inception_resnet_v2_2016_08_30.ckpt.tgz")
+            checkpoint_source, "inception_resnet_v2_2016_08_30.ckpt.tgz"
         )
 
     # If the source is an archive extract it
     if checkpoint_source.endswith(".tgz"):
         with tarfile.open(checkpoint_source, "r:gz") as tar:
-            tar.extractall(path=DIR_ROOT)
-            checkpoint_source = join(DIR_ROOT, "inception_resnet_v2_2016_08_30.ckpt")
+            tar.extractall(path=".")
+            checkpoint_source = "inception_resnet_v2_2016_08_30.ckpt"
 
     checkpoint_source = expanduser(checkpoint_source)
     if not isfile(checkpoint_source):

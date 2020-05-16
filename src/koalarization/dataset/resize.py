@@ -1,28 +1,24 @@
 """Resizing the images for the model
 
-To be able to train in batches, we resize all images (in particular, we use shape 299 x 299). Use the following script 
-to achieve this:
-
+To be able to train in batches, we resize all images to a common shape (299x299).
+Use the following script to achieve this:
 
 ```
-$ python3 -m koalarization.dataset.resize <args>
+python3 -m koalarization.dataset.resize path/to/original path/to/resized
 ```
 
 Use `-h` to see the available options
-
 """
 
 
 import argparse
 from os import listdir
 from os.path import join, isfile, isdir
-from typing import Tuple
 
 from PIL import Image
 from resizeimage import resizeimage
 
-from koalarization.dataset.shared import maybe_create_folder
-from koalarization.dataset.shared import DIR_ORIGINALS, DIR_RESIZED
+from .shared import maybe_create_folder
 
 
 class ImagenetResizer:
@@ -86,7 +82,8 @@ class ImagenetResizer:
             size (tuple, optional): Output image shape. Defaults to (299, 299).
         """
         for filename in listdir(self.source_dir):
-            if isfile(join(self.source_dir, filename)):
+            img_path = join(self.source_dir, filename)
+            if filename.endswith((".jpg", ".jpeg")) and isfile(img_path):
                 self.resize_img(filename, size)
 
 
@@ -97,27 +94,30 @@ def _parse_args():
         Namespace: Arguments.
 
     """
-    # Argparse setup
+
+    def size_tuple(size: str):
+        size = tuple(map(int, size.split(",", maxsplit=1)))
+        if len(size) == 1:
+            size = size[0]
+            size = (size, size)
+        return size
+
     parser = argparse.ArgumentParser(
-        description="Resize images from a folder to 299x299."
+        description="Resize all images in a folder to a common size."
     )
     parser.add_argument(
-        "-s",
-        "--source-folder",
-        default=DIR_ORIGINALS,
-        type=str,
-        metavar="FOLDER",
-        dest="source",
-        help="use FOLDER as source of the images (default: {})".format(DIR_ORIGINALS),
+        "source", type=str, metavar="SRC_DIR", help="resize all images in SRC_DIR"
     )
     parser.add_argument(
-        "-o",
-        "--output-folder",
-        default=DIR_RESIZED,
-        type=str,
-        metavar="FOLDER",
-        dest="output",
-        help="use FOLDER as destination (default: {})".format(DIR_RESIZED),
+        "output", type=str, metavar="OUR_DIR", help="save resized images in OUR_DIR"
+    )
+    parser.add_argument(
+        "-s --size",
+        type=size_tuple,
+        default=(299, 299),
+        metavar="SIZE",
+        dest="size",
+        help="resize images to SIZE, can be a single integer or two comma-separated (W,H)",
     )
 
     args = parser.parse_args()
@@ -127,5 +127,6 @@ def _parse_args():
 if __name__ == "__main__":
     args = _parse_args()
     ImagenetResizer(source_dir=args.source, dest_dir=args.output).resize_all(
-        size=(299, 299)
+        size=args.size
     )
+    print("Done")

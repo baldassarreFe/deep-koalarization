@@ -1,22 +1,17 @@
 """Converting to TFRecords (requires Inception checkpoint).
 
 ```
-$ python -O -m koalarization.dataset.lab_batch <args>
+python -m koalarization.dataset.lab_batch -c inception.ckpt path/to/resized path/to/tfrecords
 ```
 
-Passing `-c path/to/inception_resnet_v2_2016_08_30.ckpt` is highly recommended over passing a url. To download the
-checkpoint it separately:
+Passing -c is highly recommended over passing a url. To download the checkpoint separately:
 
 ```
 wget http://download.tensorflow.org/models/inception_resnet_v2_2016_08_30.tar.gz
 tar -xvf inception_resnet_v2_2016_08_30.tar.gz
 ```
 
-Omitting the `-O` (optimize) will print all image names at the moment they are written to a TFRecord. These prints will 
-most likely appear all at once, after TensorFlow has written the batch on disk and passes the control back to Python.
-
 Use `-h` to see the available options
-
 """
 import time
 from os.path import isdir, join, basename
@@ -25,27 +20,29 @@ import argparse
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
 
-from koalarization.dataset.embedding import (
+from .embedding import (
     prepare_image_for_inception,
     maybe_download_inception,
     inception_resnet_v2,
     inception_resnet_v2_arg_scope,
 )
-from koalarization.dataset.shared import maybe_create_folder, DIR_RESIZED, DIR_TFRECORD
-from koalarization.dataset.shared import progressive_filename_generator
-from koalarization.dataset.tfrecords import batch_operations
-from koalarization.dataset.tfrecords.images.lab_image_record import LabImageRecordWriter
-from koalarization.dataset.tfrecords.images_queue import queue_single_images_from_folder
-from koalarization.dataset.embedding.inception_utils import CHECKPOINT_URL
-
-
-DEFAULT_BATCH_SIZE = 500
+from .shared import maybe_create_folder
+from .shared import progressive_filename_generator
+from .tfrecords import batch_operations
+from .tfrecords.images.lab_image_record import LabImageRecordWriter
+from .tfrecords.images_queue import queue_single_images_from_folder
 
 
 class LabImagenetBatcher:
     """Class instance to create TFRecords."""
 
-    def __init__(self, inputs_dir, records_dir, checkpoint_source):
+    def __init__(
+        self,
+        inputs_dir: str,
+        records_dir: str,
+        checkpoint_source: str,
+        verbose: int = 0,
+    ):
         """Constructor.
 
         Args:
@@ -53,14 +50,16 @@ class LabImagenetBatcher:
             records_dir (str): Path to folder with the TFRecords (output).
             checkpoint_source (str): Set trained inception weights checkpoint, can be the url, the archive or the
                                         file itself.
+            verbose (int): Verbosity.
 
         Raises:
-            Exception: If resized image folder.
+            Exception: If resized image folder does not exist.
 
         """
         if not isdir(inputs_dir):
-            raise Exception("Input folder does not exists: {}".format(inputs_dir))
+            raise FileNotFoundError(f"Input folder does not exists: {inputs_dir}")
         self.inputs_dir = inputs_dir
+        self.verbose = verbose
 
         # Destination folder
         maybe_create_folder(records_dir)
@@ -189,8 +188,9 @@ class LabImagenetBatcher:
             # Iterate over each result in the results
             for one_res in zip(*results):
                 writer.write_image(*one_res)
-                if __debug__:
-                    print("Written", basename(one_res[0]))
+                if self.verbose > 0:
+                    filename = one_res[0].decode()
+                    print("Written", basename(filename))
 
             self._examples_count += len(results[0])
             print("Record ready:", writer.path)
@@ -203,7 +203,11 @@ def _parse_args():
         Namespace: Get arguments.
 
     """
-    # Argparse setup
+    import argparse
+    from .embedding.inception_utils import CHECKPOINT_URL
+
+    DEFAULT_BATCH_SIZE = 500
+
     parser = argparse.ArgumentParser(
         description="Takes one folders containing 299x299 images, extracts "
         "the inception resnet v2 features from the image, "
@@ -212,24 +216,10 @@ def _parse_args():
         "files in batches on N images"
     )
     parser.add_argument(
-        "-i",
-        "--inputs-folder",
-        default=DIR_RESIZED,
-        type=str,
-        metavar="FOLDER",
-        dest="inputs",
-        help="use FOLDER as source of the input images "
-        "(default: {}) ".format(DIR_RESIZED),
+        "source", type=str, metavar="SRC_DIR", help="process all images in SRC_DIR"
     ),
     parser.add_argument(
-        "-o",
-        "--output-folder",
-        default=DIR_TFRECORD,
-        type=str,
-        metavar="FOLDER",
-        dest="records",
-        help="use FOLDER as destination for the TFRecord "
-        "batches (default: {}) ".format(DIR_TFRECORD),
+        "output", type=str, metavar="OUT_DIR", help="save tfrecords in OUR_DIR"
     )
     parser.add_argument(
         "-c",
@@ -237,9 +227,7 @@ def _parse_args():
         default=CHECKPOINT_URL,
         type=str,
         dest="checkpoint",
-        help="set the source for the trained inception "
-        "weights, can be the url, the archive or the "
-        "file itself (default: {}) ".format(CHECKPOINT_URL),
+        help=f"set the source for the trained inception weights, can be the url, the archive or the file itself (default: {CHECKPOINT_URL}) ",
     )
     parser.add_argument(
         "-b",
@@ -248,19 +236,18 @@ def _parse_args():
         type=int,
         metavar="N",
         dest="batch_size",
-        help="every batch will contain N images, except maybe "
-        "the last one (default: {})".format(DEFAULT_BATCH_SIZE),
+        help=f"every batch will contain N images, except maybe the last one (default: {DEFAULT_BATCH_SIZE})",
     )
+    parser.add_argument("--verbose", "-v", action="count", default=0)
     args = parser.parse_args()
     return args
 
 
-# Run from the top folder as:
-# python3 -m dataset.lab_batch <args>
 if __name__ == "__main__":
     args = _parse_args()
     LabImagenetBatcher(
-        inputs_dir=args.inputs,
-        records_dir=args.records,
+        inputs_dir=args.source,
+        records_dir=args.output,
         checkpoint_source=args.checkpoint,
+        verbose=args.verbose,
     ).batch_all(examples_per_record=args.batch_size)

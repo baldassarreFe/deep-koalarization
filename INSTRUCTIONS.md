@@ -5,16 +5,16 @@ The project is based on Python 3.6, to manage the dependencies contained in
 [`requirements.txt`](requirements.txt) a virtual environment is recommended.
 
 ```bash
-$ python3.6 -m venv venv
-$ source venv/bin/activate
-$ pip install -e .
+python3.6 -m venv venv
+source venv/bin/activate
+pip install -e .
 ```
 
 Even better, use a [Conda environment](https://docs.conda.io/):
 ```bash
-$ conda create -y -n koalarization python=3.6
-$ conda activate koalarization
-$ pip install -e .
+conda create -y -n koalarization python=3.6
+conda activate koalarization
+pip install -e .
 ```
 
 For GPU-support, run:
@@ -44,10 +44,12 @@ Before training, ensure that the folder `data` contains:
   (just rename some training records as validation, but do it before any training!)
 
 The training script will train on all the training images, and regularly 
-checkpoint the weights and save to disk some colored images from the validation set. 
+checkpoint the weights and save to disk some colored images from the validation set.
+
+All training logs, metrics and checkpoints are saved in `runs/run_id`.
 
 ```bash
-$ python -m koalarization.train \
+python -m koalarization.train \
   --run-id 'run1' \
   --train-steps 100 \
   --val-every 20 \
@@ -58,7 +60,7 @@ The evaluation script will load the latest checkpoint, colorize images from the 
 records and save them to disk. At the moment, it is not possible to operate on normal image
 files (e.g. `jpeg` or `png`), but the images must be processed as TFRecords first.
 ```bash
-$ python -m koalarization.evaluate \
+python -m koalarization.evaluate \
   --run-id 'run1' \
   'data/tfrecords' 'runs/'
 ```
