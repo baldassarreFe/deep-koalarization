@@ -28,11 +28,13 @@ class BatchableRecordReader(RecordReader):
                 capacity,
                 min_after_dequeue,
                 num_threads,
-                allow_smaller_final_batch=False)
+                allow_smaller_final_batch=False,
+            )
         else:
             return tf.train.batch(
                 self.read_operation,
                 batch_size,
                 num_threads,
                 capacity,
-                allow_smaller_final_batch=False)
+                allow_smaller_final_batch=False,
+            )

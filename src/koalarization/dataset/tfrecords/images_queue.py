@@ -5,17 +5,24 @@ import tensorflow as tf
 
 
 def queue_single_images_from_folder(folder):
+    """Create queue of images.
+
+    Args:
+        folder (str): Folder.
+
+    """
     # Normalize the path
     folder = expanduser(folder)
 
     # This queue will yield a filename every time it is polled
-    file_matcher = tf.train.match_filenames_once(join(folder, '*.jpeg'))
+    file_matcher = tf.train.match_filenames_once(join(folder, "*.jpeg"))
 
     # NOTE: if num_epochs is set to something different than None, then we
     # need to run tf.local_variables_initializer when launching the session!!
     # https://www.tensorflow.org/api_docs/python/tf/train/string_input_producer
     filename_queue = tf.train.string_input_producer(
-        file_matcher, shuffle=False, num_epochs=1)
+        file_matcher, shuffle=False, num_epochs=1
+    )
 
     # This is the reader we'll use to read each image given the file name
     image_reader = tf.WholeFileReader()
@@ -33,19 +40,15 @@ def queue_single_images_from_folder(folder):
 
 
 def batch_operations(operations, batch_size):
-    """
-    Once you have created the operation(s) with the other methods of this class,
-    use this method to batch it(them).
+    """Once you have created the operation(s) with the other methods of this class,
+    use this method to batch it (them).
 
-    :Note:
+    Args:
+        operations: Can be a tensor or a list of tensors.
+        batch_size (int): Batch
 
-        If a single queue operation is `[a, b, c]`,
-        the batched queue_operation will be `[[a1, a2], [b1,b2], [c1, c2]]`
-        and not `[[a1, b1, c1], [a2, b2, c3]]`
-
-    :param operations: can be a tensor or a list of tensors
-    :param batch_size: the batch
-    :return:
+    Returns:
+        [type]: [description]
     """
     # Recommended configuration for these parameters (found online)
     num_threads = multiprocessing.cpu_count()

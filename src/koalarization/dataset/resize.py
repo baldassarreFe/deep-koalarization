@@ -1,11 +1,14 @@
-"""Run module script
+"""Resizing the images for the model
+
+To be able to train in batches, we resize all images (in particular, we use shape 299 x 299). Use the following script 
+to achieve this:
+
 
 ```
-$ python3 -m dataset.resize <args>
+$ python3 -m koalarization.dataset.resize <args>
 ```
 
-Raises:
-    Exception: [description]
+Use `-h` to see the available options
 
 """
 
@@ -19,7 +22,7 @@ from PIL import Image
 from resizeimage import resizeimage
 
 from koalarization.dataset.shared import maybe_create_folder
-    from koalarization.dataset.shared import DIR_ORIGINALS, DIR_RESIZED
+from koalarization.dataset.shared import DIR_ORIGINALS, DIR_RESIZED
 
 
 class ImagenetResizer:
@@ -37,8 +40,7 @@ class ImagenetResizer:
 
         """
         if not isdir(source_dir):
-            raise Exception('Input folder does not exists: {}'
-                            .format(source_dir))
+            raise Exception("Input folder does not exists: {}".format(source_dir))
         self.source_dir = source_dir
 
         # Destination folder
@@ -65,13 +67,16 @@ class ImagenetResizer:
             # Both sides of the image are shorter than the desired dimension,
             # so take the side that's closer in size and enlarge the image
             # in both directions to make that one fit
-            enlarged_size = (int(orig_width * enlarge_factor), int(orig_height * enlarge_factor))
+            enlarged_size = (
+                int(orig_width * enlarge_factor),
+                int(orig_height * enlarge_factor),
+            )
             img = img.resize(enlarged_size)
 
         # Now we have an image that's either larger than the desired shape
         # or at least one side matches the desired shape and we can resize
         # with contain
-        res = resizeimage.resize_contain(img, size).convert('RGB')
+        res = resizeimage.resize_contain(img, size).convert("RGB")
         res.save(join(self.dest_dir, filename), res.format)
 
     def resize_all(self, size=(299, 299)):
@@ -94,30 +99,33 @@ def _parse_args():
     """
     # Argparse setup
     parser = argparse.ArgumentParser(
-        description='Resize images from a folder to 299x299.'
+        description="Resize images from a folder to 299x299."
     )
-    parser.add_argument('-s', '--source-folder',
-                        default=DIR_ORIGINALS,
-                        type=str,
-                        metavar='FOLDER',
-                        dest='source',
-                        help='use FOLDER as source of the images (default: {})'
-                        .format(DIR_ORIGINALS))
-    parser.add_argument('-o', '--output-folder',
-                        default=DIR_RESIZED,
-                        type=str,
-                        metavar='FOLDER',
-                        dest='output',
-                        help='use FOLDER as destination (default: {})'
-                        .format(DIR_RESIZED))
+    parser.add_argument(
+        "-s",
+        "--source-folder",
+        default=DIR_ORIGINALS,
+        type=str,
+        metavar="FOLDER",
+        dest="source",
+        help="use FOLDER as source of the images (default: {})".format(DIR_ORIGINALS),
+    )
+    parser.add_argument(
+        "-o",
+        "--output-folder",
+        default=DIR_RESIZED,
+        type=str,
+        metavar="FOLDER",
+        dest="output",
+        help="use FOLDER as destination (default: {})".format(DIR_RESIZED),
+    )
 
     args = parser.parse_args()
     return args
 
 
-if __name__ == '__main__':    
+if __name__ == "__main__":
     args = _parse_args()
-    ImagenetResizer(
-        source_dir=args.source, 
-        dest_dir=args.output
-    ).resize_all(size=(299, 299))
+    ImagenetResizer(source_dir=args.source, dest_dir=args.output).resize_all(
+        size=(299, 299)
+    )
