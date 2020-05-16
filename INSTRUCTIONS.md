@@ -1,5 +1,6 @@
 # Instructions
 
+### Table of contents
 - [Environment](#environment)
 - [Dataset](#dataset)
 - [Training and evaluation](#training-and-evaluation)

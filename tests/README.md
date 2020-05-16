@@ -5,6 +5,13 @@ All commands must to be run at repository folder level.
 
 Before running any test, generate a sample dataset (see below).
 
+### Table of contents
+
+- [Prepare sample dataset](#prepare-sample-dataset)
+- [Run tests](#run-tests)
+    - [Run all tests](#run-all-tests)
+    - [Run specific module tests](#run-specific-module-tests)
+
 ## Prepare sample dataset
 
 The sample dataset is generated using the [unsplash.txt](../data/unsplash.txt) file. Run
