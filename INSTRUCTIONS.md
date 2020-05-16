@@ -1,5 +1,10 @@
 # Instructions
 
+- [Environment](#environment)
+- [Dataset](#dataset)
+- [Training and evaluation](#training-and-evaluation)
+- [Development and test the code](#development-and-test-the-code)
+
 ## Environment
 The project is based on Python 3.6, to manage the dependencies contained in 
 [`requirements.txt`](requirements.txt) a virtual environment is recommended.
@@ -67,3 +72,7 @@ python -m koalarization.evaluate \
   --run-id 'run1' \
   'data/tfrecords' 'runs/'
 ```
+
+## Development and test the code
+
+See [here](tests/README.md).
