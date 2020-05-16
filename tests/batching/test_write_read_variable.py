@@ -10,8 +10,10 @@ import unittest
 import numpy as np
 import tensorflow as tf
 
-from koalarization.dataset.shared import DIR_TFRECORD
 from koalarization.dataset.tfrecords import RecordWriter, RecordReader
+
+
+DIR_TFRECORDS = './tests/data/tfrecords'
 
 
 class VariableSizeTypesRecordWriter(RecordWriter):
@@ -72,12 +74,12 @@ class VariableSizeTypesRecordReader(RecordReader):
 class TestVariableSizeRecords(unittest.TestCase):
     def test_variable_size_record(self):
         # WRITING
-        with VariableSizeTypesRecordWriter("variable.tfrecord", DIR_TFRECORD) as writer:
+        with VariableSizeTypesRecordWriter("variable.tfrecord", DIR_TFRECORDS) as writer:
             for i in range(2):
                 writer.write_test()
 
         # READING
-        reader = VariableSizeTypesRecordReader("variable.tfrecord", DIR_TFRECORD)
+        reader = VariableSizeTypesRecordReader("variable.tfrecord", DIR_TFRECORDS)
         read_one_example = reader.read_operation
 
         with tf.Session() as sess:

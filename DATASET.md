@@ -10,6 +10,17 @@ Storing the images and the embedding as separate files on disk (`jpeg/png` and `
 the performances during training, so all the image-embedding pairs are stored in binary format in large 
 continuous [TFRecords](https://www.tensorflow.org/programmers_guide/datasets).
 
+### Table of contents
+
+- [Pipeline](#pipeline)
+    - [Imagenet images](#imagenet-images)
+    - [Resizing for training](#resizing-for-training)
+    - [Converting to TFRecords](#converting-to-tfrecords)
+    - [Validation set](#validation-set)
+- [Space on disk notes](#space-on-disk-notes)
+    - [The images](#the-images)
+    - [The TFRecords](#the-tfrecords)
+
 ## Pipeline
 
 All the data preparation steps are independent and persisted on the disk, the default (and recommended) folder structure is:

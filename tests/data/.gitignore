@@ -1,0 +1,8 @@
+# Ignore everything in this directory
+original/*
+resized/*
+tfrecords/*
+inception_resnet_v2_2016_08_30.ckpt
+
+# Except these files
+!resized

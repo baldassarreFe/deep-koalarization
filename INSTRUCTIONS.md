@@ -1,5 +1,11 @@
 # Instructions
 
+### Table of contents
+- [Environment](#environment)
+- [Dataset](#dataset)
+- [Training and evaluation](#training-and-evaluation)
+- [Development and test the code](#development-and-test-the-code)
+
 ## Environment
 The project is based on Python 3.6, to manage the dependencies contained in 
 [`requirements.txt`](requirements.txt) a virtual environment is recommended.
@@ -20,8 +26,11 @@ pip install -e .
 For GPU-support, run:
 
 ```
-$ pip install -e .[gpu]
+pip install -e .[gpu]
 ```
+
+> If it does not work, manually install `tensorflow-gpu` library (must be compatible with your OS, python version and
+> `tensorflow` library). More info [here](https://www.tensorflow.org/install/gpu).
 
 ## Dataset
 Prior to training, the images from ImageNet need to be downloaded, resized and processed.
@@ -64,3 +73,7 @@ python -m koalarization.evaluate \
   --run-id 'run1' \
   'data/tfrecords' 'runs/'
 ```
+
+## Development and test the code
+
+See [here](tests/README.md).
