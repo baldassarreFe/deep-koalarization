@@ -9,7 +9,7 @@ import unittest
 
 import tensorflow as tf
 
-from koalarization.dataset.shared import dir_tfrecord
+from koalarization.dataset.shared import DIR_TFRECORD
 from koalarization.dataset.tfrecords import RecordWriter, BatchableRecordReader
 
 
@@ -53,7 +53,7 @@ class TestBaseRecords(unittest.TestCase):
         # WRITING
         for i in range(self.number_of_records):
             record_name = 'base_type_{}.tfrecord'.format(i)
-            with BaseTypesRecordWriter(record_name, dir_tfrecord) as writer:
+            with BaseTypesRecordWriter(record_name, DIR_TFRECORD) as writer:
                 for j in range(self.samples_per_record):
                     writer.write_test(i * self.number_of_records + j)
 
@@ -62,7 +62,7 @@ class TestBaseRecords(unittest.TestCase):
         # otherwise the internal shuffle queue gets created but its
         # threads won't start
 
-        reader = BaseTypesRecordReader('base_type_*.tfrecord', dir_tfrecord)
+        reader = BaseTypesRecordReader('base_type_*.tfrecord', DIR_TFRECORD)
         read_one_example = reader.read_operation
         read_batched_examples = reader.read_batch(50)
 

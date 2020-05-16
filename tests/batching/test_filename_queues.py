@@ -3,7 +3,7 @@ import unittest
 
 import tensorflow as tf
 
-from koalarization.dataset.shared import dir_resized
+from koalarization.dataset.shared import DIR_RESIZED
 from koalarization.dataset.tfrecords import \
     queue_single_images_from_folder
 
@@ -13,7 +13,7 @@ class TestFilenameQueues(unittest.TestCase):
         """Load all images from a folder once and print the result."""
         # Create the queue operations
         image_key, image_tensor, image_shape = queue_single_images_from_folder(
-            dir_resized)
+            DIR_RESIZED)
 
         # Start a new session to run the operations
         with tf.Session() as sess:

@@ -10,7 +10,7 @@ import unittest
 import numpy as np
 import tensorflow as tf
 
-from koalarization.dataset.shared import dir_tfrecord
+from koalarization.dataset.shared import DIR_TFRECORD
 from koalarization.dataset.tfrecords import RecordWriter, BatchableRecordReader
 
 
@@ -60,7 +60,7 @@ class FixedSizeTypesRecordReader(BatchableRecordReader):
 class TestFixedSizeRecords(unittest.TestCase):
     def test_fixed_size_record(self):
         # WRITING
-        with FixedSizeTypesRecordWriter('fixed_size.tfrecord', dir_tfrecord) as writer:
+        with FixedSizeTypesRecordWriter('fixed_size.tfrecord', DIR_TFRECORD) as writer:
             writer.write_test()
             writer.write_test()
 
@@ -68,7 +68,7 @@ class TestFixedSizeRecords(unittest.TestCase):
         # Important: read_batch MUST be called before start_queue_runners,
         # otherwise the internal shuffle queue gets created but its
         # threads won't start
-        reader = FixedSizeTypesRecordReader('fixed_size.tfrecord', dir_tfrecord)
+        reader = FixedSizeTypesRecordReader('fixed_size.tfrecord', DIR_TFRECORD)
         read_one_example = reader.read_operation
         read_batched_examples = reader.read_batch(4)
 

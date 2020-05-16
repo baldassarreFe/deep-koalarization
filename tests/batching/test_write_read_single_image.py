@@ -11,7 +11,7 @@ from os.path import basename
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
-from koalarization.dataset.shared import dir_resized, dir_tfrecord
+from koalarization.dataset.shared import DIR_RESIZED, DIR_TFRECORD
 from koalarization.dataset.tfrecords import SingleImageRecordWriter, SingleImageRecordReader
 from koalarization.dataset.tfrecords import queue_single_images_from_folder
 
@@ -23,11 +23,11 @@ class TestSingleImageWriteRead(unittest.TestCase):
 
     def _single_image_write(self):
         # Create the queue operations
-        img_key, img_tensor, _ = queue_single_images_from_folder(dir_resized)
+        img_key, img_tensor, _ = queue_single_images_from_folder(DIR_RESIZED)
 
         # Create a writer to write_image the images
         single_writer = SingleImageRecordWriter('single_images.tfrecord',
-                                                dir_tfrecord)
+                                                DIR_TFRECORD)
 
         # Start a new session to run the operations
         with tf.Session() as sess:
@@ -65,7 +65,7 @@ class TestSingleImageWriteRead(unittest.TestCase):
         # Important: read_batch MUST be called before start_queue_runners,
         # otherwise the internal shuffle queue gets created but its
         # threads won't start
-        irr = SingleImageRecordReader('single_images.tfrecord', dir_tfrecord)
+        irr = SingleImageRecordReader('single_images.tfrecord', DIR_TFRECORD)
         read_one_example = irr.read_operation
         read_batched_examples = irr.read_batch(10)
 
