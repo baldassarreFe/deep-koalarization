@@ -101,20 +101,7 @@ The Training data for this experiment could come from any source. We decuded to 
 
 ## Use the code
 
-### Installation
-
-Refer to [INSTRUCTIONS](INSTRUCTIONS.md) to install and use the code in this repo. But in short, to install the package,
-simply run:
-
-```
-pip install -e .
-```
-
-
-### Getting started
-
-You need to generate the [necessary data](DATASET.md). Once this is done, you can inspect the [koalarization code](src/koalarization/).
-
+Refer to [INSTRUCTIONS](INSTRUCTIONS.md) to install and use the code in this repo.
 
 ## Community
 
