@@ -3,8 +3,10 @@ import unittest
 
 import tensorflow as tf
 
-from koalarization.dataset.shared import DIR_RESIZED
 from koalarization.dataset.tfrecords import queue_single_images_from_folder
+
+
+DIR_RESIZED = './tests/data/resized/'
 
 
 class TestFilenameQueues(unittest.TestCase):

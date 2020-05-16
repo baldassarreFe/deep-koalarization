@@ -13,10 +13,13 @@ import tensorflow as tf
 
 from koalarization import l_to_rgb
 from koalarization import lab_to_rgb
-from koalarization.dataset.shared import DIR_RESIZED, DIR_TFRECORD
 from koalarization.dataset.tfrecords import LabImageRecordReader
 from koalarization.dataset.tfrecords import LabImageRecordWriter
 from koalarization.dataset.tfrecords import queue_single_images_from_folder
+
+
+DIR_RESIZED = './tests/data/resized/'
+DIR_TFRECORDS = './tests/data/tfrecords'
 
 
 class TestLabImageWriteRead(unittest.TestCase):
@@ -30,7 +33,7 @@ class TestLabImageWriteRead(unittest.TestCase):
         img_emb = tf.truncated_normal(shape=[1001])
 
         # Create a writer to write_image the images
-        lab_writer = LabImageRecordWriter("test_lab_images.tfrecord", DIR_TFRECORD)
+        lab_writer = LabImageRecordWriter("test_lab_images.tfrecord", DIR_TFRECORDS)
 
         # Start a new session to run the operations
         with tf.Session() as sess:
@@ -74,7 +77,7 @@ class TestLabImageWriteRead(unittest.TestCase):
         # Important: read_batch MUST be called before start_queue_runners,
         # otherwise the internal shuffle queue gets created but its
         # threads won't start
-        irr = LabImageRecordReader("test_lab_images.tfrecord", DIR_TFRECORD)
+        irr = LabImageRecordReader("test_lab_images.tfrecord", DIR_TFRECORDS)
         read_one_example = irr.read_operation
         read_batched_examples = irr.read_batch(20)
 
