@@ -12,7 +12,7 @@ with open(os.path.join(this_directory, 'requirements2.txt')) as f:
 
 setup(
     name='deep-koalarization',
-    version="0.1.0",
+    version="0.2.0",
     description="Keras/Tensorflow implementation of our paper Grayscale Image Colorization using deep CNN and "
                 "Inception-ResNet-v2",
     long_description=long_description,

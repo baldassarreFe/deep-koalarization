@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="https://github.com/baldassarreFe/deep-koalarization">
-    <img alt="Package version" src="https://img.shields.io/badge/koalarization-v0.1.0-blue.svg?style=for-the-badge&logo=python&logoColor=yellow">
+    <img alt="Package version" src="https://img.shields.io/badge/koalarization-v0.2.0-blue.svg?style=for-the-badge&logo=python&logoColor=yellow">
   </a>
 </p>
 
