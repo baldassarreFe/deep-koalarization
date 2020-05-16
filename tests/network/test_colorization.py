@@ -25,10 +25,7 @@ class TestColorization(unittest.TestCase):
         cost = tf.reduce_mean(tf.squared_difference(imgs_ab, imgs_true_ab))
         optimizer = tf.train.AdamOptimizer(0.001).minimize(cost)
 
-        opt_operations = {
-            'cost': cost,
-            'optimizer': optimizer
-        }
+        opt_operations = {"cost": cost, "optimizer": optimizer}
 
         self._run(imgs_l, imgs_ab, imgs_true_ab, opt_operations)
 
@@ -41,60 +38,52 @@ class TestColorization(unittest.TestCase):
             coord = tf.train.Coordinator()
             threads = tf.train.start_queue_runners(coord=coord)
 
-            res = sess.run({
-                'imgs_l': imgs_l,
-                'imgs_ab': imgs_ab,
-                'imgs_true_ab': imgs_true_ab,
-            })
+            res = sess.run(
+                {"imgs_l": imgs_l, "imgs_ab": imgs_ab, "imgs_true_ab": imgs_true_ab,}
+            )
 
-            img_gray = l_to_rgb(res['imgs_l'][0][:, :, 0])
-            img_output = lab_to_rgb(res['imgs_l'][0][:, :, 0],
-                                    res['imgs_ab'][0])
-            img_true = lab_to_rgb(res['imgs_l'][0][:, :, 0],
-                                  res['imgs_true_ab'][0])
+            img_gray = l_to_rgb(res["imgs_l"][0][:, :, 0])
+            img_output = lab_to_rgb(res["imgs_l"][0][:, :, 0], res["imgs_ab"][0])
+            img_true = lab_to_rgb(res["imgs_l"][0][:, :, 0], res["imgs_true_ab"][0])
 
             plt.subplot(2, 3, 1)
             plt.imshow(img_gray)
-            plt.title('Input (grayscale)')
-            plt.axis('off')
+            plt.title("Input (grayscale)")
+            plt.axis("off")
             plt.subplot(2, 3, 2)
             plt.imshow(img_output)
-            plt.title('Network output')
-            plt.axis('off')
+            plt.title("Network output")
+            plt.axis("off")
             plt.subplot(2, 3, 3)
             plt.imshow(img_true)
-            plt.title('Target (original)')
-            plt.axis('off')
+            plt.title("Target (original)")
+            plt.axis("off")
 
             for epoch in range(NUM_EPOCHS):
-                print('Epoch:', epoch, end=' ')
+                print("Epoch:", epoch, end=" ")
                 res = sess.run(opt_operations)
-                print('Cost:', res['cost'])
+                print("Cost:", res["cost"])
 
-            res = sess.run({
-                'imgs_l': imgs_l,
-                'imgs_ab': imgs_ab,
-                'imgs_true_ab': imgs_true_ab,
-            })
+            res = sess.run(
+                {"imgs_l": imgs_l, "imgs_ab": imgs_ab, "imgs_true_ab": imgs_true_ab,}
+            )
 
-            img_gray = l_to_rgb(res['imgs_l'][0][:, :, 0])
-            img_output = lab_to_rgb(res['imgs_l'][0][:, :, 0],
-                                    res['imgs_ab'][0])
-            img_true = lab_to_rgb(res['imgs_l'][0][:, :, 0],
-                                  res['imgs_true_ab'][0])
+            img_gray = l_to_rgb(res["imgs_l"][0][:, :, 0])
+            img_output = lab_to_rgb(res["imgs_l"][0][:, :, 0], res["imgs_ab"][0])
+            img_true = lab_to_rgb(res["imgs_l"][0][:, :, 0], res["imgs_true_ab"][0])
 
             plt.subplot(2, 3, 4)
             plt.imshow(img_gray)
-            plt.title('Input (grayscale)')
-            plt.axis('off')
+            plt.title("Input (grayscale)")
+            plt.axis("off")
             plt.subplot(2, 3, 5)
             plt.imshow(img_output)
-            plt.title('Network output')
-            plt.axis('off')
+            plt.title("Network output")
+            plt.axis("off")
             plt.subplot(2, 3, 6)
             plt.imshow(img_true)
-            plt.title('Target (original)')
-            plt.axis('off')
+            plt.title("Target (original)")
+            plt.axis("off")
 
             plt.show()
 
@@ -114,9 +103,9 @@ class TestColorization(unittest.TestCase):
 
         # The target image is a simple checkboard pattern
         img = np.zeros((width, height, 3), dtype=np.uint8)
-        img[:width // 2, :, 0] = 255
-        img[:, height // 2:, 1] = 255
-        img[:width // 2, :height // 2, 2] = 255
+        img[: width // 2, :, 0] = 255
+        img[:, height // 2 :, 1] = 255
+        img[: width // 2, : height // 2, 2] = 255
 
         # Simulate a batch of Lab images with size [width, height]
         # and Lab values in the range [-1, 1]
@@ -126,14 +115,16 @@ class TestColorization(unittest.TestCase):
         l = l.reshape([width, height, 1])
         ab /= 127
 
-        imgs_l, imgs_ab, imgs_emb = tf.train.batch([
-            tf.convert_to_tensor(l),
-            tf.convert_to_tensor(ab),
-            tf.truncated_normal(shape=[1001])],
-            batch_size=10
+        imgs_l, imgs_ab, imgs_emb = tf.train.batch(
+            [
+                tf.convert_to_tensor(l),
+                tf.convert_to_tensor(ab),
+                tf.truncated_normal(shape=[1001]),
+            ],
+            batch_size=10,
         )
         return imgs_l, imgs_ab, imgs_emb
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -15,13 +15,14 @@ def queue_single_images_from_folder(folder):
     folder = expanduser(folder)
 
     # This queue will yield a filename every time it is polled
-    file_matcher = tf.train.match_filenames_once(join(folder, '*.jpeg'))
+    file_matcher = tf.train.match_filenames_once(join(folder, "*.jpeg"))
 
     # NOTE: if num_epochs is set to something different than None, then we
     # need to run tf.local_variables_initializer when launching the session!!
     # https://www.tensorflow.org/api_docs/python/tf/train/string_input_producer
     filename_queue = tf.train.string_input_producer(
-        file_matcher, shuffle=False, num_epochs=1)
+        file_matcher, shuffle=False, num_epochs=1
+    )
 
     # This is the reader we'll use to read each image given the file name
     image_reader = tf.WholeFileReader()

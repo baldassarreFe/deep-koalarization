@@ -24,12 +24,16 @@ class FixedSizeTypesRecordWriter(RecordWriter):
         mat_ints = np.arange(6, dtype=np.int64).reshape(2, 3)
         mat_floats = np.random.random((3, 2)).astype(np.float32)
 
-        example = tf.train.Example(features=tf.train.Features(feature={
-            'list_ints': self._int64_list(list_ints),
-            'list_floats': self._float32_list(list_floats),
-            'mat_ints': self._int64_list(mat_ints.flatten()),
-            'mat_floats': self._float32_list(mat_floats.flatten()),
-        }))
+        example = tf.train.Example(
+            features=tf.train.Features(
+                feature={
+                    "list_ints": self._int64_list(list_ints),
+                    "list_floats": self._float32_list(list_floats),
+                    "mat_ints": self._int64_list(mat_ints.flatten()),
+                    "mat_floats": self._float32_list(mat_floats.flatten()),
+                }
+            )
+        )
         self.write(example.SerializeToString())
 
 
@@ -43,24 +47,25 @@ class FixedSizeTypesRecordReader(BatchableRecordReader):
         features = tf.parse_single_example(
             self._tfrecord_serialized,
             features={
-                'list_ints': tf.FixedLenFeature([6], tf.int64),
-                'list_floats': tf.FixedLenFeature([2], tf.float32),
-                'mat_ints': tf.FixedLenFeature([6], tf.int64),
-                'mat_floats': tf.FixedLenFeature([6], tf.float32),
-            })
+                "list_ints": tf.FixedLenFeature([6], tf.int64),
+                "list_floats": tf.FixedLenFeature([2], tf.float32),
+                "mat_ints": tf.FixedLenFeature([6], tf.int64),
+                "mat_floats": tf.FixedLenFeature([6], tf.float32),
+            },
+        )
 
         return {
-            'list_ints': features['list_ints'],
-            'list_floats': features['list_floats'],
-            'mat_ints': tf.reshape(features['mat_ints'], [2, 3]),
-            'mat_floats': tf.reshape(features['mat_floats'], [3, 2]),
+            "list_ints": features["list_ints"],
+            "list_floats": features["list_floats"],
+            "mat_ints": tf.reshape(features["mat_ints"], [2, 3]),
+            "mat_floats": tf.reshape(features["mat_floats"], [3, 2]),
         }
 
 
 class TestFixedSizeRecords(unittest.TestCase):
     def test_fixed_size_record(self):
         # WRITING
-        with FixedSizeTypesRecordWriter('fixed_size.tfrecord', DIR_TFRECORD) as writer:
+        with FixedSizeTypesRecordWriter("fixed_size.tfrecord", DIR_TFRECORD) as writer:
             writer.write_test()
             writer.write_test()
 
@@ -68,13 +73,14 @@ class TestFixedSizeRecords(unittest.TestCase):
         # Important: read_batch MUST be called before start_queue_runners,
         # otherwise the internal shuffle queue gets created but its
         # threads won't start
-        reader = FixedSizeTypesRecordReader('fixed_size.tfrecord', DIR_TFRECORD)
+        reader = FixedSizeTypesRecordReader("fixed_size.tfrecord", DIR_TFRECORD)
         read_one_example = reader.read_operation
         read_batched_examples = reader.read_batch(4)
 
         with tf.Session() as sess:
-            sess.run([tf.global_variables_initializer(),
-                      tf.local_variables_initializer()])
+            sess.run(
+                [tf.global_variables_initializer(), tf.local_variables_initializer()]
+            )
 
             # Coordinate the queue of tfrecord files.
             coord = tf.train.Coordinator()
@@ -83,7 +89,7 @@ class TestFixedSizeRecords(unittest.TestCase):
             # Reading examples sequentially one by one
             for j in range(3):
                 fetches = sess.run(read_one_example)
-                print('Read:', fetches)
+                print("Read:", fetches)
 
             # Reading a batch of examples
             results = sess.run(read_batched_examples)
@@ -94,5 +100,5 @@ class TestFixedSizeRecords(unittest.TestCase):
             coord.join(threads)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

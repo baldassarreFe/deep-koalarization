@@ -13,7 +13,8 @@ class RecordReader(ABC):
     to the subclasses, while the logic to queue all the record files as
     a single data source is provided here.
     """
-    def __init__(self, tfrecord_pattern, folder=''):
+
+    def __init__(self, tfrecord_pattern, folder=""):
         # Normalize the folder and build the path
         tfrecord_pattern = join(expanduser(folder), tfrecord_pattern)
 

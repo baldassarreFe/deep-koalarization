@@ -15,11 +15,15 @@ from koalarization.dataset.tfrecords import RecordWriter, BatchableRecordReader
 
 class BaseTypesRecordWriter(RecordWriter):
     def write_test(self, i):
-        example = tf.train.Example(features=tf.train.Features(feature={
-            'string': self._bytes_feature('hey {}'.format(i).encode('ascii')),
-            'int': self._int64(42),
-            'float': self._float32(3.14),
-        }))
+        example = tf.train.Example(
+            features=tf.train.Features(
+                feature={
+                    "string": self._bytes_feature("hey {}".format(i).encode("ascii")),
+                    "int": self._int64(42),
+                    "float": self._float32(3.14),
+                }
+            )
+        )
         self.write(example.SerializeToString())
 
 
@@ -33,15 +37,16 @@ class BaseTypesRecordReader(BatchableRecordReader):
         features = tf.parse_single_example(
             self._tfrecord_serialized,
             features={
-                'string': tf.FixedLenFeature([], tf.string),
-                'int': tf.FixedLenFeature([], tf.int64),
-                'float': tf.FixedLenFeature([], tf.float32),
-            })
+                "string": tf.FixedLenFeature([], tf.string),
+                "int": tf.FixedLenFeature([], tf.int64),
+                "float": tf.FixedLenFeature([], tf.float32),
+            },
+        )
 
         return {
-            'string': features['string'],
-            'int': features['int'],
-            'float': features['float'],
+            "string": features["string"],
+            "int": features["int"],
+            "float": features["float"],
         }
 
 
@@ -52,7 +57,7 @@ class TestBaseRecords(unittest.TestCase):
     def test_base_records(self):
         # WRITING
         for i in range(self.number_of_records):
-            record_name = 'base_type_{}.tfrecord'.format(i)
+            record_name = "base_type_{}.tfrecord".format(i)
             with BaseTypesRecordWriter(record_name, DIR_TFRECORD) as writer:
                 for j in range(self.samples_per_record):
                     writer.write_test(i * self.number_of_records + j)
@@ -62,13 +67,14 @@ class TestBaseRecords(unittest.TestCase):
         # otherwise the internal shuffle queue gets created but its
         # threads won't start
 
-        reader = BaseTypesRecordReader('base_type_*.tfrecord', DIR_TFRECORD)
+        reader = BaseTypesRecordReader("base_type_*.tfrecord", DIR_TFRECORD)
         read_one_example = reader.read_operation
         read_batched_examples = reader.read_batch(50)
 
         with tf.Session() as sess:
-            sess.run([tf.global_variables_initializer(),
-                      tf.local_variables_initializer()])
+            sess.run(
+                [tf.global_variables_initializer(), tf.local_variables_initializer()]
+            )
 
             # Coordinate the queue of tfrecord files.
             coord = tf.train.Coordinator()
@@ -77,18 +83,22 @@ class TestBaseRecords(unittest.TestCase):
             # Reading examples sequentially one by one
             for j in range(50):
                 fetches = sess.run(read_one_example)
-                print('Read:', fetches)
+                print("Read:", fetches)
 
             # Reading a batch of examples
             results = sess.run(read_batched_examples)
-            for i in range(len(results['string'])):
-                print(results['string'][i], results['int'][i],
-                      results['float'][i], sep='\t')
+            for i in range(len(results["string"])):
+                print(
+                    results["string"][i],
+                    results["int"][i],
+                    results["float"][i],
+                    sep="\t",
+                )
 
             # Finish off the queue coordinator.
             coord.request_stop()
             coord.join(threads)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

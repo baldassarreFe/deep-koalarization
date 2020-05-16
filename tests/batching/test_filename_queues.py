@@ -4,8 +4,7 @@ import unittest
 import tensorflow as tf
 
 from koalarization.dataset.shared import DIR_RESIZED
-from koalarization.dataset.tfrecords import \
-    queue_single_images_from_folder
+from koalarization.dataset.tfrecords import queue_single_images_from_folder
 
 
 class TestFilenameQueues(unittest.TestCase):
@@ -13,7 +12,8 @@ class TestFilenameQueues(unittest.TestCase):
         """Load all images from a folder once and print the result."""
         # Create the queue operations
         image_key, image_tensor, image_shape = queue_single_images_from_folder(
-            DIR_RESIZED)
+            DIR_RESIZED
+        )
 
         # Start a new session to run the operations
         with tf.Session() as sess:
@@ -30,8 +30,7 @@ class TestFilenameQueues(unittest.TestCase):
             # we execute the operations to get one image and print everything.
             try:
                 while not coord.should_stop():
-                    key, img, shape = sess.run(
-                        [image_key, image_tensor, image_shape])
+                    key, img, shape = sess.run([image_key, image_tensor, image_shape])
                     print(key)
                     count += 1
             except tf.errors.OutOfRangeError:
@@ -41,12 +40,15 @@ class TestFilenameQueues(unittest.TestCase):
             finally:
                 # Ask the threads (filename queue) to stop.
                 coord.request_stop()
-                print('Finished listing {} pairs in {:.2f}s'
-                      .format(count, time.time() - start_time))
+                print(
+                    "Finished listing {} pairs in {:.2f}s".format(
+                        count, time.time() - start_time
+                    )
+                )
 
             # Wait for threads to finish.
             coord.join(threads)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

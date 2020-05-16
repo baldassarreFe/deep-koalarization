@@ -5,23 +5,33 @@ import tensorflow as tf
 from keras import backend as K
 
 from .network_definition import Colorization
-from .training_utils import evaluation_pipeline, \
-    checkpointing_system, plot_evaluation, metrics_system
+from .training_utils import (
+    evaluation_pipeline,
+    checkpointing_system,
+    plot_evaluation,
+    metrics_system,
+)
 
-parser = argparse.ArgumentParser(description='Eval')
-parser.add_argument('tfrecords',
-                    type=str,
-                    metavar='TFRECORDS_DIR',
-                    help='evaluate using all tfrecords in TFRECORDS_DIR')
-parser.add_argument('output',
-                    type=str,
-                    metavar='OUR_DIR',
-                    help='use OUR_DIR to load checkpoints and write images')
-parser.add_argument('--run-id',
-                    required=True,
-                    type=str,
-                    metavar='RUN_ID',
-                    help='load checkpoint from the run RUN_ID')
+parser = argparse.ArgumentParser(description="Eval")
+parser.add_argument(
+    "tfrecords",
+    type=str,
+    metavar="TFRECORDS_DIR",
+    help="evaluate using all tfrecords in TFRECORDS_DIR",
+)
+parser.add_argument(
+    "output",
+    type=str,
+    metavar="OUR_DIR",
+    help="use OUR_DIR to load checkpoints and write images",
+)
+parser.add_argument(
+    "--run-id",
+    required=True,
+    type=str,
+    metavar="RUN_ID",
+    help="load checkpoint from the run RUN_ID",
+)
 args = parser.parse_args()
 dir_tfrecords = Path(args.tfrecords).expanduser().resolve().as_posix()
 dir_output = Path(args.output).expanduser().resolve().joinpath(args.run_id).as_posix()
@@ -51,15 +61,15 @@ with sess.as_default():
 
     # Restore
     if latest_checkpoint is not None:
-        print(f'Restoring from: {latest_checkpoint}')
+        print(f"Restoring from: {latest_checkpoint}")
         saver.restore(sess, latest_checkpoint)
     else:
-        print(f'No checkpoint found in: {checkpoint_paths}')
+        print(f"No checkpoint found in: {checkpoint_paths}")
         exit(1)
 
     res = sess.run(evaluations_ops)
-    print('Cost: {}'.format(res['cost']))
-    plot_evaluation(res, 'eval', dir_output)
+    print("Cost: {}".format(res["cost"]))
+    plot_evaluation(res, "eval", dir_output)
 
     # Finish off the filename queue coordinator.
     coord.request_stop()

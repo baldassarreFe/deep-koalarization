@@ -25,8 +25,12 @@ import argparse
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
 
-from koalarization.dataset.embedding import prepare_image_for_inception, \
-    maybe_download_inception, inception_resnet_v2, inception_resnet_v2_arg_scope
+from koalarization.dataset.embedding import (
+    prepare_image_for_inception,
+    maybe_download_inception,
+    inception_resnet_v2,
+    inception_resnet_v2_arg_scope,
+)
 from koalarization.dataset.shared import maybe_create_folder, DIR_RESIZED, DIR_TFRECORD
 from koalarization.dataset.shared import progressive_filename_generator
 from koalarization.dataset.tfrecords import batch_operations
@@ -55,8 +59,7 @@ class LabImagenetBatcher:
 
         """
         if not isdir(inputs_dir):
-            raise Exception('Input folder does not exists: {}'
-                            .format(inputs_dir))
+            raise Exception("Input folder does not exists: {}".format(inputs_dir))
         self.inputs_dir = inputs_dir
 
         # Destination folder
@@ -69,7 +72,8 @@ class LabImagenetBatcher:
         # Utils
         self._examples_count = 0
         self.records_names_gen = progressive_filename_generator(
-            join(records_dir, 'lab_images_{}.tfrecord'))
+            join(records_dir, "lab_images_{}.tfrecord")
+        )
 
     def batch_all(self, examples_per_record):
         """.
@@ -111,8 +115,7 @@ class LabImagenetBatcher:
 
         """
         # Create the queue operations
-        image_key, image_tensor, _ = \
-            queue_single_images_from_folder(self.inputs_dir)
+        image_key, image_tensor, _ = queue_single_images_from_folder(self.inputs_dir)
 
         # Build Inception Resnet v2 operations using the image as input
         # - from rgb to grayscale to loose the color information
@@ -123,8 +126,9 @@ class LabImagenetBatcher:
         img_for_inception = tf.image.grayscale_to_rgb(img_for_inception)
         img_for_inception = prepare_image_for_inception(img_for_inception)
         with slim.arg_scope(inception_resnet_v2_arg_scope()):
-            input_embedding, _ = inception_resnet_v2(img_for_inception,
-                                                     is_training=False)
+            input_embedding, _ = inception_resnet_v2(
+                img_for_inception, is_training=False
+            )
 
         operations = image_key, image_tensor, input_embedding
 
@@ -157,8 +161,11 @@ class LabImagenetBatcher:
         finally:
             # Ask the threads (filename queue) to stop.
             coord.request_stop()
-            print('Finished writing {} images in {:.2f}s'
-                  .format(self._examples_count, time.time() - start_time))
+            print(
+                "Finished writing {} images in {:.2f}s".format(
+                    self._examples_count, time.time() - start_time
+                )
+            )
 
         # Wait for threads to finish.
         coord.join(threads)
@@ -183,10 +190,10 @@ class LabImagenetBatcher:
             for one_res in zip(*results):
                 writer.write_image(*one_res)
                 if __debug__:
-                    print('Written', basename(one_res[0]))
+                    print("Written", basename(one_res[0]))
 
             self._examples_count += len(results[0])
-            print('Record ready:', writer.path)
+            print("Record ready:", writer.path)
 
 
 def _parse_args():
@@ -198,54 +205,62 @@ def _parse_args():
     """
     # Argparse setup
     parser = argparse.ArgumentParser(
-        description='Takes one folders containing 299x299 images, extracts '
-                    'the inception resnet v2 features from the image, '
-                    'serializes the image in Lab space and the embedding and '
-                    'writes everything in tfrecord files '
-                    'files in batches on N images'
+        description="Takes one folders containing 299x299 images, extracts "
+        "the inception resnet v2 features from the image, "
+        "serializes the image in Lab space and the embedding and "
+        "writes everything in tfrecord files "
+        "files in batches on N images"
     )
-    parser.add_argument('-i', '--inputs-folder',
-                        default=DIR_RESIZED,
-                        type=str,
-                        metavar='FOLDER',
-                        dest='inputs',
-                        help='use FOLDER as source of the input images '
-                             '(default: {}) '
-                        .format(DIR_RESIZED)),
-    parser.add_argument('-o', '--output-folder',
-                        default=DIR_TFRECORD,
-                        type=str,
-                        metavar='FOLDER',
-                        dest='records',
-                        help='use FOLDER as destination for the TFRecord '
-                             'batches (default: {}) '
-                        .format(DIR_TFRECORD))
-    parser.add_argument('-c', '--checkpoint',
-                        default=CHECKPOINT_URL,
-                        type=str,
-                        dest='checkpoint',
-                        help='set the source for the trained inception '
-                             'weights, can be the url, the archive or the '
-                             'file itself (default: {}) '
-                        .format(CHECKPOINT_URL)
+    parser.add_argument(
+        "-i",
+        "--inputs-folder",
+        default=DIR_RESIZED,
+        type=str,
+        metavar="FOLDER",
+        dest="inputs",
+        help="use FOLDER as source of the input images "
+        "(default: {}) ".format(DIR_RESIZED),
+    ),
+    parser.add_argument(
+        "-o",
+        "--output-folder",
+        default=DIR_TFRECORD,
+        type=str,
+        metavar="FOLDER",
+        dest="records",
+        help="use FOLDER as destination for the TFRecord "
+        "batches (default: {}) ".format(DIR_TFRECORD),
     )
-    parser.add_argument('-b', '--batch-size',
-                        default=DEFAULT_BATCH_SIZE,
-                        type=int,
-                        metavar='N',
-                        dest='batch_size',
-                        help='every batch will contain N images, except maybe '
-                             'the last one (default: {})'.format(DEFAULT_BATCH_SIZE))
+    parser.add_argument(
+        "-c",
+        "--checkpoint",
+        default=CHECKPOINT_URL,
+        type=str,
+        dest="checkpoint",
+        help="set the source for the trained inception "
+        "weights, can be the url, the archive or the "
+        "file itself (default: {}) ".format(CHECKPOINT_URL),
+    )
+    parser.add_argument(
+        "-b",
+        "--batch-size",
+        default=DEFAULT_BATCH_SIZE,
+        type=int,
+        metavar="N",
+        dest="batch_size",
+        help="every batch will contain N images, except maybe "
+        "the last one (default: {})".format(DEFAULT_BATCH_SIZE),
+    )
     args = parser.parse_args()
     return args
 
 
 # Run from the top folder as:
 # python3 -m dataset.lab_batch <args>
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = _parse_args()
     LabImagenetBatcher(
-        inputs_dir=args.inputs, 
-        records_dir=args.records, 
-        checkpoint_source=args.checkpoint
+        inputs_dir=args.inputs,
+        records_dir=args.records,
+        checkpoint_source=args.checkpoint,
     ).batch_all(examples_per_record=args.batch_size)

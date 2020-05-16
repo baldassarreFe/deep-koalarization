@@ -11,7 +11,7 @@ class RecordWriter(tf.python_io.TFRecordWriter):
     easily serialize different data types.
     """
 
-    def __init__(self, tfrecord_name, dest_folder=''):
+    def __init__(self, tfrecord_name, dest_folder=""):
         self.path = join(dest_folder, tfrecord_name)
         super().__init__(self.path, options=compression)
 
