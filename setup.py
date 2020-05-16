@@ -21,6 +21,7 @@ setup(
     author='Federico Baldassare, Diego González Morín, Lucas Rodés-Guirao',
     license='GPL-v3',
     install_requires=requirements,
+    extras_require={"gpu": ['tensorflow-gpu==1.3.0']},
     packages=find_packages('src'),
     package_dir={'': 'src'},
     namespace_packages=['koalarization'],

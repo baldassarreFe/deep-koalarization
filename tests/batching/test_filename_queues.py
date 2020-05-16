@@ -10,9 +10,7 @@ from koalarization.dataset.tfrecords import \
 
 class TestFilenameQueues(unittest.TestCase):
     def test_one(self):
-        """
-        Load all images from a folder once and print the result
-        """
+        """Load all images from a folder once and print the result."""
         # Create the queue operations
         image_key, image_tensor, image_shape = queue_single_images_from_folder(
             dir_resized)

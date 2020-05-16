@@ -42,6 +42,13 @@ The code is built using [Keras](http://keras.io) and [Tensorflow](https://www.te
 
 Consider starring this project if you found it useful :star:!
 
+- [Citation](#citation)
+- [Abstract](#abstract)
+- [Overview](#overview)
+- [Installation](#installation)
+- [Results](#results)
+- [Community](#community)
+
 ## Citation
 
 If you find Deep Koalarization useful in your research, please consider citing our paper as
@@ -101,7 +108,9 @@ Refer to [INSTRUCTIONS](INSTRUCTIONS.md) to setup and use the code in this repo.
 
 ![Historical 1](assets/historical.png)
 
-## Thanks to the people who noticed our work!
+## Community
+
+### Thanks to the people who noticed our work!
 
 We are proud if our work gets noticed and helps/inspires other people on their path to knowledge. Here's a list of references we are aware of, some of the authors contacted us, some others we just happened to find online:
 
@@ -110,5 +119,5 @@ We are proud if our work gets noticed and helps/inspires other people on their p
 - Amir Kalron on [Logz.io Blog](https://logz.io/blog/open-source-machine-learning/)
 - sparkexpert on [CSDN](http://blog.csdn.net/sparkexpert/article/details/74452523)
 
-## Projects originated from here
+### Projects originated from here
 - [Ensemble Image Colorization using Convolutional Neural Networks with Refinement Network](https://github.com/Kriztoper/deep-koalarization) by Kriztoper a.k.a. **Deep Koalarization v2**.
