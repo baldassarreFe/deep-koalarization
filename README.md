@@ -9,24 +9,12 @@
 </p>
 
 <p align="center">
-  <a href="https://www.python.org/downloads/release/python-360/">
-    <img alt="Python 3.6" src="https://img.shields.io/badge/python-3.6-blue.svg">
-  </a>
-  <a href="https://github.com/baldassarreFe/deep-koalarization/blob/master/LICENSE">
-    <img alt="GitHub License" src="https://img.shields.io/github/license/baldassarreFe/deep-koalarization.svg">
-  </a>
-  <a href="https://github.com/baldassarreFe/deep-koalarization/stargazers">
-    <img alt="GitHub stars" src="https://img.shields.io/github/stars/baldassarreFe/deep-koalarization.svg">
-  </a>
-  <a href="https://github.com/baldassarreFe/deep-koalarization/network">
-    <img alt="GitHub forks" src="https://img.shields.io/github/forks/baldassarreFe/deep-koalarization.svg">
-  </a>
-  <a href="https://arxiv.org/abs/1712.03400">
-    <img alt="arXiv" src="https://img.shields.io/badge/paper-arXiv-_.svg?&color=B31B1B">
-  </a>
-  <a href="https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2FbaldassarreFe%2Fdeep-koalarization">
-    <img alt="Twitter" src="https://img.shields.io/twitter/url/https/github.com/baldassarreFe/deep-koalarization.svg?style=social">
-  </a>
+  <a href="https://www.python.org/downloads/release/python-360/"><img alt="Python 3.6" src="https://img.shields.io/badge/python-3.6-blue.svg"></a>
+  <a href="https://github.com/baldassarreFe/deep-koalarization/blob/master/LICENSE"><img alt="GitHub License" src="https://img.shields.io/github/license/baldassarreFe/deep-koalarization.svg"></a>
+  <a href="https://github.com/baldassarreFe/deep-koalarization/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/baldassarreFe/deep-koalarization.svg"></a>
+  <a href="https://github.com/baldassarreFe/deep-koalarization/network"><img alt="GitHub forks" src="https://img.shields.io/github/forks/baldassarreFe/deep-koalarization.svg"></a>
+  <a href="https://arxiv.org/abs/1712.03400"><img alt="arXiv" src="https://img.shields.io/badge/paper-arXiv-_.svg?&color=B31B1B"></a>
+  <a href="https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2FbaldassarreFe%2Fdeep-koalarization"><img alt="Twitter" src="https://img.shields.io/twitter/url/https/github.com/baldassarreFe/deep-koalarization.svg?style=social"></a>
 </p>
 
 
