@@ -24,7 +24,7 @@ pip install -e .[gpu]
 ```
 
 > If it does not work, manually install `tensorflow-gpu` library (must be compatible with your OS, python version and
-> `tensorflow` library)
+> `tensorflow` library). More info [here](https://www.tensorflow.org/install/gpu).
 
 ## Dataset
 Prior to training, the images from ImageNet need to be downloaded, resized and processed.
