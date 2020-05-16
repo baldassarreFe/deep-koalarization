@@ -12,6 +12,9 @@ from skimage import color
 from koalarization import Colorization, lab_to_rgb, l_to_rgb
 
 
+NUM_EPOCHS = 10
+
+
 class TestColorization(unittest.TestCase):
     def test_colorization(self):
         imgs_l, imgs_true_ab, imgs_emb = self._tensors()
@@ -63,7 +66,7 @@ class TestColorization(unittest.TestCase):
             plt.title('Target (original)')
             plt.axis('off')
 
-            for epoch in range(100):
+            for epoch in range(NUM_EPOCHS):
                 print('Epoch:', epoch, end=' ')
                 res = sess.run(opt_operations)
                 print('Cost:', res['cost'])

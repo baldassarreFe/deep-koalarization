@@ -9,6 +9,9 @@
 </p>
 
 <p align="center">
+  <a href="https://www.python.org/downloads/release/python-360/">
+    <img alt="Python 3.6" src="https://img.shields.io/badge/python-3.6-blue.svg">
+  </a>
   <a href="https://github.com/baldassarreFe/deep-koalarization/blob/master/LICENSE">
     <img alt="GitHub License" src="https://img.shields.io/github/license/baldassarreFe/deep-koalarization.svg">
   </a>
@@ -48,7 +51,6 @@ Consider starring this project if you found it useful :star:!
 - [Abstract](#abstract)
 - [Project Overview](#project-overview)
 - [Results](#results)
-- [Installation](#installation)
 - [Use the code](#use-the-code)
 - [Community](#community)
 
@@ -109,12 +111,14 @@ The Training data for this experiment could come from any source. We decuded to 
 
 ---
 
-## Installation
+## Use the code
+
+### Installation
 
 Refer to [INSTRUCTIONS](INSTRUCTIONS.md) to setup and use the code in this repo.
 
 
-## Use the code
+### Getting started
 
 You need to generate the necessary data (see [here](DATASET.md)). Then, you can inspect the [koalarization code](src/koalarization/).
 

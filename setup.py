@@ -24,7 +24,7 @@ setup(
     extras_require={"gpu": ['tensorflow-gpu==1.3.0']},
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    namespace_packages=['koalarization'],
+    # namespace_packages=['koalarization'],
     py_modules=[os.path.splitext(os.path.basename(path))[0] for path in glob.glob('src/*.py')],
     include_package_data=True,
     zip_safe=False,
