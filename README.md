@@ -120,7 +120,7 @@ Refer to [INSTRUCTIONS](INSTRUCTIONS.md) to setup and use the code in this repo.
 
 ### Getting started
 
-You need to generate the [necessary](DATASET.md). Once this is done, you can inspect the [koalarization code](src/koalarization/).
+You need to generate the [necessary data](DATASET.md). Once this is done, you can inspect the [koalarization code](src/koalarization/).
 
 
 ## Community
