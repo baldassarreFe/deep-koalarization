@@ -1,4 +1,4 @@
-<h1 align="center" style="border-bottom: none;"> <a href="http://lcsrg.me/deep-koalarization">🐨 deep koalarization</a>
+<h1 align="center" style="border-bottom: none;"> <a href="https://lcsrg.me/deep-koalarization">🐨 deep koalarization</a>
 </h1>
 <h3 align="center">Impementation of our paper <a href="https://arxiv.org/abs/1712.03400">Deep Koalarization: Image Colorization using CNNs and Inception-ResNet-v2 (2017)</a></h3>
 
@@ -13,7 +13,7 @@
   <a href="https://github.com/baldassarreFe/deep-koalarization/blob/master/LICENSE"><img alt="GitHub License" src="https://img.shields.io/github/license/baldassarreFe/deep-koalarization.svg"></a>
   <a href="https://github.com/baldassarreFe/deep-koalarization/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/baldassarreFe/deep-koalarization.svg"></a>
   <a href="https://github.com/baldassarreFe/deep-koalarization/network"><img alt="GitHub forks" src="https://img.shields.io/github/forks/baldassarreFe/deep-koalarization.svg"></a>
-    <a href="http://github.com/baldassarreFe/deep-koalarization"><img alt="HitCount" src="https://views.whatilearened.today/views/github/baldassarreFe/deep-koalarization.svg"></a>
+    <a href="https://github.com/baldassarreFe/deep-koalarization"><img alt="HitCount" src="https://views.whatilearened.today/views/github/baldassarreFe/deep-koalarization.svg"></a>
   <a href="https://arxiv.org/abs/1712.03400"><img alt="arXiv" src="https://img.shields.io/badge/paper-arXiv-_.svg?&color=B31B1B"></a>
   <a href="https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2FbaldassarreFe%2Fdeep-koalarization"><img alt="Twitter" src="https://img.shields.io/twitter/url/https/github.com/baldassarreFe/deep-koalarization.svg?style=social"></a>
 </p>
@@ -28,9 +28,9 @@
 </p> 
 
 
-**deep-koalarization** was developed as part of the [DD2424 Deep Learning in Data Science course](https://www.kth.se/student/kurser/kurs/DD2424?l=en) at [KTH Royal Institute of Technology](http://kth.se), spring 2017.
+**deep-koalarization** was developed as part of the [DD2424 Deep Learning in Data Science course](https://www.kth.se/student/kurser/kurs/DD2424?l=en) at [KTH Royal Institute of Technology](https://www.kth.se/en), spring 2017.
 
-The code is built using [Keras](http://keras.io) and [Tensorflow](https://www.tensorflow.org/).
+The code is built using [Keras](https://keras.io) and [Tensorflow](https://www.tensorflow.org/).
 
 Consider starring this project if you found it useful :star:!
 
@@ -66,7 +66,7 @@ We review some of the most recent approaches to colorize gray-scale images using
 
 <!---
 ## Intro
-We got the inspiration from the work of Richard Zhang, Phillip Isola and Alexei A. Efros, who realized a network able to colorize black and white images ([blog post](http://richzhang.github.io/colorization/) and [paper](https://arxiv.org/abs/1603.08511)). They trained a network on ImageNet pictures preprocessed to make them gray-scale, with the colored image as the output target.
+We got the inspiration from the work of Richard Zhang, Phillip Isola and Alexei A. Efros, who realized a network able to colorize black and white images ([blog post](https://richzhang.github.io/colorization/) and [paper](https://arxiv.org/abs/1603.08511)). They trained a network on ImageNet pictures preprocessed to make them gray-scale, with the colored image as the output target.
 
 Then we also saw the experiments of Satoshi Iizuka, Edgar Simo-Serra and Hiroshi Ishikawa, who added image classification features to raw pixels fed to the network, improving the overall results ([YouTube review](https://www.youtube.com/watch?v=MfaTOXxA8dM), [blog post](http://hi.cs.waseda.ac.jp/~iizuka/projects/colorization/en/) and [paper](http://hi.cs.waseda.ac.jp/~iizuka/projects/colorization/data/colorization_sig2016.pdf)).
 -->
