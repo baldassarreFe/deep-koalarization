@@ -12,3 +12,4 @@ authors:
 title: "Deep-Koalarization: Image Colorization using CNNs and Inception-ResNet-v2"
 date-released: 2017-12-09
 url: "https://arxiv.org/abs/1712.03400"
+version: v0.2.0
