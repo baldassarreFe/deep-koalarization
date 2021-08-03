@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Baldassarre"
+  given-names: "Federico"
+  orcid: "https://orcid.org/0000-0001-8152-767X"
+- family-names: "González Morín"
+  given-names: "Diego"
+- family-names: "Rodes-Guirao"
+  given-names: "Lucas"
+  orcid: "https://orcid.org/0000-0003-4341-7204"
+title: "Deep-Koalarization: Image Colorization using CNNs and Inception-ResNet-v2"
+date-released: 2017-12-09
+url: "https://arxiv.org/abs/1712.03400"
